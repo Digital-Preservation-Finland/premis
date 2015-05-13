@@ -41,7 +41,7 @@ def _subelement(parent, tag, prefix=""):
     return ET.SubElement(parent, premis_ns(tag, prefix))
 
 
-def xsi(tag):
+def xsi_ns(tag):
     """TODO: Docstring for premis.
 
     :tag: TODO
@@ -226,7 +226,7 @@ def premis_object(
     _original_name.text = original_name
 
     if representation:
-        _object.set(xsi('type'), 'premis:representation')
+        _object.set(xsi_ns('type'), 'premis:representation')
 
     if child_elements:
         for element in child_elements:
@@ -242,7 +242,7 @@ def premis_premis_ns(child_elements=None):
     """
     _premis = _element('premis')
     _premis.set(
-        xsi('schemaLocation'),
+        xsi_ns('schemaLocation'),
         'info:lc/xmlns/premis-v2 '
         'http://www.loc.gov/standards/premis/premis.xsd')
 

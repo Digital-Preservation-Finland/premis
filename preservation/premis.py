@@ -1,9 +1,12 @@
 """Premis serialization from / to JSON and XML"""
 
+import xml.etree.ElementTree
+
 import json
 
+class EventEtree(
 
-class Event(object):
+class EventJson(object):
 
     """Premis event serializer.
 

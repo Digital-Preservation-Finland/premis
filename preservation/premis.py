@@ -3,7 +3,7 @@
 import json
 
 
-class EventJson(object):
+class Event(object):
 
     """Premis event serializer.
 

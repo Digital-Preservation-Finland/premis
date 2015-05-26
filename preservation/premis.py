@@ -1,10 +1,7 @@
 """Premis serialization from / to JSON and XML"""
 
-import xml.etree.ElementTree
-
 import json
 
-class EventEtree(
 
 class EventJson(object):
 
@@ -56,4 +53,3 @@ class EventJson(object):
         """
         for line in self.to_json():
             yield line
-        pass

@@ -126,10 +126,10 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
         _identifier = _element('Identifier', prefix)
 
     _type = _subelement(_identifier, 'IdentifierValue', prefix)
-    _type.text = identifier_type
+    _type.text = identifier_value
 
     _value = _subelement(_identifier, 'IdentifierType', prefix)
-    _value.text = identifier_value
+    _value.text = identifier_type
 
     return _identifier
 

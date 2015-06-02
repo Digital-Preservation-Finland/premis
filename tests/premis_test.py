@@ -8,6 +8,26 @@ PREMIS_NS = 'info:lc/xmlns/premis-v2'
 XSI_NS = 'http://www.w3.org/2001/XMLSchema-instance'
 
 
+class PremisEvent(object):
+
+    """Docstring for PremisEvent. """
+
+    def __init__(self):
+        """TODO: to be defined1. """
+        pass
+
+    @classmethod
+    def fromstring(cls, string):
+        """TODO: Docstring for fromstring.
+
+        :string: TODO
+        :returns: TODO
+
+        """
+
+        return cls(string)
+
+
 def premis_ns(tag, prefix=""):
     """TODO: Docstring for premis.
 
@@ -56,6 +76,7 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
 
     Produces without prefix the following PREMIS segment::
 
+
           <premis:objectIdentifier>
               <premis:objectIdentifierType>
                   pas-sig-id
@@ -84,6 +105,15 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
             <premis:dependencyIdentifierValue>
                 kdk-sip-premis-object001</premis:dependencyIdentifierValue>
         </premis:dependencyIdentifier>
+
+    With prefix='linking' the following PREMIS segment::
+
+        <premis:linkingObjectIdentifier>
+            <premis:linkingObjectIdentifierType>
+                pas-sip-id</premis:linkingObjectIdentifierType>
+            <premis:linkingObjectIdentifierValue>
+                pas-sip-1ac641ec</premis:linkingObjectIdentifierValue>
+        </premis:linkingObjectIdentifier>
 
     """
 
@@ -284,7 +314,8 @@ def premis_event_outcome(outcome, detail_note):
 
 
 def premis_event(
-        event_type, event_date_time, event_detail, child_elements=None):
+        event_type, event_date_time, event_detail, child_elements=[],
+        linking_objects=[]):
     """TODO: Docstring for premis_event.
 
     :arg1: TODO
@@ -319,6 +350,13 @@ def premis_event(
 
     for element in child_elements:
         event.append(element)
+
+    for _object in linking_objects:
+        linking_object = premis_identifier(
+            _object.findtext('.//' + premis_ns('objectIdentifierType')),
+            _object.findtext('.//' + premis_ns('objectIdentifierValue')),
+            'linkingObject')
+        event.append(linking_object)
 
     return event
 
@@ -410,3 +448,10 @@ def test_premis_ns():
 
     premis = premis_premis_ns([sip_object, event])
     print serialize(premis)
+
+    xml = serialize(premis)
+
+    premis = ET.fromstring(xml)
+
+    print serialize(premis)
+

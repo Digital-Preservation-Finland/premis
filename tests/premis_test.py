@@ -2,30 +2,8 @@
 
 import xml.etree.ElementTree as ET
 
-REPORT_PATH = 'tests/data/premis_test_validation_report.xml'
-
 PREMIS_NS = 'info:lc/xmlns/premis-v2'
 XSI_NS = 'http://www.w3.org/2001/XMLSchema-instance'
-
-
-class PremisEvent(object):
-
-    """Docstring for PremisEvent. """
-
-    def __init__(self):
-        """TODO: to be defined1. """
-        pass
-
-    @classmethod
-    def fromstring(cls, string):
-        """TODO: Docstring for fromstring.
-
-        :string: TODO
-        :returns: TODO
-
-        """
-
-        return cls(string)
 
 
 def premis_ns(tag, prefix=""):
@@ -79,10 +57,10 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
 
           <premis:objectIdentifier>
               <premis:objectIdentifierType>
-                  pas-sig-id
+                  preservation-sig-id
               </premis:objectIdentifierType>
               <premis:objectIdentifierValue>
-                  pas-sig-c8b978b6-e160-4497-8027-e19fa0297766
+                  preservation-sig-c8b978b6-e160-4497-8027-e19fa0297766
               </premis:objectIdentifierValue>
           </premis:objectIdentifier>
 
@@ -90,10 +68,10 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
 
           <premis:relatedObjectIdentification>
               <premis:relatedObjectIdentifierType>
-                  pas-sip-id
+                  preservation-sip-id
               </premis:relatedObjectIdentifierType>
               <premis:relatedObjectIdentifierValue>
-                  pas-sip-1ac641ec-223f-42f4-86c2-9402451d63bf
+                  preservation-sip-1ac641ec-223f-42f4-86c2-9402451d63bf
               </premis:relatedObjectIdentifierValue>
           </premis:relatedObjectIdentification>
 
@@ -110,9 +88,9 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
 
         <premis:linkingObjectIdentifier>
             <premis:linkingObjectIdentifierType>
-                pas-sip-id</premis:linkingObjectIdentifierType>
+                preservation-sip-id</premis:linkingObjectIdentifierType>
             <premis:linkingObjectIdentifierValue>
-                pas-sip-1ac641ec</premis:linkingObjectIdentifierValue>
+                preservation-sip-1ac641ec</premis:linkingObjectIdentifierValue>
         </premis:linkingObjectIdentifier>
 
     """
@@ -125,11 +103,11 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
     else:
         _identifier = _element('Identifier', prefix)
 
-    _type = _subelement(_identifier, 'IdentifierValue', prefix)
-    _type.text = identifier_value
-
     _value = _subelement(_identifier, 'IdentifierType', prefix)
     _value.text = identifier_type
+
+    _type = _subelement(_identifier, 'IdentifierValue', prefix)
+    _type.text = identifier_value
 
     return _identifier
 
@@ -230,7 +208,9 @@ def premis_environment(dependency_identifier=None):
 
 
 def premis_object(
-        original_name, child_elements=None,
+        identifier,
+        original_name,
+        child_elements=None,
         representation=False):
 
     """TODO: Docstring for Event.
@@ -252,11 +232,13 @@ def premis_object(
 
     _object = _element('object')
 
-    _original_name = _subelement(_object, 'originalName')
-    _original_name.text = original_name
+    _object.append(identifier)
 
     if representation:
         _object.set(xsi_ns('type'), 'premis:representation')
+
+    _original_name = _subelement(_object, 'originalName')
+    _original_name.text = original_name
 
     if child_elements:
         for element in child_elements:
@@ -265,7 +247,40 @@ def premis_object(
     return _object
 
 
-def premis_premis_ns(child_elements=None):
+def premis_agent(
+        identifier, agent_name, agent_type):
+    """Returns PREMIS agent element
+
+    Generates the following PREMIS segment::
+
+        <premis:agent>
+            <premis:agentIdentifier>
+                <premis:agentIdentifierType>
+                    preservation-agent-id</premis:agentIdentifierType>
+                <premis:agentIdentifierValue>
+                    preservation-agent-check_virus_clamscan.py-0.63-1422
+                </premis:agentIdentifierValue>
+            </premis:agentIdentifier>
+            <premis:agentName>check_virus_clamscan.py</premis:agentName>
+            <premis:agentType>software</premis:agentType>
+        </premis:agent>
+
+    """
+
+    agent = _element('agent')
+
+    agent.append(identifier)
+
+    _agent_name = _subelement(agent, 'agentName')
+    _agent_name.text = agent_name
+
+    _agent_type = _subelement(agent, 'agentType')
+    _agent_type.text = agent_type
+
+    return agent
+
+
+def premis_premis(child_elements=None):
     """TODO: Docstring for premis_premis.
     :returns: TODO
 
@@ -275,6 +290,8 @@ def premis_premis_ns(child_elements=None):
         xsi_ns('schemaLocation'),
         'info:lc/xmlns/premis-v2 '
         'http://www.loc.gov/standards/premis/premis.xsd')
+
+    _premis.set('version', '2.2')
 
     if child_elements:
         for element in child_elements:
@@ -314,8 +331,8 @@ def premis_event_outcome(outcome, detail_note):
 
 
 def premis_event(
-        event_type, event_date_time, event_detail, child_elements=[],
-        linking_objects=[]):
+        identifier, event_type, event_date_time, event_detail,
+        child_elements=None, linking_objects=None):
     """TODO: Docstring for premis_event.
 
     :arg1: TODO
@@ -339,6 +356,8 @@ def premis_event(
 
     event = _element('event')
 
+    event.append(identifier)
+
     _event_type = _subelement(event, 'eventType')
     _event_type.text = event_type
 
@@ -348,15 +367,17 @@ def premis_event(
     _event_detail = _subelement(event, 'eventDetail')
     _event_detail.text = event_detail
 
-    for element in child_elements:
-        event.append(element)
+    if child_elements:
+        for element in child_elements:
+            event.append(element)
 
-    for _object in linking_objects:
-        linking_object = premis_identifier(
-            _object.findtext('.//' + premis_ns('objectIdentifierType')),
-            _object.findtext('.//' + premis_ns('objectIdentifierValue')),
-            'linkingObject')
-        event.append(linking_object)
+    if linking_objects:
+        for _object in linking_objects:
+            linking_object = premis_identifier(
+                _object.findtext('.//' + premis_ns('objectIdentifierType')),
+                _object.findtext('.//' + premis_ns('objectIdentifierValue')),
+                'linkingObject')
+            event.append(linking_object)
 
     return event
 
@@ -406,7 +427,7 @@ def test_premis_ns():
 
     # SIP & METS object identifiers
 
-    sip_identifier = premis_identifier('pas-sip-id', 'csc-sip-001')
+    sip_identifier = premis_identifier('preservation-sip-id', 'csc-sip-001')
     mets_identifier = premis_identifier('METS-OBJID', 'mets-objid-999')
 
     # PREMIS relationship
@@ -427,26 +448,28 @@ def test_premis_ns():
 
     sip_object = premis_object(
         original_name='csc-sip-001.zip',
-        child_elements=[sip_identifier, relationship, environment],
+        identifier=sip_identifier,
+        child_elements=[relationship, environment],
         representation=True)
 
     # Create the PREMIS event
 
     event_identifier = premis_identifier(
-        'pas-event-id', 'event-id-1234', 'event')
+        'preservation-event-id', 'event-id-1234', 'event')
 
     event_outcome = premis_event_outcome(
         'success', 'Validation successful - OK')
 
     event = premis_event(
+        event_identifier,
         'digital signature validation',
         '1.1.2015',
         'Submission information package signature',
-        child_elements=[event_identifier, event_outcome])
+        child_elements=[event_outcome])
 
     # PREMIS XML & print
 
-    premis = premis_premis_ns([sip_object, event])
+    premis = premis_premis([sip_object, event])
     print serialize(premis)
 
     xml = serialize(premis)
@@ -454,4 +477,3 @@ def test_premis_ns():
     premis = ET.fromstring(xml)
 
     print serialize(premis)
-

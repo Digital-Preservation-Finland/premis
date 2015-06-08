@@ -462,6 +462,119 @@ def premis_event(
     return event
 
 
+def iter_elements(starting_element, tag):
+    """TODO: Docstring for premis_agents.
+
+    :premis: TODO
+    :returns: TODO
+
+    """
+    for element in starting_element.findall(premis_ns(tag)):
+        yield element
+
+
+def iter_agents(premis):
+    """TODO: Docstring for premis_agents.
+
+    :premis: TODO
+    :returns: TODO
+
+    """
+    for element in iter_elements(premis, 'agent'):
+        yield element
+
+
+def iter_events(premis):
+    """TODO: Docstring for premis_agents.
+
+    :premis: TODO
+    :returns: TODO
+
+    """
+    for element in iter_elements(premis, 'event'):
+        yield element
+
+
+def iter_objects(premis):
+    """TODO: Docstring for premis_agents.
+
+    :premis: TODO
+    :returns: TODO
+
+    """
+
+    for element in iter_elements(premis, 'object'):
+        yield element
+
+
+def filter_objects(premis_objects, filtered_objects):
+    """TODO: Docstring for filter_objects.
+
+    :premis_objects: TODO
+    :filtered_objects: TODO
+    :returns: TODO
+
+    """
+    for element in premis_objects:
+        found = False
+        for filter_element in iter_objects(filtered_objects):
+            if contains_object(filter_element, element):
+                found = True
+        if not found:
+            yield element
+
+
+def contains_object(object_element, search_from_element):
+    """TODO: Docstring for element_in.
+    :returns: TODO
+
+    """
+
+    key_identifier_value = iter_elements(
+        object_element, 'objectIdentifierValue').next()
+
+    # Unfortunately Python 2.6 ElementTree does not support xpath search by
+    # element value so we have to search with for-loop
+
+    identifiers = iter_elements(search_from_element, 'objectIdentifierValue')
+
+    for identifier_value in identifiers:
+        if identifier_value.text == key_identifier_value.text:
+            return True
+
+    return False
+
+
+def event_count(premis):
+    """TODO: Docstring for .
+
+    :premis: TODO
+    :returns: TODO
+
+    """
+    return len([x for x in iter_events(premis)])
+
+
+def object_count(premis):
+    """TODO: Docstring for object_count.
+
+    :premis: TODO
+    :returns: TODO
+
+    """
+    return len([x for x in iter_objects(premis)])
+
+
+def agent_count(premis):
+    """TODO: Docstring for agent_count.
+
+    :premis: TODO
+    :returns: TODO
+
+    """
+    return len([x for x in iter_agents(premis)])
+
+
 #
 # TODO: Remove JSON Event class after refactoring Premis generation to
 # ElementTree factories

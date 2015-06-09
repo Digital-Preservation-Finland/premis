@@ -170,7 +170,7 @@ def get_identifier_type_value(object_or_identifier):
     or object. If segment contains multiple identifiers, returns first
     occurrence.
 
-    :object_or_identifier: TODO
+    :object_or_identifier: Premis object or identifier
     :returns: (identifier_type, identifier_value)
 
     """
@@ -192,12 +192,12 @@ def premis_relationship(
         relationship_type, relationship_subtype,
         related_object):
 
-    """TODO: Docstring for premis_relationshi.
+    """Create PREMIS relationship DOM segment.
 
-    :relationship_type: TODO
-    :subtype: TODO
-    :related_object_identification: TODO
-    :returns: TODO
+    :relationship_type: Relationship type from PREMIS vocabulary
+    :relationship_subtype: Relationship subtype from PREMIS vocabulary
+    :related_object: Related object linked to relationship
+    :returns: ElementTree DOM tree
 
     Produces the following PREMIS segment::
 
@@ -463,10 +463,11 @@ def premis_event(
 
 
 def iter_elements(starting_element, tag):
-    """TODO: Docstring for premis_agents.
+    """Iterate all element from starting element that match the `tag`
+    parameter. Tag is always prefixed to PREMIS namespace before matching.
 
-    :premis: TODO
-    :returns: TODO
+    :starting_element: Element where matching elements are searched
+    :returns: Generator object for iterating all elements
 
     """
     for element in starting_element.findall(premis_ns(tag)):
@@ -474,10 +475,10 @@ def iter_elements(starting_element, tag):
 
 
 def iter_agents(premis):
-    """TODO: Docstring for premis_agents.
+    """Iterate all PREMIS agents from starting element.
 
-    :premis: TODO
-    :returns: TODO
+    :starting_element: Element where matching elements are searched
+    :returns: Generator object for iterating all elements
 
     """
     for element in iter_elements(premis, 'agent'):
@@ -485,10 +486,10 @@ def iter_agents(premis):
 
 
 def iter_events(premis):
-    """TODO: Docstring for premis_agents.
+    """Iterate all PREMIS events from starting element.
 
-    :premis: TODO
-    :returns: TODO
+    :starting_element: Element where matching elements are searched
+    :returns: Generator object for iterating all elements
 
     """
     for element in iter_elements(premis, 'event'):
@@ -496,10 +497,10 @@ def iter_events(premis):
 
 
 def iter_objects(premis):
-    """TODO: Docstring for premis_agents.
+    """Iterate all PREMIS objects from starting element.
 
-    :premis: TODO
-    :returns: TODO
+    :starting_element: Element where matching elements are searched
+    :returns: Generator object for iterating all elements
 
     """
 
@@ -508,11 +509,12 @@ def iter_objects(premis):
 
 
 def filter_objects(premis_objects, filtered_objects):
-    """TODO: Docstring for filter_objects.
+    """Return PREMIS objects from `premis_objects` which are not listed in
+    `filtered_objects`
 
-    :premis_objects: TODO
-    :filtered_objects: TODO
-    :returns: TODO
+    :premis_objects: Objects to filter
+    :filtered_objects: Objects which are removed from `premis_objects`
+    :returns: Generator object for iterating all objects
 
     """
     for element in premis_objects:
@@ -525,8 +527,12 @@ def filter_objects(premis_objects, filtered_objects):
 
 
 def contains_object(object_element, search_from_element):
-    """TODO: Docstring for element_in.
-    :returns: TODO
+    """Return True if `search_from_element` contains the `object_element`
+    object or objectIdentifier.
+
+    :object_element: PREMIS object or identifier
+    :search_from_element: PREMIS object to search from
+    :returns: Boolean
 
     """
 
@@ -546,30 +552,30 @@ def contains_object(object_element, search_from_element):
 
 
 def event_count(premis):
-    """TODO: Docstring for .
+    """Return number of events in PREMIS data dictionary.
 
-    :premis: TODO
-    :returns: TODO
+    :premis: ElementTree element
+    :returns: Integer
 
     """
     return len([x for x in iter_events(premis)])
 
 
 def object_count(premis):
-    """TODO: Docstring for object_count.
+    """Return number of objects in PREMIS data dictionary.
 
-    :premis: TODO
-    :returns: TODO
+    :premis: ElementTree element
+    :returns: Integer
 
     """
     return len([x for x in iter_objects(premis)])
 
 
 def agent_count(premis):
-    """TODO: Docstring for agent_count.
+    """Return number of agents in PREMIS data dictionary.
 
-    :premis: TODO
-    :returns: TODO
+    :premis: ElementTree element
+    :returns: Integer
 
     """
     return len([x for x in iter_agents(premis)])

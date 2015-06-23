@@ -372,7 +372,7 @@ def premis_premis(child_elements=None):
     return _premis
 
 
-def premis_event_outcome(outcome, detail_note):
+def premis_event_outcome(outcome, detail_note=None, detail_extension=None):
     """Create PREMIS event outcome DOM structure.
 
     :outcome: Event outcome (success, failure)
@@ -399,8 +399,13 @@ def premis_event_outcome(outcome, detail_note):
 
     detail = _subelement(outcome_information, 'eventOutcomeDetail')
 
-    _detail_note = _subelement(detail, 'eventOutcomeDetailNote')
-    _detail_note.text = detail_note
+    if detail_note:
+        _detail_note = _subelement(detail, 'eventOutcomeDetailNote')
+        _detail_note.text = detail_note
+
+    if detail_extension:
+        _detail_extension = _subelement(detail, 'eventOutcomeDetailExtension')
+        _detail_extension.text = detail_extension
 
     return outcome_information
 

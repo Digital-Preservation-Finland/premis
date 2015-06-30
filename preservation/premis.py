@@ -475,7 +475,7 @@ def iter_elements(starting_element, tag):
     :returns: Generator object for iterating all elements
 
     """
-    for element in starting_element.findall(premis_ns(tag)):
+    for element in starting_element.findall('.//' + premis_ns(tag)):
         yield element
 
 

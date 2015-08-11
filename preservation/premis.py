@@ -113,7 +113,7 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
                   preservation-sig-id
               </premis:objectIdentifierType>
               <premis:objectIdentifierValue>
-                  preservation-sig-c8b978b6-e160-4497-8027-e19fa0297766
+                  c8b978b6-e160-4497-8027-e19fa0297766
               </premis:objectIdentifierValue>
           </premis:objectIdentifier>
 
@@ -124,7 +124,7 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
                   preservation-sip-id
               </premis:relatedObjectIdentifierType>
               <premis:relatedObjectIdentifierValue>
-                  preservation-sip-1ac641ec-223f-42f4-86c2-9402451d63bf
+                  1ac641ec-223f-42f4-86c2-9402451d63bf
               </premis:relatedObjectIdentifierValue>
           </premis:relatedObjectIdentification>
 
@@ -143,7 +143,7 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
             <premis:linkingObjectIdentifierType>
                 preservation-sip-id</premis:linkingObjectIdentifierType>
             <premis:linkingObjectIdentifierValue>
-                preservation-sip-1ac641ec</premis:linkingObjectIdentifierValue>
+                1ac641ec</premis:linkingObjectIdentifierValue>
         </premis:linkingObjectIdentifier>
 
     """

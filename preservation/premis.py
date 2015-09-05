@@ -233,7 +233,7 @@ def premis_relationship(
     return relationship
 
 
-def premis_environment(dependency_identifier=None):
+def premis_environment(object_or_identifier=None):
     """Return the PREMIS environment structure.
 
     :dependency_identifier: PREMIS identifier structure
@@ -253,9 +253,29 @@ def premis_environment(dependency_identifier=None):
 
     environment = _element('environment')
 
-    if dependency_identifier:
-        dependency = _subelement(environment, 'dependency')
-        dependency.append(dependency_identifier)
+    if object_or_identifier is None:
+        return environment
+
+    object_identifier = object_or_identifier.find(
+        premis_ns('objectIdentifier'))
+
+    if object_identifier is None:
+        object_identifier = object_or_identifier
+
+    dependency_identifier_type = object_identifier.find(
+        premis_ns('dependencyIdentifierType'))
+
+    if dependency_identifier_type is None:
+        (identifier_type, identifier_value) = get_identifier_type_value(
+            object_identifier)
+
+        dependency_identifier = premis_identifier(
+            identifier_type, identifier_value, 'dependency')
+    else:
+        dependency_identifier = object_identifier
+
+    dependency = _subelement(environment, 'dependency')
+    dependency.append(dependency_identifier)
 
     return environment
 

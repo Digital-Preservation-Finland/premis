@@ -661,3 +661,20 @@ class Event(object):
         """
         for line in self.to_json():
             yield line
+
+
+def agents_with_type(agents, agent_type='organization'):
+    """Return all agents from list of `agents` with given `agent_type`.
+
+    :task_report: Report to search from
+    :returns: Generator object which iterates all (agent_type, agent_name)
+
+    """
+
+    for agent in agents:
+        print serialize(agent)
+        agent_name = agent.findtext(premis_ns('agentName'))
+        _agent_type = agent.findtext(premis_ns('agentType'))
+
+        if _agent_type == agent_type:
+            yield (agent_type, agent_name)

@@ -188,19 +188,6 @@ def get_identifier_type_value(object_or_identifier):
         identifier.find(premis_ns('objectIdentifierValue')).text)
 
 
-def get_aip_id(premis_object):
-    """Get an AIP ID (objectIdentifierValue) from an AIP object.
-
-    :premis_object: Premis object
-    :returns: The AIP ID as a string or None, if the ID is not found
-
-    """
-    (object_id_type, object_id_value) = get_identifier_type_value(premis_object)
-    if object_id_type == "preservation-aip-id":
-        return object_id_value
-    return None
-
-
 def premis_relationship(
         relationship_type, relationship_subtype,
         related_object):

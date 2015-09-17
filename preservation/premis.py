@@ -678,3 +678,22 @@ def agents_with_type(agents, agent_type='organization'):
 
         if _agent_type == agent_type:
             yield (agent_type, agent_name)
+
+
+def objects_with_type(objects, object_identifier_type):
+    """Return all objects from list of `objects` with given
+    `object_identifier_type` matching the PREMIS objectIdentifierType field.
+
+    :objects: Iterable of objects
+    :object_identifier_type: Identifier type as string
+    :returns: Iterator with all matching objects
+
+    """
+    for _object in objects:
+
+        _object_identifier = _object.find(premis_ns('objectIdentifier'))
+        _object_identifier_type = _object_identifier.findtext(
+            premis_ns('objectIdentifierType'))
+
+        if _object_identifier_type == object_identifier_type:
+            yield _object

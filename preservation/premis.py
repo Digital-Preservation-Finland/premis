@@ -697,3 +697,22 @@ def objects_with_type(objects, object_identifier_type):
 
         if _object_identifier_type == object_identifier_type:
             yield _object
+
+
+def events_with_type(events, event_identifier_type):
+    """Return all events from list of `events` with given
+    `object_identifier_type` matching the PREMIS eventIdentifierType field.
+
+    :events: Iterable of events
+    :event_identifier_type: Identifier type as string
+    :returns: Iterator with all matching events
+
+    """
+    for _event in events:
+
+        _event_identifier = _event.find(premis_ns('eventctIdentifier'))
+        _event_identifier_type = _event_identifier.findtext(
+            premis_ns('objectIdentifierType'))
+
+        if _event_identifier_type == event_identifier_type:
+            yield _event

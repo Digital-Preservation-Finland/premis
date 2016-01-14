@@ -672,7 +672,6 @@ def agents_with_type(agents, agent_type='organization'):
     """
 
     for agent in agents:
-        print serialize(agent)
         agent_name = agent.findtext(premis_ns('agentName'))
         _agent_type = agent.findtext(premis_ns('agentType'))
 

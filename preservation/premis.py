@@ -91,7 +91,7 @@ def _element(tag, prefix=""):
 
 def _subelement(parent, tag, prefix=""):
     """Return subelement for the given parent element. Created element is
-    appelded to parent element.
+    appended to parent element.
 
     :parent: Parent element
     :tag: Element tagname

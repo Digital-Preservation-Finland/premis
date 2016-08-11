@@ -551,6 +551,22 @@ def filter_objects(premis_objects, filtered_objects):
             yield element
 
 
+def find_event_by_id(premis, event_id):
+    """Find a PREMIS event by its eventIdentifierValue
+
+    :premis: ElementTree element
+    :event_id: The PREMIS event's ID
+
+    :returns: Element if found, None otherwise
+    """
+    for element in iter_events(premis):
+        if element.findtext(
+                './/' + premis_ns('eventIdentifierValue')) == event_id:
+            return element
+
+    return None
+
+
 def contains_object(object_element, search_from_element):
     """Return True if `search_from_element` contains the `object_element`
     object or objectIdentifier.

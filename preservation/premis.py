@@ -21,7 +21,7 @@ XSI_NS = 'http://www.w3.org/2001/XMLSchema-instance'
 
 
 def serialize(root_element):
-    """Serialize ElementTree structure with PREMIS namespace mapping.
+    """Serialize an ElementTree or an Element with PREMIS namespace mapping.
 
     This modifies the default "ns0:tag" style prefixes to "premis:tag"
     prefixes.
@@ -30,6 +30,10 @@ def serialize(root_element):
     :returns: Serialized XML as string
 
     """
+    # We can't serialize an ElementTree, so serialize the tree's
+    # root Element instead
+    if isinstance(root_element, ET.ElementTree):
+        root_element = root_element.getroot()
 
     def register_namespace(prefix, uri):
         """foo"""

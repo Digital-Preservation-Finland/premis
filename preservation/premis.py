@@ -734,3 +734,19 @@ def event_with_type_and_detail(events, event_type, event_detail):
 
         if _event_type == event_type and _event_detail == event_detail:
             yield _event
+
+
+def events_with_outcome(events, event_outcome):
+    """Iterate over all events with given outcome
+
+    :events: Iterable of events
+    :outcome: Return all events that has the outcome
+    :returns: Iterable of events
+
+    """
+    for _event in events:
+        _event_outcome = _event.findtext('/'.join([
+            premis_ns('eventOutcomeInformation'),
+            premis_ns('eventOutcome')]))
+        if _event_outcome == event_outcome:
+            yield _event

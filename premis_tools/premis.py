@@ -14,7 +14,7 @@ import json
 
 import xml.etree.ElementTree as ET
 
-import preservation.xmlutil
+import siptools.xml.xmlutil
 
 PREMIS_NS = 'info:lc/xmlns/premis-v2'
 XSI_NS = 'http://www.w3.org/2001/XMLSchema-instance'
@@ -43,9 +43,9 @@ def serialize(root_element):
     register_namespace('premis', PREMIS_NS)
     register_namespace('xsi', XSI_NS)
 
-    preservation.xmlutil.indent(root_element)
+    siptools.xml.xmlutil.indent(root_element)
 
-    return ET.tostring(root_element)
+    return ET.tostring(root_element, encoding='utf8')
 
 
 def premis_ns(tag, prefix=""):
@@ -286,7 +286,7 @@ def premis_environment(object_or_identifier=None):
 
 def premis_object(
         identifier,
-        original_name,
+        original_name=None,
         child_elements=None,
         representation=False):
 
@@ -317,9 +317,12 @@ def premis_object(
 
     if representation:
         _object.set(xsi_ns('type'), 'premis:representation')
+    else:
+        _object.set(xsi_ns('type'), 'premis:file')
 
-    _original_name = _subelement(_object, 'originalName')
-    _original_name.text = original_name
+    if original_name:
+        _original_name = _subelement(_object, 'originalName')
+        _original_name.text = original_name
 
     if child_elements:
         for element in child_elements:

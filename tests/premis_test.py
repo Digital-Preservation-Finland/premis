@@ -3,6 +3,9 @@
 import preservation.premis as p
 import xml.etree.ElementTree as ET
 
+NAMESPACES = {'premis': 'info:lc/xmlns/premis-v2',
+              'xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
+
 
 def test_premis_ns():
     """TODO: Docstring for test_premis.
@@ -55,10 +58,10 @@ def test_premis_ns():
     # PREMIS XML & print
 
     premis = p.premis_premis([sip_object, event])
-    print p.serialize(premis)
+    print common_xml_utils.utils.serialize(premis, NAMESPACES)
 
-    xml = p.serialize(premis)
+    xml = common_xml_utils.utils..serialize(premis, NAMESPACES)
 
     premis_root = ET.fromstring(xml)
 
-    print p.serialize(premis_root)
+    print common_xml_utils.utils.serialize(premis_root, NAMESPACES)

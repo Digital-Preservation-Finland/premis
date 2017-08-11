@@ -14,43 +14,13 @@ import json
 
 import xml.etree.ElementTree as ET
 
-import siptools.xml.xmlutil
-
 PREMIS_NS = 'info:lc/xmlns/premis-v2'
 XSI_NS = 'http://www.w3.org/2001/XMLSchema-instance'
 
 
-def serialize(root_element):
-    """Serialize an ElementTree or an Element with PREMIS namespace mapping.
-
-    This modifies the default "ns0:tag" style prefixes to "premis:tag"
-    prefixes.
-
-    :element: Starting element to serialize
-    :returns: Serialized XML as string
-
-    """
-    # We can't serialize an ElementTree, so serialize the tree's
-    # root Element instead
-    if isinstance(root_element, ET.ElementTree):
-        root_element = root_element.getroot()
-
-    def register_namespace(prefix, uri):
-        """foo"""
-        ns_map = getattr(ET, '_namespace_map')
-        ns_map[uri] = prefix
-
-    register_namespace('premis', PREMIS_NS)
-    register_namespace('xsi', XSI_NS)
-
-    siptools.xml.xmlutil.indent(root_element)
-
-    return ET.tostring(root_element, encoding='utf8')
-
 
 def premis_ns(tag, prefix=""):
     """Prefix ElementTree tags with PREMIS namespace.
-
     object -> {info:lc...premis}object
 
     :tag: Tag name as string

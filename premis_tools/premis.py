@@ -10,13 +10,10 @@ References:
 """
 
 
-import json
-
 import xml.etree.ElementTree as ET
 
 PREMIS_NS = 'info:lc/xmlns/premis-v2'
 XSI_NS = 'http://www.w3.org/2001/XMLSchema-instance'
-
 
 
 def premis_ns(tag, prefix=""):
@@ -137,29 +134,6 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
     _type.text = identifier_value
 
     return _identifier
-
-
-def get_identifier_type_value(object_or_identifier):
-    """Return identifierType and IdentifierValue from given PREMIS identifier
-    or object. If segment contains multiple identifiers, returns first
-    occurrence.
-
-    :object_or_identifier: Premis object or identifier
-    :returns: (identifier_type, identifier_value)
-
-    """
-
-    identifier = object_or_identifier
-
-    if identifier.find(premis_ns('objectIdentifier')) is not None:
-        identifier = identifier.find(premis_ns('objectIdentifier'))
-
-    if identifier.find(premis_ns('relatedObjectIdentification')) is not None:
-        identifier = identifier.find(premis_ns('relatedObjectIdentification'))
-
-    return (
-        identifier.find(premis_ns('objectIdentifierType')).text,
-        identifier.find(premis_ns('objectIdentifierValue')).text)
 
 
 def premis_premis(child_elements=None):

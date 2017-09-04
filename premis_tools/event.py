@@ -10,10 +10,8 @@ References:
 """
 
 
-import json
-
-import xml.etree.ElementTree as ET
-from premis.premis import element, subelement, premis_ns
+from premis_tools.premis import element, subelement, premis_ns, \
+    premis_identifier, iter_elements
 
 def premis_event_outcome(outcome, detail_note=None, detail_extension=None):
     """Create PREMIS event outcome DOM structure.
@@ -117,8 +115,8 @@ def iter_events(premis):
     :returns: Generator object for iterating all elements
 
     """
-    for element in iter_elements(premis, 'event'):
-        yield element
+    for elem in iter_elements(premis, 'event'):
+        yield elem
 
 
 def find_event_by_id(premis, event_id):
@@ -129,10 +127,10 @@ def find_event_by_id(premis, event_id):
 
     :returns: Element if found, None otherwise
     """
-    for element in iter_events(premis):
-        if element.findtext(
+    for elem in iter_events(premis):
+        if elem.findtext(
                 './/' + premis_ns('eventIdentifierValue')) == event_id:
-            return element
+            return elem
 
     return None
 

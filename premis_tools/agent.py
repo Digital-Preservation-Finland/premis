@@ -10,9 +10,8 @@ References:
 """
 
 
-import json
-import xml.etree.ElementTree as ET
-from premis.premis import element, subelement, iter_elements, premis_ns
+from premis_tools.premis import element, subelement, iter_elements, premis_ns
+
 
 def premis_agent(
         identifier, agent_name, agent_type):
@@ -58,8 +57,8 @@ def iter_agents(premis):
     :returns: Generator object for iterating all elements
 
     """
-    for element in iter_elements(premis, 'agent'):
-        yield element
+    for elem in iter_elements(premis, 'agent'):
+        yield elem
 
 
 def agent_count(premis):

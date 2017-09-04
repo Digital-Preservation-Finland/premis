@@ -10,10 +10,9 @@ References:
 """
 
 
-import json
+from premis_tools.premis import element, subelement, premis_ns, \
+    premis_identifier, iter_elements, xsi_ns
 
-import xml.etree.ElementTree as ET
-from premis.premis import element, subelement, premis_ns
 
 def get_identifier_type_value(object_or_identifier):
     """Return identifierType and IdentifierValue from given PREMIS identifier

@@ -10,7 +10,7 @@ References:
 """
 
 
-from premis_tools.premis import element, subelement, premis_ns, \
+from premis_tools.premis import _element, _subelement, premis_ns, \
     premis_identifier, iter_elements
 
 def premis_event_outcome(outcome, detail_note=None, detail_extension=None):
@@ -33,19 +33,19 @@ def premis_event_outcome(outcome, detail_note=None, detail_extension=None):
 
     """
 
-    outcome_information = element('eventOutcomeInformation')
+    outcome_information = _element('eventOutcomeInformation')
 
-    _outcome = subelement(outcome_information, 'eventOutcome')
+    _outcome = _subelement(outcome_information, 'eventOutcome')
     _outcome.text = outcome
 
-    detail = subelement(outcome_information, 'eventOutcomeDetail')
+    detail = _subelement(outcome_information, 'eventOutcomeDetail')
 
     if detail_note:
-        _detail_note = subelement(detail, 'eventOutcomeDetailNote')
+        _detail_note = _subelement(detail, 'eventOutcomeDetailNote')
         _detail_note.text = detail_note
 
     if detail_extension:
-        _detail_extension = subelement(detail, 'eventOutcomeDetailExtension')
+        _detail_extension = _subelement(detail, 'eventOutcomeDetailExtension')
         _detail_extension.text = detail_extension
 
     return outcome_information
@@ -80,17 +80,17 @@ def premis_event(
 
     """
 
-    event = element('event')
+    event = _element('event')
 
     event.append(identifier)
 
-    _event_type = subelement(event, 'eventType')
+    _event_type = _subelement(event, 'eventType')
     _event_type.text = event_type
 
-    _event_date_time = subelement(event, 'eventDateTime')
+    _event_date_time = _subelement(event, 'eventDateTime')
     _event_date_time.text = event_date_time
 
-    _event_detail = subelement(event, 'eventDetail')
+    _event_detail = _subelement(event, 'eventDetail')
     _event_detail.text = event_detail
 
     if child_elements:

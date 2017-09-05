@@ -10,7 +10,7 @@ References:
 """
 
 
-from premis_tools.premis import element, subelement, iter_elements, premis_ns
+from premis_tools.premis import _element, _subelement, iter_elements, premis_ns
 
 
 def premis_agent(
@@ -37,14 +37,14 @@ def premis_agent(
 
     """
 
-    agent = element('agent')
+    agent = _element('agent')
 
     agent.append(identifier)
 
-    _agent_name = subelement(agent, 'agentName')
+    _agent_name = _subelement(agent, 'agentName')
     _agent_name.text = agent_name
 
-    _agent_type = subelement(agent, 'agentType')
+    _agent_type = _subelement(agent, 'agentType')
     _agent_type.text = agent_type
 
     return agent

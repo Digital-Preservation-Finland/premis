@@ -10,7 +10,7 @@ References:
 """
 
 
-from premis_tools.premis import element, subelement, premis_ns, \
+from premis_tools.premis import _element, _subelement, premis_ns, \
     premis_identifier, iter_elements, xsi_ns
 
 
@@ -63,12 +63,12 @@ def premis_relationship(
 
     """
 
-    relationship = element('relationship')
+    relationship = _element('relationship')
 
-    _type = subelement(relationship, 'relationshipType')
+    _type = _subelement(relationship, 'relationshipType')
     _type.text = relationship_type
 
-    _subtype = subelement(relationship, 'relationshipSubType')
+    _subtype = _subelement(relationship, 'relationshipSubType')
     _subtype.text = relationship_subtype
 
     (related_type, related_value) = get_identifier_type_value(
@@ -100,7 +100,7 @@ def premis_environment(object_or_identifier=None):
 
     """
 
-    environment = element('environment')
+    environment = _element('environment')
 
     if object_or_identifier is None:
         return environment
@@ -123,7 +123,7 @@ def premis_environment(object_or_identifier=None):
     else:
         dependency_identifier = object_identifier
 
-    dependency = subelement(environment, 'dependency')
+    dependency = _subelement(environment, 'dependency')
     dependency.append(dependency_identifier)
 
     return environment
@@ -156,7 +156,7 @@ def premis_object(
 
     """
 
-    _object = element('object')
+    _object = _element('object')
 
     _object.append(identifier)
 
@@ -166,7 +166,7 @@ def premis_object(
         _object.set(xsi_ns('type'), 'premis:file')
 
     if original_name:
-        _original_name = subelement(_object, 'originalName')
+        _original_name = _subelement(_object, 'originalName')
         _original_name.text = original_name
 
     if child_elements:

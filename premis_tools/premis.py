@@ -42,7 +42,7 @@ def xsi_ns(tag):
     return '{%s}%s' % (XSI_NS, tag)
 
 
-def element(tag, prefix=""):
+def _element(tag, prefix=""):
     """Return _ElementInterface with PREMIS namespace.
 
     Prefix parameter is useful for adding prefixed to lower case tags. It just
@@ -60,7 +60,7 @@ def element(tag, prefix=""):
     return ET.Element(premis_ns(tag, prefix))
 
 
-def subelement(parent, tag, prefix=""):
+def _subelement(parent, tag, prefix=""):
     """Return subelement for the given parent element. Created element is
     appended to parent element.
 
@@ -123,14 +123,14 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
         prefix = 'object'
 
     if prefix == 'relatedObject':
-        _identifier = element('Identification', prefix)
+        _identifier = _element('Identification', prefix)
     else:
-        _identifier = element('Identifier', prefix)
+        _identifier = _element('Identifier', prefix)
 
-    _value = subelement(_identifier, 'IdentifierType', prefix)
+    _value = _subelement(_identifier, 'IdentifierType', prefix)
     _value.text = identifier_type
 
-    _type = subelement(_identifier, 'IdentifierValue', prefix)
+    _type = _subelement(_identifier, 'IdentifierValue', prefix)
     _type.text = identifier_value
 
     return _identifier
@@ -152,7 +152,7 @@ def premis_premis(child_elements=None):
             version="2.2">
 
     """
-    _premis = element('premis')
+    _premis = _element('premis')
     _premis.set(
         xsi_ns('schemaLocation'),
         'info:lc/xmlns/premis-v2 '

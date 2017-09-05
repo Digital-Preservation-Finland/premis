@@ -11,9 +11,9 @@ References:
 
 
 import xml.etree.ElementTree as ET
+from common_xml_utils.utils import XSI_NS, xsi_ns
 
 PREMIS_NS = 'info:lc/xmlns/premis-v2'
-XSI_NS = 'http://www.w3.org/2001/XMLSchema-instance'
 
 
 def premis_ns(tag, prefix=""):
@@ -28,18 +28,6 @@ def premis_ns(tag, prefix=""):
         tag = tag[0].upper() + tag[1:]
         return '{%s}%s%s' % (PREMIS_NS, prefix, tag)
     return '{%s}%s' % (PREMIS_NS, tag)
-
-
-def xsi_ns(tag):
-    """Prefix ElementTree tags with XSI namespace.
-
-    object -> {info:lc...premis}object
-
-    :tag: Tag name as string
-    :returns: Prefixed tag
-
-    """
-    return '{%s}%s' % (XSI_NS, tag)
 
 
 def _element(tag, prefix=""):
@@ -157,7 +145,9 @@ def premis_premis(child_elements=None):
         xsi_ns('schemaLocation'),
         'info:lc/xmlns/premis-v2 '
         'http://www.loc.gov/standards/premis/premis.xsd')
-
+    _preims.set('xmlns:' + 'mets', METS_NS)
+    _premis.set('xmlns:' + 'xsi', XSI_NS)
+    _premis.set('xmlns:' + 'xlink', XLINK)
     _premis.set('version', '2.2')
 
     if child_elements:

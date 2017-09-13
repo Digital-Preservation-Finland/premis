@@ -1,67 +1,84 @@
 """Test for the Premis class"""
 
-import preservation.premis as p
 import xml.etree.ElementTree as ET
-
-NAMESPACES = {'premis': 'info:lc/xmlns/premis-v2',
-              'xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
+import premis_tools.premis as p
 
 
 def test_premis_ns():
-    """TODO: Docstring for test_premis.
-    :returns: TODO
+    """Test premis_ns"""
+    assert p.premis_ns('xxx') == '{info:lc/xmlns/premis-v2}xxx'
 
-    """
 
-    # SIP & METS object identifiers
+def test_element():
+    """Test PREMIS _element"""
+    ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
+    xml = """<premis:xxx xmlns:premis="info:lc/xmlns/premis-v2" />"""
+    assert ET.tostring(p._element('xxx')) == xml
 
-    sip_identifier = p.premis_identifier('preservation-sip-id', 'csc-sip-001')
-    mets_identifier = p.premis_identifier('METS-OBJID', 'mets-objid-999')
 
-    # PREMIS relationship
+def test_subelement():
+    """Test PREMIS _subelement"""
+    ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
+    xml = """<premis:xxx xmlns:premis="info:lc/xmlns/premis-v2" />"""
+    parent_xml = """<premis:premis xmlns:premis="info:lc/xmlns/premis-v2"/>"""
+    parent = ET.fromstring(parent_xml)
+    assert ET.tostring(p._subelement(parent, 'xxx')) == xml
 
-    relationship = p.premis_relationship(
-        relationship_type='structural',
-        relationship_subtype='is included in',
-        related_object=mets_identifier)
 
-    # PREMIS enviroment
+def test_premis_identifier():
+    """Test premis_identifier"""
+    ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
+    object_identifier = p.premis_identifier('local', 'id01')
+    object_related = p.premis_identifier('local', 'id01', 'relatedObject')
+    event_identifier = p.premis_identifier('local', 'id01', 'event')
+    object_id = '<premis:objectIdentifier xmlns:premis="info:lc/xmlns/premis-v2">' \
+                '<premis:objectIdentifierType>local</premis:objectIdentifierType>' \
+                '<premis:objectIdentifierValue>id01</premis:objectIdentifierValue>' \
+                '</premis:objectIdentifier>'
+    xml_related = '<premis:relatedObjectIdentification xmlns:premis="info:lc/xmlns/premis-v2">' \
+                  '<premis:relatedObjectIdentifierType>local</premis:relatedObjectIdentifierType>' \
+                  '<premis:relatedObjectIdentifierValue>id01</premis:relatedObjectIdentifierValue>' \
+                  '</premis:relatedObjectIdentification>'
+    xml_event = '<premis:eventIdentifier xmlns:premis="info:lc/xmlns/premis-v2">' \
+                '<premis:eventIdentifierType>local</premis:eventIdentifierType>' \
+                '<premis:eventIdentifierValue>id01</premis:eventIdentifierValue>' \
+                '</premis:eventIdentifier>'
 
-    dependency_identifier = p.premis_identifier(
-        'local', 'kdk-sip-premis-object001', 'dependency')
+    assert ET.tostring(object_identifier) == object_id
+    assert ET.tostring(object_related) == xml_related
+    assert ET.tostring(event_identifier) == xml_event
 
-    environment = p.premis_environment(dependency_identifier)
 
-    # PREMIS object
+def test_get_identifier_type_value():
+    """Test get_identifier_type_value"""
+    object_identifier = p.premis_identifier('local', 'id01')
+    object_related = p.premis_identifier('local', 'id01', 'relatedObject')
+    event_identifier = p.premis_identifier('local', 'id01', 'event')
 
-    sip_object = p.premis_object(
-        original_name='csc-sip-001.zip',
-        identifier=sip_identifier,
-        child_elements=[relationship, environment],
-        representation=True)
+    (idtype, idval) = p.get_identifier_type_value(object_identifier)
+    assert idtype == 'local'
+    assert idval == 'id01'
+    (idtype, idval) = p.get_identifier_type_value(object_related, 'relatedObject')
+    assert idtype == 'local'
+    assert idval == 'id01'
+    (idtype, idval) = p.get_identifier_type_value(event_identifier, 'event')
+    assert idtype == 'local'
+    assert idval == 'id01'
 
-    # Create the PREMIS event
 
-    event_identifier = p.premis_identifier(
-        'preservation-event-id', 'event-id-1234', 'event')
+def test_premis_premis():
+    """Test PREMIS root generation"""
+    ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
+    tree = ET.tostring(p.premis_premis())
+    xml = """<premis:premis
+             xsi:schemaLocation="info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/premis.xsd"
+             xmlns:premis = "info:lc/xmlns/premis-v2"
+             xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+             version="2.2" />"""
+    tree_xml = ET.tostring(ET.fromstring(xml))
+    assert tree == tree_xml
 
-    event_outcome = p.premis_event_outcome(
-        'success', 'Validation successful - OK')
+def test_iter_elements():
+    """test iter_elements"""
+    # TODO
 
-    event = p.premis_event(
-        event_identifier,
-        'digital signature validation',
-        '1.1.2015',
-        'Submission information package signature',
-        child_elements=[event_outcome])
-
-    # PREMIS XML & print
-
-    premis = p.premis_premis([sip_object, event])
-    print common_xml_utils.utils.serialize(premis, NAMESPACES)
-
-    xml = common_xml_utils.utils..serialize(premis, NAMESPACES)
-
-    premis_root = ET.fromstring(xml)
-
-    print common_xml_utils.utils.serialize(premis_root, NAMESPACES)

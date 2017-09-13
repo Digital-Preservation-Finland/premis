@@ -11,10 +11,11 @@ References:
 
 
 import xml.etree.ElementTree as ET
-from common_xml_utils.utils import XSI_NS, xsi_ns
+from common_xml_utils.utils import XSI_NS, xsi_ns, register_namespaces
 
 PREMIS_NS = 'info:lc/xmlns/premis-v2'
-
+NAMESPACES = {'premis': PREMIS_NS,
+              'xsi': XSI_NS}
 
 def premis_ns(tag, prefix=""):
     """Prefix ElementTree tags with PREMIS namespace.
@@ -61,7 +62,7 @@ def _subelement(parent, tag, prefix=""):
     return ET.SubElement(parent, premis_ns(tag, prefix))
 
 
-def premis_identifier(identifier_type, identifier_value, prefix=""):
+def premis_identifier(identifier_type, identifier_value, prefix='object'):
     """Return PREMIS identifier segments.
 
     Produces without prefix the following PREMIS segment::
@@ -107,9 +108,6 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
 
     """
 
-    if not prefix:
-        prefix = 'object'
-
     if prefix == 'relatedObject':
         _identifier = _element('Identification', prefix)
     else:
@@ -124,7 +122,34 @@ def premis_identifier(identifier_type, identifier_value, prefix=""):
     return _identifier
 
 
-def premis_premis(child_elements=None):
+def get_identifier_type_value(identifier, prefix='object'):
+    """Return identifierType and IdentifierValue from given PREMIS id.
+    If segment contains multiple identifiers, returns first
+    occurrence.
+
+    :identifier: Premis identifier
+    :returns: (identifier_type, identifier_value)
+
+    """
+    if prefix == 'relatedObject':
+        if identifier.tag != premis_ns('relatedObjectIdentification'):
+            identifier = identifier.find(premis_ns('relatedObjectIdentification'))
+        if identifier is not None:
+            return (
+                identifier.find(premis_ns('relatedObjectIdentifierType')).text,
+                identifier.find(premis_ns('relatedObjectIdentifierValue')).text)
+        return None
+
+    if identifier.tag != premis_ns('Identifier', prefix):
+        identifier = identifier.find(premis_ns('Identifier', prefix))
+    if identifier is not None:
+        return (
+            identifier.find(premis_ns('IdentifierType', prefix)).text,
+            identifier.find(premis_ns('IdentifierValue', prefix)).text)
+    return None
+
+
+def premis_premis(child_elements=None, namespaces=NAMESPACES):
     """Create PREMIS Data Dictionary root element.
 
     :child_elements: Any elements appended to the PREMIS dictionary
@@ -140,14 +165,12 @@ def premis_premis(child_elements=None):
             version="2.2">
 
     """
+    register_namespaces(namespaces)
     _premis = _element('premis')
     _premis.set(
         xsi_ns('schemaLocation'),
         'info:lc/xmlns/premis-v2 '
         'http://www.loc.gov/standards/premis/premis.xsd')
-    _preims.set('xmlns:' + 'mets', METS_NS)
-    _premis.set('xmlns:' + 'xsi', XSI_NS)
-    _premis.set('xmlns:' + 'xlink', XLINK)
     _premis.set('version', '2.2')
 
     if child_elements:

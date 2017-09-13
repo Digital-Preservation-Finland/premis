@@ -11,30 +11,7 @@ References:
 
 
 from premis_tools.premis import _element, _subelement, premis_ns, \
-    premis_identifier, iter_elements, xsi_ns
-
-
-def get_identifier_type_value(object_or_identifier):
-    """Return identifierType and IdentifierValue from given PREMIS identifier
-    or object. If segment contains multiple identifiers, returns first
-    occurrence.
-
-    :object_or_identifier: Premis object or identifier
-    :returns: (identifier_type, identifier_value)
-
-    """
-
-    identifier = object_or_identifier
-
-    if identifier.find(premis_ns('objectIdentifier')) is not None:
-        identifier = identifier.find(premis_ns('objectIdentifier'))
-
-    if identifier.find(premis_ns('relatedObjectIdentification')) is not None:
-        identifier = identifier.find(premis_ns('relatedObjectIdentification'))
-
-    return (
-        identifier.find(premis_ns('objectIdentifierType')).text,
-        identifier.find(premis_ns('objectIdentifierValue')).text)
+    premis_identifier, get_identifier_type_value, iter_elements, xsi_ns
 
 
 def premis_relationship(

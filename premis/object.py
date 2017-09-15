@@ -10,7 +10,7 @@ References:
 """
 
 
-from premis_tools.premis import _element, _subelement, premis_ns, \
+from premis.premis import _element, _subelement, premis_ns, \
     premis_identifier, get_identifier_type_value, iter_elements, xsi_ns
 
 

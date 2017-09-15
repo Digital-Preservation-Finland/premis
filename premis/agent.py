@@ -10,7 +10,7 @@ References:
 """
 
 
-from premis_tools.premis import _element, _subelement, iter_elements, premis_ns
+from premis.premis import _element, _subelement, iter_elements, premis_ns
 
 
 def premis_agent(

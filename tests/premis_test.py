@@ -1,7 +1,7 @@
 """Test for the Premis class"""
 
 import xml.etree.ElementTree as ET
-import premis_tools.premis as p
+import premis.premis as p
 
 
 def test_premis_ns():

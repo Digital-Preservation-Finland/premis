@@ -10,7 +10,7 @@ References:
 """
 
 
-from premis_tools.premis import _element, _subelement, premis_ns, \
+from premis.premis import _element, _subelement, premis_ns, \
     premis_identifier, iter_elements
 
 def premis_event_outcome(outcome, detail_note=None, detail_extension=None):

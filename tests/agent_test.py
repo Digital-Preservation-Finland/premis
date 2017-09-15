@@ -1,8 +1,8 @@
 """Test for the Premis agent class"""
 
 import xml.etree.ElementTree as ET
-import premis_tools.premis as p
-import premis_tools.agent as a
+import premis.premis as p
+import premis.agent as a
 
 def test_agent():
     """Test premis_agent"""

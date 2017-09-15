@@ -1,8 +1,8 @@
 """Test for the Premis object class"""
 
 import xml.etree.ElementTree as ET
-import premis_tools.premis as p
-import premis_tools.object as o
+import premis.premis as p
+import premis.object as o
 
 
 def test_relationship():

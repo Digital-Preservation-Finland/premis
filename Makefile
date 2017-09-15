@@ -11,10 +11,10 @@ install:
 	cat INSTALLED_FILES | sed 's/^/\//g' >> INSTALLED_FILES
 
 test:
-	py.test -svvvv --junitprefix=premis-tools --junitxml=junit.xml tests
+	py.test -svvvv --junitprefix=premis --junitxml=junit.xml tests
 
 coverage:
-	py.test tests --cov=premis_tools --cov-report=html
+	py.test tests --cov=premis --cov-report=html
 	coverage report -m
 	coverage html
 	coverage xml

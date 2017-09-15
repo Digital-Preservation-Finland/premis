@@ -1,8 +1,8 @@
 """Test for the Premis event class"""
 
 import xml.etree.ElementTree as ET
-import premis_tools.premis as p
-import premis_tools.event as e
+import premis.premis as p
+import premis.event as e
 
 def test_event_outcome():
     """Test premis_event_outcome"""

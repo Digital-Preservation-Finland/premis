@@ -11,7 +11,7 @@ References:
 
 
 import xml.etree.ElementTree as ET
-from common_xml_utils.utils import XSI_NS, xsi_ns, register_namespaces
+from xml_helpers.utils import XSI_NS, xsi_ns, register_namespaces
 
 PREMIS_NS = 'info:lc/xmlns/premis-v2'
 NAMESPACES = {'premis': PREMIS_NS,

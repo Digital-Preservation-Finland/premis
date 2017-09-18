@@ -14,7 +14,62 @@ from premis.premis import _element, _subelement, premis_ns, \
     premis_identifier, get_identifier_type_value, iter_elements, xsi_ns
 
 
-def premis_relationship(
+def fixity(message_digest, digest_algorithm='MD5'):
+    fixity_el = p._element('fixity')
+    fixity_algorithm = p._subelement(
+        fixity_el, 'messageDigestAlgorithm')
+    fixity_algorithm.text = digest_algorithm
+    fixity_checksum = p._subelement(fixity_el, 'messageDigest')
+    fixity_checksum.text = message_digest
+    return fixity_el
+
+
+def format_designation(format_name, format_version=None):
+    format_designation = p._element('formatDesignation')
+    format_name_el = p._subelement(el_formatDesignation, 'formatName')
+    format_name_el.text = format_name
+    if format_version:
+        format_version_el = p._subelement(
+            el_formatDesignation, 'formatVersion')
+        format_version_el.text = format_version
+    return format_designation
+
+
+def format(child_elements=None):
+    format_el = p._element('format')
+    if child_elements:
+        for elem in child_elements:
+            format_el.append(elem)
+    return format_el
+
+
+def date_created(date):
+    date_el = p._element('dateCreatedByApplication')
+    date_el.text = date
+    return date_el
+
+
+def creating_application(child_elements=None):
+    creating_app = p._element('creatingApplication')
+    if child_elements:
+        for elem in child_elements:
+            creating_app.append(elem)
+    return creating_app
+
+
+def object_characteristics(composition_level='0', child_elements=None):
+    object_char = p._element('objectCharacteristics')
+
+    composition = p._subelement(
+        el_objectCharacteristics, 'compositionLevel')
+    composition.text = composition_level
+    if child_elements:
+        for elem in child_elements:
+            object_char.append(elem)
+    return object_char
+
+
+def relationship(
         relationship_type, relationship_subtype,
         related_object):
 
@@ -59,7 +114,7 @@ def premis_relationship(
     return relationship
 
 
-def premis_environment(object_or_identifier=None):
+def environment(object_or_identifier=None):
     """Return the PREMIS environment structure.
 
     :dependency_identifier: PREMIS identifier structure
@@ -106,7 +161,7 @@ def premis_environment(object_or_identifier=None):
     return environment
 
 
-def premis_object(
+def object(
         identifier,
         original_name=None,
         child_elements=None,

@@ -5,6 +5,36 @@ import premis.premis as p
 import premis.object as o
 
 
+def test_fixity():
+    """Test fixity"""
+    # TODO
+
+
+def test_format_designation():
+    """Test format_designation"""
+    # TODO
+
+
+def test_format():
+    """Test format"""
+    # TODO
+
+
+def test_date_created():
+    """Test date_created"""
+    # TODO
+
+
+def test_creating_application():
+    """Test creating_application"""
+    # TODO
+
+
+def test_object_characteristics():
+    """Test object_characteristics"""
+    # TODO
+
+
 def test_relationship():
     """Test premis_relationship"""
     ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')

@@ -37,17 +37,17 @@ def agent(
 
     """
 
-    agent = _element('agent')
+    _agent = _element('agent')
 
-    agent.append(agent_id)
+    _agent.append(agent_id)
 
-    _agent_name = _subelement(agent, 'agentName')
+    _agent_name = _subelement(_agent, 'agentName')
     _agent_name.text = agent_name
 
-    _agent_type = _subelement(agent, 'agentType')
+    _agent_type = _subelement(_agent, 'agentType')
     _agent_type.text = agent_type
 
-    return agent
+    return _agent
 
 
 def iter_agents(premis):
@@ -79,9 +79,9 @@ def agents_with_type(agents, agent_type='organization'):
 
     """
 
-    for agent in agents:
-        agent_name = agent.findtext(premis_ns('agentName'))
-        _agent_type = agent.findtext(premis_ns('agentType'))
+    for _agent in agents:
+        agent_name = _agent.findtext(premis_ns('agentName'))
+        _agent_type = _agent.findtext(premis_ns('agentType'))
 
         if _agent_type == agent_type:
             yield (agent_type, agent_name)

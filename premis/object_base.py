@@ -25,14 +25,14 @@ def fixity(message_digest, digest_algorithm='MD5'):
 
 
 def format_designation(format_name, format_version=None):
-    format_designation = _element('formatDesignation')
-    format_name_el = _subelement(el_formatDesignation, 'formatName')
+    format_designation_el = _element('formatDesignation')
+    format_name_el = _subelement(format_designation_el, 'formatName')
     format_name_el.text = format_name
     if format_version:
         format_version_el = _subelement(
-            el_formatDesignation, 'formatVersion')
+            format_designation_el, 'formatVersion')
         format_version_el.text = format_version
-    return format_designation
+    return format_designation_el
 
 
 def format(child_elements=None):
@@ -61,7 +61,7 @@ def object_characteristics(composition_level='0', child_elements=None):
     object_char = _element('objectCharacteristics')
 
     composition = _subelement(
-        el_objectCharacteristics, 'compositionLevel')
+        object_char, 'compositionLevel')
     composition.text = composition_level
     if child_elements:
         for elem in child_elements:
@@ -95,12 +95,12 @@ def relationship(
 
     """
 
-    relationship = _element('relationship')
+    _relationship = _element('relationship')
 
-    _type = _subelement(relationship, 'relationshipType')
+    _type = _subelement(_relationship, 'relationshipType')
     _type.text = relationship_type
 
-    _subtype = _subelement(relationship, 'relationshipSubType')
+    _subtype = _subelement(_relationship, 'relationshipSubType')
     _subtype.text = relationship_subtype
 
     (related_type, related_value) = get_identifier_type_value(
@@ -109,9 +109,9 @@ def relationship(
     related_identifier = identifier(
         related_type, related_value, prefix='relatedObject')
 
-    relationship.append(related_identifier)
+    _relationship.append(related_identifier)
 
-    return relationship
+    return _relationship
 
 
 def environment(object_or_identifier=None):
@@ -132,10 +132,10 @@ def environment(object_or_identifier=None):
 
     """
 
-    environment = _element('environment')
+    _environment = _element('environment')
 
     if object_or_identifier is None:
-        return environment
+        return _environment
 
     object_identifier = object_or_identifier.find(
         premis_ns('objectIdentifier'))
@@ -155,10 +155,10 @@ def environment(object_or_identifier=None):
     else:
         dependency_identifier = object_identifier
 
-    dependency = _subelement(environment, 'dependency')
+    dependency = _subelement(_environment, 'dependency')
     dependency.append(dependency_identifier)
 
-    return environment
+    return _environment
 
 
 def object(

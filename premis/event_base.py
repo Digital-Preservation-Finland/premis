@@ -80,22 +80,22 @@ def event(
 
     """
 
-    event = _element('event')
+    _event = _element('event')
 
-    event.append(event_id)
+    _event.append(event_id)
 
-    _event_type = _subelement(event, 'eventType')
+    _event_type = _subelement(_event, 'eventType')
     _event_type.text = event_type
 
-    _event_date_time = _subelement(event, 'eventDateTime')
+    _event_date_time = _subelement(_event, 'eventDateTime')
     _event_date_time.text = event_date_time
 
-    _event_detail = _subelement(event, 'eventDetail')
+    _event_detail = _subelement(_event, 'eventDetail')
     _event_detail.text = event_detail
 
     if child_elements:
         for elem in child_elements:
-            event.append(elem)
+            _event.append(elem)
 
     if linking_objects:
         for _object in linking_objects:
@@ -103,9 +103,9 @@ def event(
                 _object.findtext('.//' + premis_ns('objectIdentifierType')),
                 _object.findtext('.//' + premis_ns('objectIdentifierValue')),
                 'linkingObject')
-            event.append(linking_object)
+            _event.append(linking_object)
 
-    return event
+    return _event
 
 
 def iter_events(premis):
@@ -163,7 +163,7 @@ def event_with_type_and_detail(events, event_type, event_detail):
             yield _event
 
 
-def events_with_outcome(events, event_outcome):
+def events_with_outcome(events, outcome):
     """Iterate over all events with given outcome
 
     :events: Iterable of events
@@ -175,6 +175,6 @@ def events_with_outcome(events, event_outcome):
         _event_outcome = _event.findtext('/'.join([
             premis_ns('eventOutcomeInformation'),
             premis_ns('eventOutcome')]))
-        if _event_outcome == event_outcome:
+        if _event_outcome == outcome:
             yield _event
 

@@ -10,10 +10,10 @@ References:
 """
 
 
-from premis.premis import _element, _subelement, premis_ns, \
-    premis_identifier, iter_elements
+from premis.base import _element, _subelement, premis_ns, \
+    identifier, iter_elements
 
-def premis_event_outcome(outcome, detail_note=None, detail_extension=None):
+def event_outcome(outcome, detail_note=None, detail_extension=None):
     """Create PREMIS event outcome DOM structure.
 
     :outcome: Event outcome (success, failure)
@@ -51,12 +51,12 @@ def premis_event_outcome(outcome, detail_note=None, detail_extension=None):
     return outcome_information
 
 
-def premis_event(
-        identifier, event_type, event_date_time, event_detail,
+def event(
+        event_id, event_type, event_date_time, event_detail,
         child_elements=None, linking_objects=None):
     """Create PREMIS event element.
 
-    :identifier: PREMIS event identifier
+    :event_id: PREMIS event identifier
     :event_type: Type for the event
     :event_date_time: Event time
     :event_detail: Event details
@@ -82,7 +82,7 @@ def premis_event(
 
     event = _element('event')
 
-    event.append(identifier)
+    event.append(event_id)
 
     _event_type = _subelement(event, 'eventType')
     _event_type.text = event_type
@@ -99,7 +99,7 @@ def premis_event(
 
     if linking_objects:
         for _object in linking_objects:
-            linking_object = premis_identifier(
+            linking_object = identifier(
                 _object.findtext('.//' + premis_ns('objectIdentifierType')),
                 _object.findtext('.//' + premis_ns('objectIdentifierValue')),
                 'linkingObject')

@@ -1,13 +1,13 @@
 """Test for the Premis event class"""
 
 import xml.etree.ElementTree as ET
-import premis.premis as p
-import premis.event as e
+import premis.base as p
+import premis.event_base as e
 
 def test_event_outcome():
-    """Test premis_event_outcome"""
+    """Test event_outcome"""
     ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
-    outcome = e.premis_event_outcome('success', 'OK')
+    outcome = e.event_outcome('success', 'OK')
     xml = '<premis:eventOutcomeInformation xmlns:premis="info:lc/xmlns/premis-v2">' \
           '<premis:eventOutcome>success</premis:eventOutcome>' \
           '<premis:eventOutcomeDetail><premis:eventOutcomeDetailNote>OK' \
@@ -16,11 +16,11 @@ def test_event_outcome():
     assert ET.tostring(outcome) == xml
 
 def test_event():
-    """Test premis_event"""
+    """Test event"""
     ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
-    event = e.premis_event(
-        p.premis_identifier('a', 'b', 'event'), 'c', 'd', 'e',
-        linking_objects=[p.premis_identifier('f', 'g')])
+    event = e.event(
+        p.identifier('a', 'b', 'event'), 'c', 'd', 'e',
+        linking_objects=[p.identifier('f', 'g')])
     xml = '<premis:event xmlns:premis="info:lc/xmlns/premis-v2">' \
           '<premis:eventIdentifier><premis:eventIdentifierType>a' \
           '</premis:eventIdentifierType><premis:eventIdentifierValue>b' \
@@ -51,7 +51,7 @@ def test_event_count():
 
 
 def test_event_with_type_and_detail():
-    """Test premis_event_with_type_and_detail"""
+    """Test event_with_type_and_detail"""
     # TODO
 
 

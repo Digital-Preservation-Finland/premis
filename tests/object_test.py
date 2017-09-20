@@ -1,8 +1,8 @@
 """Test for the Premis object class"""
 
 import xml.etree.ElementTree as ET
-import premis.premis as p
-import premis.object as o
+import premis.base as p
+import premis.object_base as o
 
 
 def test_fixity():
@@ -36,9 +36,9 @@ def test_object_characteristics():
 
 
 def test_relationship():
-    """Test premis_relationship"""
+    """Test relationship"""
     ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
-    rel = o.premis_relationship('a', 'b', p.premis_identifier('c', 'd'))
+    rel = o.relationship('a', 'b', p.identifier('c', 'd'))
     xml = '<premis:relationship xmlns:premis="info:lc/xmlns/premis-v2">' \
           '<premis:relationshipType>a</premis:relationshipType>' \
           '<premis:relationshipSubType>b</premis:relationshipSubType>' \
@@ -51,7 +51,7 @@ def test_relationship():
 def test_environment():
     """Test premis_environment"""
     ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
-    rel = o.premis_environment(p.premis_identifier('c', 'd'))
+    rel = o.environment(p.identifier('c', 'd'))
     xml = '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2"><premis:dependency>' \
           '<premis:dependencyIdentifier><premis:dependencyIdentifierType>' \
           'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>' \
@@ -59,7 +59,7 @@ def test_environment():
           '</premis:dependency></premis:environment>'
     assert ET.tostring(rel) == xml
 
-    rel = o.premis_environment(p.premis_identifier('c', 'd', 'dependency'))
+    rel = o.environment(p.identifier('c', 'd', 'dependency'))
     xml = '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2"><premis:dependency>' \
           '<premis:dependencyIdentifier><premis:dependencyIdentifierType>' \
           'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>' \
@@ -72,8 +72,8 @@ def test_object():
     """Test premis_premis"""
     ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
     ET.register_namespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance')
-    obj1 = o.premis_object(p.premis_identifier('a', 'b'), original_name='c')
-    obj2 = o.premis_object(p.premis_identifier('a', 'b'), representation=True)
+    obj1 = o.object(p.identifier('a', 'b'), original_name='c')
+    obj2 = o.object(p.identifier('a', 'b'), representation=True)
     xml1 = '<premis:object xmlns:premis="info:lc/xmlns/premis-v2" ' \
            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' \
            'xsi:type="premis:file"><premis:objectIdentifier>' \
@@ -108,11 +108,11 @@ def test_contains_object():
 
 
 def test_object_count():
-    """Test contains_object"""
+    """Test object_count"""
     # TODO
 
 
 def test_objects_with_type():
-    """Test contains_object"""
+    """Test objects_with_type"""
     # TODO
 

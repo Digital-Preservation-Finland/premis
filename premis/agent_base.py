@@ -10,14 +10,14 @@ References:
 """
 
 
-from premis.premis import _element, _subelement, iter_elements, premis_ns
+from premis.base import _element, _subelement, iter_elements, premis_ns
 
 
-def premis_agent(
-        identifier, agent_name, agent_type):
+def agent(
+        agent_id, agent_name, agent_type):
     """Returns PREMIS agent element
 
-    :identifier: PREMIS identifier for the agent
+    :agent_id: PREMIS identifier for the agent
     :agent_name: Agent name
     :agent_type: Agent type
 
@@ -39,7 +39,7 @@ def premis_agent(
 
     agent = _element('agent')
 
-    agent.append(identifier)
+    agent.append(agent_id)
 
     _agent_name = _subelement(agent, 'agentName')
     _agent_name.text = agent_name

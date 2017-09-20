@@ -1,7 +1,7 @@
 """Test for the Premis class"""
 
 import xml.etree.ElementTree as ET
-import premis.premis as p
+import premis.base as p
 
 
 def test_premis_ns():
@@ -25,12 +25,12 @@ def test_subelement():
     assert ET.tostring(p._subelement(parent, 'xxx')) == xml
 
 
-def test_premis_identifier():
-    """Test premis_identifier"""
+def test_identifier():
+    """Test identifier"""
     ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
-    object_identifier = p.premis_identifier('local', 'id01')
-    object_related = p.premis_identifier('local', 'id01', 'relatedObject')
-    event_identifier = p.premis_identifier('local', 'id01', 'event')
+    object_identifier = p.identifier('local', 'id01')
+    object_related = p.identifier('local', 'id01', 'relatedObject')
+    event_identifier = p.identifier('local', 'id01', 'event')
     object_id = '<premis:objectIdentifier xmlns:premis="info:lc/xmlns/premis-v2">' \
                 '<premis:objectIdentifierType>local</premis:objectIdentifierType>' \
                 '<premis:objectIdentifierValue>id01</premis:objectIdentifierValue>' \
@@ -51,9 +51,9 @@ def test_premis_identifier():
 
 def test_get_identifier_type_value():
     """Test get_identifier_type_value"""
-    object_identifier = p.premis_identifier('local', 'id01')
-    object_related = p.premis_identifier('local', 'id01', 'relatedObject')
-    event_identifier = p.premis_identifier('local', 'id01', 'event')
+    object_identifier = p.identifier('local', 'id01')
+    object_related = p.identifier('local', 'id01', 'relatedObject')
+    event_identifier = p.identifier('local', 'id01', 'event')
 
     (idtype, idval) = p.get_identifier_type_value(object_identifier)
     assert idtype == 'local'
@@ -66,10 +66,10 @@ def test_get_identifier_type_value():
     assert idval == 'id01'
 
 
-def test_premis_premis():
+def test_premis():
     """Test PREMIS root generation"""
     ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
-    tree = ET.tostring(p.premis_premis())
+    tree = ET.tostring(p.premis())
     xml = """<premis:premis
              xsi:schemaLocation="info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/premis.xsd"
              xmlns:premis = "info:lc/xmlns/premis-v2"

@@ -62,7 +62,7 @@ def _subelement(parent, tag, prefix=""):
     return ET.SubElement(parent, premis_ns(tag, prefix))
 
 
-def premis_identifier(identifier_type, identifier_value, prefix='object'):
+def identifier(identifier_type, identifier_value, prefix='object'):
     """Return PREMIS identifier segments.
 
     Produces without prefix the following PREMIS segment::
@@ -122,34 +122,34 @@ def premis_identifier(identifier_type, identifier_value, prefix='object'):
     return _identifier
 
 
-def get_identifier_type_value(identifier, prefix='object'):
+def get_identifier_type_value(id_elem, prefix='object'):
     """Return identifierType and IdentifierValue from given PREMIS id.
     If segment contains multiple identifiers, returns first
     occurrence.
 
-    :identifier: Premis identifier
+    :id_elem: Premis identifier
     :returns: (identifier_type, identifier_value)
 
     """
     if prefix == 'relatedObject':
-        if identifier.tag != premis_ns('relatedObjectIdentification'):
-            identifier = identifier.find(premis_ns('relatedObjectIdentification'))
-        if identifier is not None:
+        if id_elem.tag != premis_ns('relatedObjectIdentification'):
+            id_elem = id_elem.find(premis_ns('relatedObjectIdentification'))
+        if id_elem is not None:
             return (
-                identifier.find(premis_ns('relatedObjectIdentifierType')).text,
-                identifier.find(premis_ns('relatedObjectIdentifierValue')).text)
+                id_elem.find(premis_ns('relatedObjectIdentifierType')).text,
+                id_elem.find(premis_ns('relatedObjectIdentifierValue')).text)
         return None
 
-    if identifier.tag != premis_ns('Identifier', prefix):
-        identifier = identifier.find(premis_ns('Identifier', prefix))
-    if identifier is not None:
+    if id_elem.tag != premis_ns('Identifier', prefix):
+        id_elem = id_elem.find(premis_ns('Identifier', prefix))
+    if id_elem is not None:
         return (
-            identifier.find(premis_ns('IdentifierType', prefix)).text,
-            identifier.find(premis_ns('IdentifierValue', prefix)).text)
+            id_elem.find(premis_ns('IdentifierType', prefix)).text,
+            id_elem.find(premis_ns('IdentifierValue', prefix)).text)
     return None
 
 
-def premis_premis(child_elements=None, namespaces=NAMESPACES):
+def premis(child_elements=None, namespaces=NAMESPACES):
     """Create PREMIS Data Dictionary root element.
 
     :child_elements: Any elements appended to the PREMIS dictionary

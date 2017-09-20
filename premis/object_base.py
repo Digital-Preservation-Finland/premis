@@ -10,8 +10,8 @@ References:
 """
 
 
-from premis.premis import _element, _subelement, premis_ns, \
-    premis_identifier, get_identifier_type_value, iter_elements, xsi_ns
+from premis.base import _element, _subelement, premis_ns, \
+    identifier, get_identifier_type_value, iter_elements, xsi_ns
 
 
 def fixity(message_digest, digest_algorithm='MD5'):
@@ -106,7 +106,7 @@ def relationship(
     (related_type, related_value) = get_identifier_type_value(
         related_object)
 
-    related_identifier = premis_identifier(
+    related_identifier = identifier(
         related_type, related_value, prefix='relatedObject')
 
     relationship.append(related_identifier)
@@ -150,7 +150,7 @@ def environment(object_or_identifier=None):
         (identifier_type, identifier_value) = get_identifier_type_value(
             object_identifier)
 
-        dependency_identifier = premis_identifier(
+        dependency_identifier = identifier(
             identifier_type, identifier_value, 'dependency')
     else:
         dependency_identifier = object_identifier
@@ -162,14 +162,14 @@ def environment(object_or_identifier=None):
 
 
 def object(
-        identifier,
+        object_id,
         original_name=None,
         child_elements=None,
         representation=False):
 
     """Return the PREMIS object.
 
-        :identifier: PREMIS identifier
+        :object_id: PREMIS identifier
         :original_name: Original name field
         :child_elements=None: Any other element appended
         :representation=False:
@@ -190,7 +190,7 @@ def object(
 
     _object = _element('object')
 
-    _object.append(identifier)
+    _object.append(object_id)
 
     if representation:
         _object.set(xsi_ns('type'), 'premis:representation')

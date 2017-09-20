@@ -15,28 +15,28 @@ from premis.base import _element, _subelement, premis_ns, \
 
 
 def fixity(message_digest, digest_algorithm='MD5'):
-    fixity_el = p._element('fixity')
-    fixity_algorithm = p._subelement(
+    fixity_el = _element('fixity')
+    fixity_algorithm = _subelement(
         fixity_el, 'messageDigestAlgorithm')
     fixity_algorithm.text = digest_algorithm
-    fixity_checksum = p._subelement(fixity_el, 'messageDigest')
+    fixity_checksum = _subelement(fixity_el, 'messageDigest')
     fixity_checksum.text = message_digest
     return fixity_el
 
 
 def format_designation(format_name, format_version=None):
-    format_designation = p._element('formatDesignation')
-    format_name_el = p._subelement(el_formatDesignation, 'formatName')
+    format_designation = _element('formatDesignation')
+    format_name_el = _subelement(el_formatDesignation, 'formatName')
     format_name_el.text = format_name
     if format_version:
-        format_version_el = p._subelement(
+        format_version_el = _subelement(
             el_formatDesignation, 'formatVersion')
         format_version_el.text = format_version
     return format_designation
 
 
 def format(child_elements=None):
-    format_el = p._element('format')
+    format_el = _element('format')
     if child_elements:
         for elem in child_elements:
             format_el.append(elem)
@@ -44,13 +44,13 @@ def format(child_elements=None):
 
 
 def date_created(date):
-    date_el = p._element('dateCreatedByApplication')
+    date_el = _element('dateCreatedByApplication')
     date_el.text = date
     return date_el
 
 
 def creating_application(child_elements=None):
-    creating_app = p._element('creatingApplication')
+    creating_app = _element('creatingApplication')
     if child_elements:
         for elem in child_elements:
             creating_app.append(elem)
@@ -58,9 +58,9 @@ def creating_application(child_elements=None):
 
 
 def object_characteristics(composition_level='0', child_elements=None):
-    object_char = p._element('objectCharacteristics')
+    object_char = _element('objectCharacteristics')
 
-    composition = p._subelement(
+    composition = _subelement(
         el_objectCharacteristics, 'compositionLevel')
     composition.text = composition_level
     if child_elements:

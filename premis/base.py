@@ -10,8 +10,8 @@ References:
 """
 
 
-import xml.etree.ElementTree as ET
-from xml_helpers.utils import XSI_NS, xsi_ns, register_namespaces
+import lxml.etree as ET
+from xml_helpers.utils import XSI_NS, xsi_ns
 
 PREMIS_NS = 'info:lc/xmlns/premis-v2'
 NAMESPACES = {'premis': PREMIS_NS,
@@ -31,7 +31,7 @@ def premis_ns(tag, prefix=""):
     return '{%s}%s' % (PREMIS_NS, tag)
 
 
-def _element(tag, prefix=""):
+def _element(tag, prefix="", ns={}):
     """Return _ElementInterface with PREMIS namespace.
 
     Prefix parameter is useful for adding prefixed to lower case tags. It just
@@ -46,10 +46,11 @@ def _element(tag, prefix=""):
     :returns: ElementTree element object
 
     """
-    return ET.Element(premis_ns(tag, prefix))
+    ns['premis'] = PREMIS_NS
+    return ET.Element(premis_ns(tag, prefix), nsmap=ns)
 
 
-def _subelement(parent, tag, prefix=""):
+def _subelement(parent, tag, prefix="", ns={}):
     """Return subelement for the given parent element. Created element is
     appended to parent element.
 
@@ -59,7 +60,8 @@ def _subelement(parent, tag, prefix=""):
     :returns: Created subelement
 
     """
-    return ET.SubElement(parent, premis_ns(tag, prefix))
+    ns['premis'] = PREMIS_NS
+    return ET.SubElement(parent, premis_ns(tag, prefix), nsmap=ns)
 
 
 def identifier(identifier_type, identifier_value, prefix='object'):
@@ -165,7 +167,6 @@ def premis(child_elements=None, namespaces=NAMESPACES):
             version="2.2">
 
     """
-    register_namespaces(namespaces)
     _premis = _element('premis')
     _premis.set(
         xsi_ns('schemaLocation'),

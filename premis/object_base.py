@@ -11,7 +11,7 @@ References:
 
 
 from premis.base import _element, _subelement, premis_ns, \
-    identifier, get_identifier_type_value, iter_elements, xsi_ns
+    identifier, get_identifier_type_value, iter_elements, xsi_ns, XSI_NS
 
 
 def fixity(message_digest, digest_algorithm='MD5'):
@@ -188,7 +188,7 @@ def object(
 
     """
 
-    _object = _element('object')
+    _object = _element('object', ns={'xsi': XSI_NS})
 
     _object.append(object_id)
 

@@ -1,12 +1,11 @@
 """Test for the Premis event class"""
 
-import xml.etree.ElementTree as ET
+import lxml.etree as ET
 import premis.base as p
 import premis.event_base as e
 
 def test_event_outcome():
     """Test event_outcome"""
-    ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
     outcome = e.event_outcome('success', 'OK')
     xml = '<premis:eventOutcomeInformation xmlns:premis="info:lc/xmlns/premis-v2">' \
           '<premis:eventOutcome>success</premis:eventOutcome>' \
@@ -17,7 +16,6 @@ def test_event_outcome():
 
 def test_event():
     """Test event"""
-    ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
     event = e.event(
         p.identifier('a', 'b', 'event'), 'c', 'd', 'e',
         linking_objects=[p.identifier('f', 'g')])

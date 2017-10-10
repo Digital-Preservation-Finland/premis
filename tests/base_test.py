@@ -1,6 +1,6 @@
 """Test for the Premis class"""
 
-import xml.etree.ElementTree as ET
+import lxml.etree as ET
 import premis.base as p
 
 
@@ -11,15 +11,13 @@ def test_premis_ns():
 
 def test_element():
     """Test PREMIS _element"""
-    ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
-    xml = """<premis:xxx xmlns:premis="info:lc/xmlns/premis-v2" />"""
+    xml = """<premis:xxx xmlns:premis="info:lc/xmlns/premis-v2"/>"""
     assert ET.tostring(p._element('xxx')) == xml
 
 
 def test_subelement():
     """Test PREMIS _subelement"""
-    ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
-    xml = """<premis:xxx xmlns:premis="info:lc/xmlns/premis-v2" />"""
+    xml = """<premis:xxx xmlns:premis="info:lc/xmlns/premis-v2"/>"""
     parent_xml = """<premis:premis xmlns:premis="info:lc/xmlns/premis-v2"/>"""
     parent = ET.fromstring(parent_xml)
     assert ET.tostring(p._subelement(parent, 'xxx')) == xml
@@ -27,7 +25,6 @@ def test_subelement():
 
 def test_identifier():
     """Test identifier"""
-    ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
     object_identifier = p.identifier('local', 'id01')
     object_related = p.identifier('local', 'id01', 'relatedObject')
     event_identifier = p.identifier('local', 'id01', 'event')
@@ -68,13 +65,12 @@ def test_get_identifier_type_value():
 
 def test_premis():
     """Test PREMIS root generation"""
-    ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
     tree = ET.tostring(p.premis())
     xml = """<premis:premis
              xsi:schemaLocation="info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/premis.xsd"
              xmlns:premis = "info:lc/xmlns/premis-v2"
              xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
-             version="2.2" />"""
+             version="2.2"/>"""
     tree_xml = ET.tostring(ET.fromstring(xml))
     assert tree == tree_xml
 

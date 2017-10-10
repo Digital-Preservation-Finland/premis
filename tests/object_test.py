@@ -1,6 +1,6 @@
 """Test for the Premis object class"""
 
-import xml.etree.ElementTree as ET
+import lxml.etree as ET
 import premis.base as p
 import premis.object_base as o
 
@@ -37,7 +37,6 @@ def test_object_characteristics():
 
 def test_relationship():
     """Test relationship"""
-    ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
     rel = o.relationship('a', 'b', p.identifier('c', 'd'))
     xml = '<premis:relationship xmlns:premis="info:lc/xmlns/premis-v2">' \
           '<premis:relationshipType>a</premis:relationshipType>' \
@@ -50,7 +49,6 @@ def test_relationship():
 
 def test_environment():
     """Test premis_environment"""
-    ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
     rel = o.environment(p.identifier('c', 'd'))
     xml = '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2"><premis:dependency>' \
           '<premis:dependencyIdentifier><premis:dependencyIdentifierType>' \
@@ -70,8 +68,6 @@ def test_environment():
 
 def test_object():
     """Test premis_premis"""
-    ET.register_namespace('premis', 'info:lc/xmlns/premis-v2')
-    ET.register_namespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance')
     obj1 = o.object(p.identifier('a', 'b'), original_name='c')
     obj2 = o.object(p.identifier('a', 'b'), representation=True)
     xml1 = '<premis:object xmlns:premis="info:lc/xmlns/premis-v2" ' \

@@ -42,7 +42,7 @@ def event_outcome(outcome, detail_note=None, detail_extension=None):
 
     if detail_note:
         _detail_note = _subelement(detail, 'eventOutcomeDetailNote')
-        _detail_note.text = detail_note
+        _detail_note.text = detail_note.decode('utf-8')
 
     if detail_extension:
         _detail_extension = _subelement(detail, 'eventOutcomeDetailExtension')
@@ -177,4 +177,48 @@ def events_with_outcome(events, outcome):
             premis_ns('eventOutcome')]))
         if _event_outcome == outcome:
             yield _event
+
+
+def parse_eventtype(event_elem):
+    try:
+        return event_elem.xpath("//premis:eventType/text()",
+                                namespaces=NAMESPACES)[0].encode("utf-8")
+    except IndexError:
+        return ""
+
+
+def parse_eventdatetime(event_elem):
+    return event_elem.xpath("//premis:eventDateTime",
+                            namespaces=NAMESPACES)[0]
+
+
+def parse_eventdetail(event_elem):
+    try:
+        return event_elem.xpath("//premis:eventDetail/text()",
+                                namespaces=NAMESPACES)[0].encode("utf-8")
+    except IndexError:
+        return ""
+
+
+def parse_eventoutcome(event_elem):
+    return event_elem.xpath(
+        "//premis:eventOutcomeInformation/premis:eventOutcome/text()",
+                      namespaces=NAMESPACES)[0].encode("utf-8")
+
+
+def parse_eventoutcomedetailnote(event_elem):
+    try:
+        return event_elem.xpath(
+            "//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailNote/text()",
+                          namespaces=NAMESPACES)[0]
+    except IndexError:
+        return ""
+
+
+def parse_eventoutcomedetailextension(event_elem):
+    try:
+        return event_elem.xpath(
+            "//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailExtension/text()", namespaces=NAMESPACES)[0]
+    except IndexError:
+        return ""
 

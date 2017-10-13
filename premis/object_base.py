@@ -11,8 +11,7 @@ References:
 
 
 from premis.base import _element, _subelement, premis_ns, \
-    identifier, get_identifier_type_value, iter_elements, xsi_ns, XSI_NS
-
+    identifier, get_identifier_type_value, iter_elements, xsi_ns, XSI_NS, NAMESPACES
 
 def fixity(message_digest, digest_algorithm='MD5'):
     fixity_el = _element('fixity')
@@ -94,6 +93,8 @@ def relationship(
       </premis:relationship>
 
     """
+    if related_object is None:
+        return None
 
     _relationship = _element('relationship')
 
@@ -290,4 +291,62 @@ def objects_with_type(objects, object_identifier_type):
 
         if _object_identifier_type == object_identifier_type:
             yield _object
+
+
+def parse_digest(obj):
+    algorithm = obj.xpath(".//premis:messageDigestAlgorithm",
+                          namespaces=NAMESPACES)[0].text
+    digest = obj.xpath(".//premis:messageDigest",
+                       namespaces=NAMESPACES)[0].text
+    return (algorithm, digest)
+
+
+def parse_format(obj):
+    format_name = obj.xpath(".//premis:formatName",
+                            namespaces=NAMESPACES)[0].text
+    format_version = obj.xpath(".//premis:formatVersion",
+                               namespaces=NAMESPACES)
+    if len(format_version) > 0:
+        format_version = format_version[0].text
+    return (format_name, format_version)
+
+
+def parse_originalname(premis_object):
+    return premis_object.xpath("//premis:originalName/text()",
+                               namespaces=NAMESPACES)[0].encode("utf-8")
+
+
+def parse_environment(premis_elem):
+    try:
+        return premis_elem.xpath("//premis:environment",
+                                 namespaces=NAMESPACES)[0]
+    except IndexError:
+        return ""
+
+def parse_dependency(premis_elem):
+    try:
+        return premis_elem.xpath("//premis:environment/premis:dependency",
+                                 namespaces=NAMESPACES)[0]
+    except IndexError:
+        return ""
+
+
+def parse_relationship(premis_elem):
+    try:
+        return premis_elem.xpath("//premis:relationship",
+                                 namespaces=NAMESPACES)[0]
+    except IndexError:
+        return ""
+
+
+def parse_relationshiptype(premis_elem):
+    return premis_elem.xpath(
+        "//premis:relationship/premis:relationshipType/text()",
+        namespaces=NAMESPACES)[0].encode("utf-8")
+
+
+def parse_relationshipsubtype(premis_elem):
+    return premis_elem.xpath(
+        "//premis:relationship/premis:relationshipSubType/text()",
+        namespaces=NAMESPACES)[0].encode("utf-8")
 

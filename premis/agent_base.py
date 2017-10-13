@@ -14,7 +14,7 @@ from premis.base import _element, _subelement, iter_elements, premis_ns
 
 
 def agent(
-        agent_id, agent_name, agent_type):
+        agent_id, agent_name, agent_type, note=None):
     """Returns PREMIS agent element
 
     :agent_id: PREMIS identifier for the agent
@@ -46,6 +46,10 @@ def agent(
 
     _agent_type = _subelement(_agent, 'agentType')
     _agent_type.text = agent_type
+
+    if note is not None:
+        _agent_type = _subelement(_agent, 'agentNote')
+        _agent_type.text = note
 
     return _agent
 
@@ -85,4 +89,18 @@ def agents_with_type(agents, agent_type='organization'):
 
         if _agent_type == agent_type:
             yield (agent_type, agent_name)
+
+
+def parse_name(agent):
+    return agent.xpath("//premis:agentName/text()",
+                          namespaces=NAMESPACES)[0].encode("utf-8")
+
+def parse_type(agent):
+    return agent.xpath("//premis:agentType/text()",
+                          namespaces=NAMESPACES)[0].encode("utf-8")
+
+def parse_note(self):
+    return agent.xpath("//premis:agentNote/text()",
+                      namespaces=NAMESPACES)[0].encode("utf-8")
+
 

@@ -151,7 +151,7 @@ def get_identifier_type_value(id_elem, prefix='object'):
     return None
 
 
-def premis(child_elements=None, namespaces=NAMESPACES):
+def premis(child_elements=None):
     """Create PREMIS Data Dictionary root element.
 
     :child_elements: Any elements appended to the PREMIS dictionary
@@ -191,4 +191,7 @@ def iter_elements(starting_element, tag):
     """
     for elem in starting_element.findall('.//' + premis_ns(tag)):
         yield elem
+
+def parse_identifier(section, prefix='object'):
+    return section.find('.//'+premis_ns('Identifier', prefix))
 

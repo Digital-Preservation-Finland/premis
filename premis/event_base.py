@@ -36,7 +36,7 @@ def event_outcome(outcome, detail_note=None, detail_extension=None):
     outcome_information = _element('eventOutcomeInformation')
 
     _outcome = _subelement(outcome_information, 'eventOutcome')
-    _outcome.text = outcome
+    _outcome.text = outcome.decode('utf-8')
 
     detail = _subelement(outcome_information, 'eventOutcomeDetail')
 
@@ -46,7 +46,7 @@ def event_outcome(outcome, detail_note=None, detail_extension=None):
 
     if detail_extension:
         _detail_extension = _subelement(detail, 'eventOutcomeDetailExtension')
-        _detail_extension.text = detail_extension
+        _detail_extension.text = detail_extension.decode('utf-8')
 
     return outcome_information
 
@@ -85,13 +85,13 @@ def event(
     _event.append(event_id)
 
     _event_type = _subelement(_event, 'eventType')
-    _event_type.text = event_type
+    _event_type.text = event_type.decode('utf-8')
 
     _event_date_time = _subelement(_event, 'eventDateTime')
-    _event_date_time.text = event_date_time
+    _event_date_time.text = event_date_time.decode('utf-8')
 
     _event_detail = _subelement(_event, 'eventDetail')
-    _event_detail.text = event_detail
+    _event_detail.text = event_detail.decode('utf-8')
 
     if child_elements:
         for elem in child_elements:
@@ -100,8 +100,8 @@ def event(
     if linking_objects:
         for _object in linking_objects:
             linking_object = identifier(
-                _object.findtext('.//' + premis_ns('objectIdentifierType')),
-                _object.findtext('.//' + premis_ns('objectIdentifierValue')),
+                _object.findtext('.//' + premis_ns('objectIdentifierType')).encode('utf-8'),
+                _object.findtext('.//' + premis_ns('objectIdentifierValue')).encode('utf-8'),
                 'linkingObject')
             _event.append(linking_object)
 
@@ -129,7 +129,7 @@ def find_event_by_id(premis, event_id):
     """
     for elem in iter_events(premis):
         if elem.findtext(
-                './/' + premis_ns('eventIdentifierValue')) == event_id:
+                './/' + premis_ns('eventIdentifierValue')) == event_id.decode('utf-8'):
             return elem
 
     return None
@@ -156,8 +156,8 @@ def event_with_type_and_detail(events, event_type, event_detail):
     """
 
     for _event in events:
-        _event_type = _event.findtext(premis_ns('eventType'))
-        _event_detail = _event.findtext(premis_ns('eventDetail'))
+        _event_type = _event.findtext(premis_ns('eventType')).encode('utf-8')
+        _event_detail = _event.findtext(premis_ns('eventDetail')).encode('utf-8')
 
         if _event_type == event_type and _event_detail == event_detail:
             yield _event
@@ -174,7 +174,7 @@ def events_with_outcome(events, outcome):
     for _event in events:
         _event_outcome = _event.findtext('/'.join([
             premis_ns('eventOutcomeInformation'),
-            premis_ns('eventOutcome')]))
+            premis_ns('eventOutcome')])).encode("utf-8")
         if _event_outcome == outcome:
             yield _event
 
@@ -210,7 +210,7 @@ def parse_eventoutcomedetailnote(event_elem):
     try:
         return event_elem.xpath(
             "//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailNote/text()",
-                          namespaces=NAMESPACES)[0]
+                          namespaces=NAMESPACES)[0].encode("utf-8")
     except IndexError:
         return ""
 
@@ -218,7 +218,8 @@ def parse_eventoutcomedetailnote(event_elem):
 def parse_eventoutcomedetailextension(event_elem):
     try:
         return event_elem.xpath(
-            "//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailExtension/text()", namespaces=NAMESPACES)[0]
+            "//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailExtension/text()",
+                namespaces=NAMESPACES)[0].encode("utf-8")
     except IndexError:
         return ""
 

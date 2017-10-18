@@ -11,26 +11,26 @@ References:
 
 
 from premis.base import _element, _subelement, premis_ns, \
-    identifier, get_identifier_type_value, iter_elements, xsi_ns, XSI_NS, NAMESPACES
+    identifier, parse_identifier_type_value, iter_elements, xsi_ns, XSI_NS, NAMESPACES
 
 def fixity(message_digest, digest_algorithm='MD5'):
     fixity_el = _element('fixity')
     fixity_algorithm = _subelement(
         fixity_el, 'messageDigestAlgorithm')
-    fixity_algorithm.text = digest_algorithm
+    fixity_algorithm.text = digest_algorithm.decode("utf-8")
     fixity_checksum = _subelement(fixity_el, 'messageDigest')
-    fixity_checksum.text = message_digest
+    fixity_checksum.text = message_digest.decode("utf-8")
     return fixity_el
 
 
 def format_designation(format_name, format_version=None):
     format_designation_el = _element('formatDesignation')
     format_name_el = _subelement(format_designation_el, 'formatName')
-    format_name_el.text = format_name
+    format_name_el.text = format_name.decode("utf-8")
     if format_version:
         format_version_el = _subelement(
             format_designation_el, 'formatVersion')
-        format_version_el.text = format_version
+        format_version_el.text = format_version.decode("utf-8")
     return format_designation_el
 
 
@@ -44,7 +44,7 @@ def format(child_elements=None):
 
 def date_created(date):
     date_el = _element('dateCreatedByApplication')
-    date_el.text = date
+    date_el.text = date.decode("utf-8")
     return date_el
 
 
@@ -61,7 +61,7 @@ def object_characteristics(composition_level='0', child_elements=None):
 
     composition = _subelement(
         object_char, 'compositionLevel')
-    composition.text = composition_level
+    composition.text = composition_level.decode("utf-8")
     if child_elements:
         for elem in child_elements:
             object_char.append(elem)
@@ -99,12 +99,12 @@ def relationship(
     _relationship = _element('relationship')
 
     _type = _subelement(_relationship, 'relationshipType')
-    _type.text = relationship_type
+    _type.text = relationship_type.decode("utf-8")
 
     _subtype = _subelement(_relationship, 'relationshipSubType')
-    _subtype.text = relationship_subtype
+    _subtype.text = relationship_subtype.decode("utf-8")
 
-    (related_type, related_value) = get_identifier_type_value(
+    (related_type, related_value) = parse_identifier_type_value(
         related_object)
 
     related_identifier = identifier(
@@ -148,7 +148,7 @@ def environment(object_or_identifier=None):
         premis_ns('dependencyIdentifierType'))
 
     if dependency_identifier_type is None:
-        (identifier_type, identifier_value) = get_identifier_type_value(
+        (identifier_type, identifier_value) = parse_identifier_type_value(
             object_identifier)
 
         dependency_identifier = identifier(
@@ -200,7 +200,7 @@ def object(
 
     if original_name:
         _original_name = _subelement(_object, 'originalName')
-        _original_name.text = original_name
+        _original_name.text = original_name.decode("utf-8")
 
     if child_elements:
         for elem in child_elements:
@@ -289,25 +289,25 @@ def objects_with_type(objects, object_identifier_type):
         _object_identifier_type = _object_identifier.findtext(
             premis_ns('objectIdentifierType'))
 
-        if _object_identifier_type == object_identifier_type:
+        if _object_identifier_type == object_identifier_type.decode("utf-8"):
             yield _object
 
 
-def parse_digest(obj):
+def parse_fixity(obj):
     algorithm = obj.xpath(".//premis:messageDigestAlgorithm",
-                          namespaces=NAMESPACES)[0].text
+                          namespaces=NAMESPACES)[0].text.encode("utf-8")
     digest = obj.xpath(".//premis:messageDigest",
-                       namespaces=NAMESPACES)[0].text
+                       namespaces=NAMESPACES)[0].text.encode("utf-8")
     return (algorithm, digest)
 
 
 def parse_format(obj):
     format_name = obj.xpath(".//premis:formatName",
-                            namespaces=NAMESPACES)[0].text
+                            namespaces=NAMESPACES)[0].text.encode("utf-8")
     format_version = obj.xpath(".//premis:formatVersion",
                                namespaces=NAMESPACES)
     if len(format_version) > 0:
-        format_version = format_version[0].text
+        format_version = format_version[0].text.encode("utf-8")
     return (format_name, format_version)
 
 

@@ -42,14 +42,14 @@ def agent(
     _agent.append(agent_id)
 
     _agent_name = _subelement(_agent, 'agentName')
-    _agent_name.text = agent_name
+    _agent_name.text = agent_name.decode('utf-8')
 
     _agent_type = _subelement(_agent, 'agentType')
-    _agent_type.text = agent_type
+    _agent_type.text = agent_type.decode('utf-8')
 
     if note is not None:
         _agent_type = _subelement(_agent, 'agentNote')
-        _agent_type.text = note
+        _agent_type.text = note.decode('utf-8')
 
     return _agent
 

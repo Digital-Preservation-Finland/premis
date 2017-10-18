@@ -116,15 +116,15 @@ def identifier(identifier_type, identifier_value, prefix='object'):
         _identifier = _element('Identifier', prefix)
 
     _value = _subelement(_identifier, 'IdentifierType', prefix)
-    _value.text = identifier_type
+    _value.text = identifier_type.decode('utf-8')
 
     _type = _subelement(_identifier, 'IdentifierValue', prefix)
-    _type.text = identifier_value
+    _type.text = identifier_value.decode('utf-8')
 
     return _identifier
 
 
-def get_identifier_type_value(id_elem, prefix='object'):
+def parse_identifier_type_value(id_elem, prefix='object'):
     """Return identifierType and IdentifierValue from given PREMIS id.
     If segment contains multiple identifiers, returns first
     occurrence.
@@ -138,20 +138,20 @@ def get_identifier_type_value(id_elem, prefix='object'):
             id_elem = id_elem.find(premis_ns('relatedObjectIdentification'))
         if id_elem is not None:
             return (
-                id_elem.find(premis_ns('relatedObjectIdentifierType')).text,
-                id_elem.find(premis_ns('relatedObjectIdentifierValue')).text)
+                id_elem.find(premis_ns('relatedObjectIdentifierType')).text.encode('utf-8'),
+                id_elem.find(premis_ns('relatedObjectIdentifierValue')).text.encode('utf-8'))
         return None
 
     if id_elem.tag != premis_ns('Identifier', prefix):
         id_elem = id_elem.find(premis_ns('Identifier', prefix))
     if id_elem is not None:
         return (
-            id_elem.find(premis_ns('IdentifierType', prefix)).text,
-            id_elem.find(premis_ns('IdentifierValue', prefix)).text)
+            id_elem.find(premis_ns('IdentifierType', prefix)).text.encode('utf-8'),
+            id_elem.find(premis_ns('IdentifierValue', prefix)).text.encode('utf-8'))
     return None
 
 
-def premis(child_elements=None):
+def premis(child_elements=None, namespaces=NAMESPACES):
     """Create PREMIS Data Dictionary root element.
 
     :child_elements: Any elements appended to the PREMIS dictionary
@@ -167,7 +167,7 @@ def premis(child_elements=None):
             version="2.2">
 
     """
-    _premis = _element('premis')
+    _premis = _element('premis', ns=namespaces)
     _premis.set(
         xsi_ns('schemaLocation'),
         'info:lc/xmlns/premis-v2 '

@@ -46,19 +46,19 @@ def test_identifier():
     assert ET.tostring(event_identifier) == xml_event
 
 
-def test_get_identifier_type_value():
-    """Test get_identifier_type_value"""
+def test_parse_identifier_type_value():
+    """Test parse_identifier_type_value"""
     object_identifier = p.identifier('local', 'id01')
     object_related = p.identifier('local', 'id01', 'relatedObject')
     event_identifier = p.identifier('local', 'id01', 'event')
 
-    (idtype, idval) = p.get_identifier_type_value(object_identifier)
+    (idtype, idval) = p.parse_identifier_type_value(object_identifier)
     assert idtype == 'local'
     assert idval == 'id01'
-    (idtype, idval) = p.get_identifier_type_value(object_related, 'relatedObject')
+    (idtype, idval) = p.parse_identifier_type_value(object_related, 'relatedObject')
     assert idtype == 'local'
     assert idval == 'id01'
-    (idtype, idval) = p.get_identifier_type_value(event_identifier, 'event')
+    (idtype, idval) = p.parse_identifier_type_value(event_identifier, 'event')
     assert idtype == 'local'
     assert idval == 'id01'
 

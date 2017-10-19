@@ -115,11 +115,15 @@ def identifier(identifier_type, identifier_value, prefix='object'):
     else:
         _identifier = _element('Identifier', prefix)
 
-    _value = _subelement(_identifier, 'IdentifierType', prefix)
-    _value.text = identifier_type.decode('utf-8')
+    _type = _subelement(_identifier, 'IdentifierType', prefix)
+    if identifier_type is not None:
+        identifier_type = identifier_type.decode('utf-8')
+    _type.text = identifier_type
 
-    _type = _subelement(_identifier, 'IdentifierValue', prefix)
-    _type.text = identifier_value.decode('utf-8')
+    _value = _subelement(_identifier, 'IdentifierValue', prefix)
+    if identifier_value is not None:
+        identifier_value = identifier_type.decode('utf-8')
+    _value.text = identifier_value
 
     return _identifier
 

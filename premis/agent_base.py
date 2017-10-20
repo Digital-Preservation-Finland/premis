@@ -10,7 +10,8 @@ References:
 """
 
 
-from premis.base import _element, _subelement, iter_elements, premis_ns
+from premis.base import _element, _subelement, iter_elements, premis_ns, \
+    NAMESPACES
 
 
 def agent(
@@ -92,15 +93,15 @@ def agents_with_type(agents, agent_type='organization'):
 
 
 def parse_name(agent):
-    return agent.xpath("//premis:agentName/text()",
+    return agent.xpath(".//premis:agentName/text()",
                           namespaces=NAMESPACES)[0].encode("utf-8")
 
 def parse_type(agent):
-    return agent.xpath("//premis:agentType/text()",
+    return agent.xpath(".//premis:agentType/text()",
                           namespaces=NAMESPACES)[0].encode("utf-8")
 
-def parse_note(self):
-    return agent.xpath("//premis:agentNote/text()",
+def parse_note(agent):
+    return agent.xpath(".//premis:agentNote/text()",
                       namespaces=NAMESPACES)[0].encode("utf-8")
 
 

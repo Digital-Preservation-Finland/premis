@@ -142,16 +142,15 @@ def parse_identifier_type_value(id_elem, prefix='object'):
             id_elem = id_elem.find(premis_ns('relatedObjectIdentification'))
         if id_elem is not None:
             return (
-                id_elem.find(premis_ns('relatedObjectIdentifierType')).text.encode('utf-8'),
-                id_elem.find(premis_ns('relatedObjectIdentifierValue')).text.encode('utf-8'))
+                id_elem.find('./' + premis_ns('relatedObjectIdentifierType')).text.encode('utf-8'),
+                id_elem.find('./' + premis_ns('relatedObjectIdentifierValue')).text.encode('utf-8'))
         return None
-
     if id_elem.tag != premis_ns('Identifier', prefix):
         id_elem = id_elem.find(premis_ns('Identifier', prefix))
     if id_elem is not None:
         return (
-            id_elem.find(premis_ns('IdentifierType', prefix)).text.encode('utf-8'),
-            id_elem.find(premis_ns('IdentifierValue', prefix)).text.encode('utf-8'))
+            id_elem.find('./' + premis_ns('IdentifierType', prefix)).text.encode('utf-8'),
+            id_elem.find('./' + premis_ns('IdentifierValue', prefix)).text.encode('utf-8'))
     return None
 
 

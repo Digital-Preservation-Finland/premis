@@ -112,3 +112,44 @@ def test_objects_with_type():
     """Test objects_with_type"""
     # TODO
 
+def test_parse_fixity():
+    """Test parse_fixity"""
+    # TODO
+
+
+def test_parse_format():
+    """Test parse_format"""
+    # TODO
+
+
+def test_parse_originalname():
+    """Test parse_originalname"""
+    # TODO
+
+
+def test_parse_environment():
+    """Test parse_environment"""
+    # TODO
+
+
+def test_parse_dependency():
+    """Test parse_dependency"""
+    # TODO
+
+
+def test_parse_relationship():
+    """Test parse_relationship"""
+    # TODO
+
+
+def test_parse_relationshiptype():
+    """Test parse_relationshiptype"""
+    # TODO
+
+
+def test_parse_relationshipsubtype():
+    """Test parse_relationshipsubtype"""
+    # TODO
+
+
+

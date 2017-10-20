@@ -9,9 +9,8 @@ References:
 
 """
 
-
 from premis.base import _element, _subelement, premis_ns, \
-    identifier, iter_elements
+    identifier, iter_elements, NAMESPACES
 
 def event_outcome(outcome, detail_note=None, detail_extension=None):
     """Create PREMIS event outcome DOM structure.
@@ -189,20 +188,20 @@ def events_with_outcome(events, outcome):
 
 def parse_eventtype(event_elem):
     try:
-        return event_elem.xpath("//premis:eventType/text()",
+        return event_elem.xpath(".//premis:eventType/text()",
                                 namespaces=NAMESPACES)[0].encode("utf-8")
     except IndexError:
         return ""
 
 
 def parse_eventdatetime(event_elem):
-    return event_elem.xpath("//premis:eventDateTime",
-                            namespaces=NAMESPACES)[0]
+    return event_elem.xpath(".//premis:eventDateTime/text()",
+                            namespaces=NAMESPACES)[0].encode("utf-8")
 
 
 def parse_eventdetail(event_elem):
     try:
-        return event_elem.xpath("//premis:eventDetail/text()",
+        return event_elem.xpath(".//premis:eventDetail/text()",
                                 namespaces=NAMESPACES)[0].encode("utf-8")
     except IndexError:
         return ""
@@ -210,14 +209,14 @@ def parse_eventdetail(event_elem):
 
 def parse_eventoutcome(event_elem):
     return event_elem.xpath(
-        "//premis:eventOutcomeInformation/premis:eventOutcome/text()",
+        ".//premis:eventOutcomeInformation/premis:eventOutcome/text()",
                       namespaces=NAMESPACES)[0].encode("utf-8")
 
 
 def parse_eventoutcomedetailnote(event_elem):
     try:
         return event_elem.xpath(
-            "//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailNote/text()",
+            ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailNote/text()",
                           namespaces=NAMESPACES)[0].encode("utf-8")
     except IndexError:
         return ""
@@ -226,7 +225,7 @@ def parse_eventoutcomedetailnote(event_elem):
 def parse_eventoutcomedetailextension(event_elem):
     try:
         return event_elem.xpath(
-            "//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailExtension/text()",
+            ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailExtension/text()",
                 namespaces=NAMESPACES)[0].encode("utf-8")
     except IndexError:
         return ""

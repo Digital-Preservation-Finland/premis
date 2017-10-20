@@ -23,13 +23,11 @@ def test_iter_agents():
     agent2 = a.agent(p.identifier('a', 'b', 'agent'), 'nimi2', 'tyyppi')
     agent3 = a.agent(p.identifier('a', 'b', 'agent'), 'nimi3', 'tyyppi')
     premisroot = p.premis(child_elements=[agent1, agent2, agent3])
-    agentlist = []
     i = 0
     for _agent in a.iter_agents(premisroot):
-        agentlist.append(_agent)
         i = i + 1
         assert a.parse_name(_agent) == 'nimi'+str(i)
-    assert len(agentlist) == 3
+    assert i == 3
 
 
 def test_agent_count():

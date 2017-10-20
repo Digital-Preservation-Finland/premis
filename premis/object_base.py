@@ -312,20 +312,20 @@ def parse_format(obj):
 
 
 def parse_originalname(premis_object):
-    return premis_object.xpath("//premis:originalName/text()",
+    return premis_object.xpath(".//premis:originalName/text()",
                                namespaces=NAMESPACES)[0].encode("utf-8")
 
 
 def parse_environment(premis_elem):
     try:
-        return premis_elem.xpath("//premis:environment",
+        return premis_elem.xpath(".//premis:environment",
                                  namespaces=NAMESPACES)[0]
     except IndexError:
         return ""
 
 def parse_dependency(premis_elem):
     try:
-        return premis_elem.xpath("//premis:environment/premis:dependency",
+        return premis_elem.xpath(".//premis:environment/premis:dependency",
                                  namespaces=NAMESPACES)[0]
     except IndexError:
         return ""
@@ -333,7 +333,7 @@ def parse_dependency(premis_elem):
 
 def parse_relationship(premis_elem):
     try:
-        return premis_elem.xpath("//premis:relationship",
+        return premis_elem.xpath(".//premis:relationship",
                                  namespaces=NAMESPACES)[0]
     except IndexError:
         return ""
@@ -341,12 +341,12 @@ def parse_relationship(premis_elem):
 
 def parse_relationshiptype(premis_elem):
     return premis_elem.xpath(
-        "//premis:relationship/premis:relationshipType/text()",
+        ".//premis:relationship/premis:relationshipType/text()",
         namespaces=NAMESPACES)[0].encode("utf-8")
 
 
 def parse_relationshipsubtype(premis_elem):
     return premis_elem.xpath(
-        "//premis:relationship/premis:relationshipSubType/text()",
+        ".//premis:relationship/premis:relationshipSubType/text()",
         namespaces=NAMESPACES)[0].encode("utf-8")
 

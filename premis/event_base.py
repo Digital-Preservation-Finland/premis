@@ -53,7 +53,7 @@ def event_outcome(outcome, detail_note=None, detail_extension=None):
 
 def event(
         event_id, event_type, event_date_time, event_detail,
-        child_elements=None, linking_objects=None):
+        child_elements=None, linking_objects=None, linking_agents=None):
     """Create PREMIS event element.
 
     :event_id: PREMIS event identifier
@@ -104,6 +104,14 @@ def event(
                 _object.findtext('.//' + premis_ns('objectIdentifierValue')).encode('utf-8'),
                 'linkingObject')
             _event.append(linking_object)
+
+    if linking_agents:
+        for _agent in linking_agents:
+            linking_agent = identifier(
+                _agent.findtext('.//' + premis_ns('agentIdentifierType')).encode('utf-8'),
+                _agent.findtext('.//' + premis_ns('agentIdentifierValue')).encode('utf-8'),
+                'linkingAgent')
+            _event.append(linking_agent)
 
     return _event
 

@@ -2,7 +2,7 @@
 
 import lxml.etree as ET
 import premis.base as p
-
+import premis.object_base as o
 
 def test_premis_ns():
     """Test premis_ns"""
@@ -74,7 +74,27 @@ def test_premis():
     tree_xml = ET.tostring(ET.fromstring(xml))
     assert tree == tree_xml
 
+
 def test_iter_elements():
-    """test iter_elements"""
-    # TODO
+    """Test iter_elements"""
+    obj1 = o.object(p.identifier('local', 'id01'), original_name='nimi1')
+    obj2 = o.object(p.identifier('local', 'id02'), original_name='nimi2')
+    obj3 = o.object(p.identifier('local', 'id03'), original_name='nimi3')
+    xml = p.premis(child_elements=[obj1, obj2, obj3])
+    i = 0
+    for name in p.iter_elements(xml, 'originalName'):
+        i = i + 1
+        assert name.text == 'nimi' + str(i)
+    assert i == 3
+
+
+def test_parse_identifier():
+    """Test parse_identifier"""
+    obj = o.object(p.identifier('local', 'id01'))
+    object_id = '<premis:objectIdentifier xmlns:premis="info:lc/xmlns/premis-v2" ' \
+                'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' \
+                '<premis:objectIdentifierType>local</premis:objectIdentifierType>' \
+                '<premis:objectIdentifierValue>id01</premis:objectIdentifierValue>' \
+                '</premis:objectIdentifier>'
+    assert ET.tostring(p.parse_identifier(obj)) == object_id
 

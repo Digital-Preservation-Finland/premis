@@ -197,5 +197,8 @@ def iter_elements(starting_element, tag):
         yield elem
 
 def parse_identifier(section, prefix='object'):
-    return section.find('.//'+premis_ns('Identifier', prefix))
+    if prefix == 'relatedObject':
+        return section.find('.//'+premis_ns('Identification', prefix))
+    else:
+        return section.find('.//'+premis_ns('Identifier', prefix))
 

@@ -122,7 +122,7 @@ def identifier(identifier_type, identifier_value, prefix='object'):
 
     _value = _subelement(_identifier, 'IdentifierValue', prefix)
     if identifier_value is not None:
-        identifier_value = identifier_type.decode('utf-8')
+        identifier_value = identifier_value.decode('utf-8')
     _value.text = identifier_value
 
     return _identifier

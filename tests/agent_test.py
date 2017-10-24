@@ -59,10 +59,10 @@ def test_parse_name():
     assert a.parse_name(agent) == 'nimi'
 
 
-def test_parse_type():
-    """Test parse_type"""
+def test_parse_agent_type():
+    """Test parse_agent_type"""
     agent = a.agent(p.identifier('a', 'b', 'agent'), 'nimi', 'tyyppi', note='nootti')
-    assert a.parse_type(agent) == 'tyyppi'
+    assert a.parse_agent_type(agent) == 'tyyppi'
 
 
 def test_parse_note():

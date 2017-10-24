@@ -4,9 +4,9 @@ import lxml.etree as ET
 import premis.base as p
 import premis.event_base as e
 
-def test_event_outcome():
+def test_outcome():
     """Test event_outcome"""
-    outcome = e.event_outcome('success', 'OK')
+    outcome = e.outcome('success', 'OK')
     xml = '<premis:eventOutcomeInformation xmlns:premis="info:lc/xmlns/premis-v2">' \
           '<premis:eventOutcome>success</premis:eventOutcome>' \
           '<premis:eventOutcomeDetail><premis:eventOutcomeDetailNote>OK' \
@@ -42,7 +42,7 @@ def test_iter_events():
     i = 0
     for ev in e.iter_events(premisroot):
         i = i + 1
-        assert e.parse_eventtype(ev) == 'tyyppi'+str(i)
+        assert e.parse_event_type(ev) == 'tyyppi'+str(i)
     assert i == 3
 
 
@@ -73,61 +73,61 @@ def test_event_with_type_and_detail():
     i = 0
     for ev in e.event_with_type_and_detail([event1, event2, event3], 'tyyppi', 'detaili2'):
         i = i + 1
-        assert e.parse_eventtype(ev) == 'tyyppi'
-        assert e.parse_eventdetail(ev) == 'detaili2'
+        assert e.parse_event_type(ev) == 'tyyppi'
+        assert e.parse_detail(ev) == 'detaili2'
     assert i == 1
 
 def test_events_with_outcome():
     """Test events_with_outcome"""
-    outcome1 = e.event_outcome('success')
-    outcome2 = e.event_outcome('failure')
-    outcome3 = e.event_outcome('success')
+    outcome1 = e.outcome('success')
+    outcome2 = e.outcome('failure')
+    outcome3 = e.outcome('success')
 
     event1 = e.event(p.identifier('local', 'id1', 'event'), 'tyyppi', '2012-12-12T12:12:12', 'detaili1', child_elements=[outcome1])
     event2 = e.event(p.identifier('local', 'id2', 'event'), 'tyyppi', '2012-12-12T12:12:12', 'detaili2', child_elements=[outcome2])
     event3 = e.event(p.identifier('local', 'id3', 'event'), 'tyyppi', '2012-12-12T12:12:12', 'detaili3', child_elements=[outcome3])
     i = 0
     for success in e.events_with_outcome([event1, event2, event3], 'success'):
-        e.parse_eventoutcome(success) == 'success'
+        e.parse_outcome(success) == 'success'
         i = i + 1
     assert i == 2
 
 
-def test_parse_eventtype():
-    """Test parse_event"""
+def test_parse_event_type():
+    """Test parse_event_type"""
     event = e.event(p.identifier('a', 'b', 'event'), 'tyyppi', '2012-12-12T12:12:12', 'detaili')
-    assert e.parse_eventtype(event) == 'tyyppi'
+    assert e.parse_event_type(event) == 'tyyppi'
 
 
-def test_parse_eventdatetime():
-    """Test parse_eventdatetime"""
+def test_parse_datetime():
+    """Test parse_datetime"""
     event = e.event(p.identifier('a', 'b', 'event'), 'tyyppi', '2012-12-12T12:12:12', 'detaili')
-    assert e.parse_eventdatetime(event) == '2012-12-12T12:12:12'
+    assert e.parse_datetime(event) == '2012-12-12T12:12:12'
 
 
-def test_parse_eventdetail():
-    """Test parse_eventdetail"""
+def test_parse_detail():
+    """Test parse_detail"""
     event = e.event(p.identifier('a', 'b', 'event'), 'tyyppi', '2012-12-12T12:12:12', 'detaili')
-    assert e.parse_eventdetail(event) == 'detaili'
+    assert e.parse_detail(event) == 'detaili'
 
 
-def test_parse_eventoutcome():
-    """Test parse_eventoutcome"""
-    outcome = e.event_outcome('success', detail_note='xxx', detail_extension='<xxx />')
+def test_parse_outcome():
+    """Test parse_outcome"""
+    outcome = e.outcome('success', detail_note='xxx', detail_extension='<xxx />')
     event = e.event(p.identifier('a', 'b', 'event'), 'tyyppi', '2012-12-12T12:12:12', 'detaili', child_elements=[outcome])
-    assert e.parse_eventoutcome(event) == 'success'
+    assert e.parse_outcome(event) == 'success'
 
 
-def test_parse_eventoutcomedetailnote():
-    """Test parse_eventoutcomedetailnote"""
-    outcome = e.event_outcome('success', detail_note='xxx', detail_extension='<xxx />')
+def test_parse_outcome_detail_note():
+    """Test parse_outcome_detail_note"""
+    outcome = e.outcome('success', detail_note='xxx', detail_extension='<xxx />')
     event = e.event(p.identifier('a', 'b', 'event'), 'tyyppi', '2012-12-12T12:12:12', 'detaili', child_elements=[outcome])
-    assert e.parse_eventoutcomedetailnote(event) == 'xxx'
+    assert e.parse_outcome_detail_note(event) == 'xxx'
 
 
-def test_parse_eventoutcomedetailextension():
-    """Test parse_eventoutcomedetailextension"""
-    outcome = e.event_outcome('success', detail_note='xxx', detail_extension='<xxx />')
+def test_parse_outcome_detail_extension():
+    """Test parse_outcome_detail_extension"""
+    outcome = e.outcome('success', detail_note='xxx', detail_extension='<xxx />')
     event = e.event(p.identifier('a', 'b', 'event'), 'tyyppi', '2012-12-12T12:12:12', 'detaili', child_elements=[outcome])
-    assert e.parse_eventoutcomedetailextension(event) == '<xxx />'
+    assert e.parse_outcome_detail_extension(event) == '<xxx />'
 

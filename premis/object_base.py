@@ -209,7 +209,7 @@ def object(
     return _object
 
 
-def iter_objects(premis):
+def iter_objects(premis_el):
     """Iterate all PREMIS objects from starting element.
 
     :starting_element: Element where matching elements are searched
@@ -217,7 +217,7 @@ def iter_objects(premis):
 
     """
 
-    for elem in iter_elements(premis, 'object'):
+    for elem in iter_elements(premis_el, 'object'):
         yield elem
 
 
@@ -264,14 +264,14 @@ def contains_object(object_element, search_from_element):
     return False
 
 
-def object_count(premis):
+def object_count(premis_el):
     """Return number of objects in PREMIS data dictionary.
 
     :premis: ElementTree element
     :returns: Integer
 
     """
-    return len([x for x in iter_objects(premis)])
+    return len([x for x in iter_objects(premis_el)])
 
 
 def objects_with_type(objects, object_identifier_type):
@@ -311,7 +311,7 @@ def parse_format(obj):
     return (format_name, format_version)
 
 
-def parse_originalname(premis_object):
+def parse_original_name(premis_object):
     return premis_object.xpath(".//premis:originalName/text()",
                                namespaces=NAMESPACES)[0].encode("utf-8")
 
@@ -339,14 +339,18 @@ def parse_relationship(premis_elem):
         return ""
 
 
-def parse_relationshiptype(premis_elem):
-    return premis_elem.xpath(
-        ".//premis:relationship/premis:relationshipType/text()",
-        namespaces=NAMESPACES)[0].encode("utf-8")
+def parse_relationship_type(premis_elem):
+    try:
+        return premis_elem.xpath(
+            ".//premis:relationshipType/text()",
+            namespaces=NAMESPACES)[0].encode("utf-8")
+    except IndexError:
+        return ""
 
-
-def parse_relationshipsubtype(premis_elem):
-    return premis_elem.xpath(
-        ".//premis:relationship/premis:relationshipSubType/text()",
-        namespaces=NAMESPACES)[0].encode("utf-8")
-
+def parse_relationship_subtype(premis_elem):
+    try:
+        return premis_elem.xpath(
+            ".//premis:relationshipSubType/text()",
+            namespaces=NAMESPACES)[0].encode("utf-8")
+    except IndexError:
+        return ""

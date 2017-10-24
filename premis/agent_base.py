@@ -96,7 +96,7 @@ def parse_name(agent):
     return agent.xpath(".//premis:agentName/text()",
                           namespaces=NAMESPACES)[0].encode("utf-8")
 
-def parse_type(agent):
+def parse_agent_type(agent):
     return agent.xpath(".//premis:agentType/text()",
                           namespaces=NAMESPACES)[0].encode("utf-8")
 

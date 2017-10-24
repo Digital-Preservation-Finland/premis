@@ -7,32 +7,64 @@ import premis.object_base as o
 
 def test_fixity():
     """Test fixity"""
-    # TODO
+    fixity = o.fixity('xxx', 'yyy')
+    xml = '<premis:fixity xmlns:premis="info:lc/xmlns/premis-v2">' \
+          '<premis:messageDigestAlgorithm>yyy</premis:messageDigestAlgorithm>' \
+          '<premis:messageDigest>xxx</premis:messageDigest>' \
+          '</premis:fixity>'
+    assert ET.tostring(fixity) == xml
 
 
 def test_format_designation():
     """Test format_designation"""
-    # TODO
+    fd = o.format_designation('xxx', 'yyy')
+    xml = '<premis:formatDesignation xmlns:premis="info:lc/xmlns/premis-v2">' \
+          '<premis:formatName>xxx</premis:formatName>' \
+          '<premis:formatVersion>yyy</premis:formatVersion>' \
+          '</premis:formatDesignation>'
+    assert ET.tostring(fd) == xml
 
 
 def test_format():
     """Test format"""
-    # TODO
+    fd = o.format_designation('xxx', 'yyy')
+    form = o.format(child_elements=[fd])
+    xml = '<premis:format xmlns:premis="info:lc/xmlns/premis-v2">' \
+          '<premis:formatDesignation>' \
+          '<premis:formatName>xxx</premis:formatName>' \
+          '<premis:formatVersion>yyy</premis:formatVersion>' \
+          '</premis:formatDesignation></premis:format>'
+    assert ET.tostring(form) == xml
 
 
 def test_date_created():
     """Test date_created"""
-    # TODO
+    date = o.date_created('2012-12-12T12:12:12')
+    xml = '<premis:dateCreatedByApplication xmlns:premis="info:lc/xmlns/premis-v2">' \
+          '2012-12-12T12:12:12</premis:dateCreatedByApplication>'
+    assert ET.tostring(date) == xml
 
 
 def test_creating_application():
     """Test creating_application"""
-    # TODO
+    date = o.date_created('2012-12-12T12:12:12')
+    create = o.creating_application(child_elements=[date])
+    xml = '<premis:creatingApplication xmlns:premis="info:lc/xmlns/premis-v2">' \
+          '<premis:dateCreatedByApplication>2012-12-12T12:12:12</premis:dateCreatedByApplication>' \
+          '</premis:creatingApplication>'
+    assert ET.tostring(create) == xml
 
 
 def test_object_characteristics():
     """Test object_characteristics"""
-    # TODO
+    fixity = o.fixity('xxx', 'yyy')
+    oc = o.object_characteristics(child_elements=[fixity])
+    xml = '<premis:objectCharacteristics xmlns:premis="info:lc/xmlns/premis-v2">' \
+          '<premis:compositionLevel>0</premis:compositionLevel><premis:fixity>' \
+          '<premis:messageDigestAlgorithm>yyy</premis:messageDigestAlgorithm>' \
+          '<premis:messageDigest>xxx</premis:messageDigest>' \
+          '</premis:fixity></premis:objectCharacteristics>'
+    assert ET.tostring(oc) == xml
 
 
 def test_relationship():
@@ -90,66 +122,146 @@ def test_object():
 
 def test_iter_objects():
     """Test iter_objects"""
-    # TODO
-
+    obj1 = o.object(p.identifier('x', 'y1', 'object'))
+    obj2 = o.object(p.identifier('x', 'y2', 'object'))
+    obj3 = o.object(p.identifier('x', 'y3', 'object'))
+    prem = p.premis(child_elements=[obj1, obj2, obj3])
+    iterator = o.iter_objects(prem)
+    i = 0
+    for iter_elem in iterator:
+        i = i + 1
+        (_, id_value) = p.parse_identifier_type_value(p.parse_identifier(iter_elem, 'object'), 'object')
+        assert id_value == 'y' + str(i)
+    assert i == 3
 
 def test_filter_objects():
     """Test filter_objects"""
-    # TODO
+    obj1 = o.object(p.identifier('x', 'y1', 'object'))
+    obj2 = o.object(p.identifier('x', 'y2', 'object'))
+    obj3 = o.object(p.identifier('x', 'y3', 'object'))
+    prem1 = p.premis(child_elements=[obj1, obj2, obj3])
+    prem2 = p.premis(child_elements=[obj1, obj3])
+    filtered = o.filter_objects(o.iter_objects(prem1), prem2)
+    i = 0
+    for filt_el in filtered:
+        i = i + 1
+        (_, id_value) = p.parse_identifier_type_value(p.parse_identifier(filt_el, 'object'), 'object')
+        assert id_value == 'y2'
+    assert i == 1
 
 
 def test_contains_object():
     """Test contains_object"""
-    # TODO
+    obj1 = o.object(p.identifier('x', 'y1', 'object'))
+    obj2 = o.object(p.identifier('x', 'y2', 'object'))
+    obj3 = o.object(p.identifier('x', 'y3', 'object'))
+    prem1 = p.premis(child_elements=[obj1, obj2, obj3])
+    prem2 = p.premis(child_elements=[obj1, obj2])
+
+    assert o.contains_object(obj3, prem1) == True
+    assert o.contains_object(obj3, prem2) == False
 
 
 def test_object_count():
     """Test object_count"""
-    # TODO
+    obj1 = o.object(p.identifier('x', 'y1', 'object'))
+    obj2 = o.object(p.identifier('x', 'y2', 'object'))
+    obj3 = o.object(p.identifier('x', 'y3', 'object'))
+    prem = p.premis(child_elements=[obj1, obj2, obj3])
+    assert o.object_count(prem) == 3
 
 
 def test_objects_with_type():
     """Test objects_with_type"""
-    # TODO
+    obj1 = o.object(p.identifier('x1', 'y1', 'object'))
+    obj2 = o.object(p.identifier('x1', 'y2', 'object'))
+    obj3 = o.object(p.identifier('x2', 'y3', 'object'))
+    filtered = o.objects_with_type([obj1, obj2, obj3], 'x1')
+    i = 0
+    for filt_el in filtered:
+        i = i + 1
+        (id_type, _) = p.parse_identifier_type_value(p.parse_identifier(filt_el, 'object'), 'object')
+        assert id_type == 'x1'
+    assert i == 2
+
 
 def test_parse_fixity():
     """Test parse_fixity"""
-    # TODO
+    fixity = o.fixity('xxx', 'yyy')
+    oc = o.object_characteristics(child_elements=[fixity])
+    obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[oc])
+    assert o.parse_fixity(obj) == ('yyy', 'xxx')
 
 
 def test_parse_format():
     """Test parse_format"""
-    # TODO
+    fd = o.format_designation('xxx', 'yyy')
+    form = o.format(child_elements=[fd])
+    oc = o.object_characteristics(child_elements=[form])
+    obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[oc])
+    assert o.parse_format(obj) == ('xxx', 'yyy')
 
 
-def test_parse_originalname():
-    """Test parse_originalname"""
-    # TODO
+def test_parse_original_name():
+    """Test parse_original_name"""
+    obj = o.object(p.identifier('x', 'y', 'object'), original_name='aaa')
+    assert o.parse_original_name(obj) == 'aaa'
 
 
 def test_parse_environment():
     """Test parse_environment"""
-    # TODO
+    env = o.environment(p.identifier('c', 'd'))
+    obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[env])
+    penv = o.parse_environment(obj)
+    xml = '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2" ' \
+          'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><premis:dependency>' \
+          '<premis:dependencyIdentifier><premis:dependencyIdentifierType>' \
+          'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>' \
+          'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>' \
+          '</premis:dependency></premis:environment>'
+    assert ET.tostring(penv) == xml
 
 
 def test_parse_dependency():
     """Test parse_dependency"""
-    # TODO
+    env = o.environment(p.identifier('c', 'd'))
+    obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[env])
+    dep = o.parse_dependency(obj)
+    xml = '<premis:dependency xmlns:premis="info:lc/xmlns/premis-v2" ' \
+          'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' \
+          '<premis:dependencyIdentifier><premis:dependencyIdentifierType>' \
+          'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>' \
+          'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>' \
+          '</premis:dependency>'
+    assert ET.tostring(dep) == xml
 
 
 def test_parse_relationship():
     """Test parse_relationship"""
-    # TODO
+    rel = o.relationship('a', 'b', p.identifier('c', 'd'))
+    obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[rel])
+    rel2 = o.parse_relationship(obj)
+    xml = '<premis:relationship xmlns:premis="info:lc/xmlns/premis-v2" ' \
+          'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' \
+          '<premis:relationshipType>a</premis:relationshipType>' \
+          '<premis:relationshipSubType>b</premis:relationshipSubType>' \
+          '<premis:relatedObjectIdentification><premis:relatedObjectIdentifierType>' \
+          'c</premis:relatedObjectIdentifierType><premis:relatedObjectIdentifierValue>' \
+          'd</premis:relatedObjectIdentifierValue>' \
+          '</premis:relatedObjectIdentification></premis:relationship>'
+    assert ET.tostring(rel2) == xml
 
 
-def test_parse_relationshiptype():
-    """Test parse_relationshiptype"""
-    # TODO
+def test_parse_relationship_type():
+    """Test parse_relationship_type"""
+    rel = o.relationship('a', 'b', p.identifier('c', 'd'))
+    assert o.parse_relationship_type(rel) == 'a'
 
 
-def test_parse_relationshipsubtype():
-    """Test parse_relationshipsubtype"""
-    # TODO
+def test_parse_relationship_subtype():
+    """Test parse_relationship_subtype"""
+    rel = o.relationship('a', 'b', p.identifier('c', 'd'))
+    assert o.parse_relationship_subtype(rel) == 'b'
 
 
 

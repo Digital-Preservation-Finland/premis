@@ -12,7 +12,7 @@ References:
 from premis.base import _element, _subelement, premis_ns, \
     identifier, iter_elements, NAMESPACES
 
-def event_outcome(outcome, detail_note=None, detail_extension=None):
+def outcome(outcome, detail_note=None, detail_extension=None):
     """Create PREMIS event outcome DOM structure.
 
     :outcome: Event outcome (success, failure)
@@ -186,7 +186,7 @@ def events_with_outcome(events, outcome):
             yield _event
 
 
-def parse_eventtype(event_elem):
+def parse_event_type(event_elem):
     try:
         return event_elem.xpath(".//premis:eventType/text()",
                                 namespaces=NAMESPACES)[0].encode("utf-8")
@@ -194,12 +194,12 @@ def parse_eventtype(event_elem):
         return ""
 
 
-def parse_eventdatetime(event_elem):
+def parse_datetime(event_elem):
     return event_elem.xpath(".//premis:eventDateTime/text()",
                             namespaces=NAMESPACES)[0].encode("utf-8")
 
 
-def parse_eventdetail(event_elem):
+def parse_detail(event_elem):
     try:
         return event_elem.xpath(".//premis:eventDetail/text()",
                                 namespaces=NAMESPACES)[0].encode("utf-8")
@@ -207,13 +207,13 @@ def parse_eventdetail(event_elem):
         return ""
 
 
-def parse_eventoutcome(event_elem):
+def parse_outcome(event_elem):
     return event_elem.xpath(
         ".//premis:eventOutcomeInformation/premis:eventOutcome/text()",
                       namespaces=NAMESPACES)[0].encode("utf-8")
 
 
-def parse_eventoutcomedetailnote(event_elem):
+def parse_outcome_detail_note(event_elem):
     try:
         return event_elem.xpath(
             ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailNote/text()",
@@ -222,7 +222,7 @@ def parse_eventoutcomedetailnote(event_elem):
         return ""
 
 
-def parse_eventoutcomedetailextension(event_elem):
+def parse_outcome_detail_extension(event_elem):
     try:
         return event_elem.xpath(
             ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailExtension/text()",

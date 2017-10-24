@@ -96,14 +96,6 @@ def event(
         for elem in child_elements:
             _event.append(elem)
 
-    if linking_objects:
-        for _object in linking_objects:
-            linking_object = identifier(
-                _object.findtext('.//' + premis_ns('objectIdentifierType')).encode('utf-8'),
-                _object.findtext('.//' + premis_ns('objectIdentifierValue')).encode('utf-8'),
-                'linkingObject')
-            _event.append(linking_object)
-
     if linking_agents:
         for _agent in linking_agents:
             linking_agent = identifier(
@@ -111,6 +103,14 @@ def event(
                 _agent.findtext('.//' + premis_ns('agentIdentifierValue')).encode('utf-8'),
                 'linkingAgent')
             _event.append(linking_agent)
+
+    if linking_objects:
+        for _object in linking_objects:
+            linking_object = identifier(
+                _object.findtext('.//' + premis_ns('objectIdentifierType')).encode('utf-8'),
+                _object.findtext('.//' + premis_ns('objectIdentifierValue')).encode('utf-8'),
+                'linkingObject')
+            _event.append(linking_object)
 
     return _event
 

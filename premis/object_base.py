@@ -221,6 +221,21 @@ def iter_objects(premis_el):
         yield elem
 
 
+def find_object_by_id(premis, object_id):
+    """Find a PREMIS object by its objectIdentifierValue
+    :premis: ElementTree element
+    :object_id: The PREMIS object's ID
+
+    :returns: Element if found, None otherwise
+    """
+    for elem in iter_objects(premis):
+        if elem.findtext('.//' + premis_ns(
+                'objectIdentifierValue')) == object_id.decode('utf-8'):
+            return elem
+
+    return None
+
+
 def filter_objects(premis_objects, filtered_objects):
     """Return PREMIS objects from `premis_objects` which are not listed in
     `filtered_objects`

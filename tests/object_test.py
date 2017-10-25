@@ -134,6 +134,17 @@ def test_iter_objects():
         assert id_value == 'y' + str(i)
     assert i == 3
 
+
+def test_find_object_by_id():
+    """Test find_object_by_id"""
+    object1 = o.object(p.identifier('local', 'id1', 'object'))
+    object2 = o.object(p.identifier('local', 'id2', 'object'))
+    object3 = o.object(p.identifier('local', 'id3', 'object'))
+    xml = p.premis(child_elements=[object1, object2, object3])
+    obj = o.find_object_by_id(xml, 'id2')
+    assert p.parse_identifier_type_value(p.parse_identifier(obj)) == ('local', 'id2')
+
+
 def test_filter_objects():
     """Test filter_objects"""
     obj1 = o.object(p.identifier('x', 'y1', 'object'))

@@ -30,6 +30,17 @@ def test_iter_agents():
     assert i == 3
 
 
+def test_find_agent_by_id():
+    """Test find_agent_by_id"""
+    agent1 = a.agent(p.identifier('local', 'id1', 'agent'), 'name', 'type1')
+    agent2 = a.agent(p.identifier('local', 'id2', 'agent'), 'name', 'type2')
+    agent3 = a.agent(p.identifier('local', 'id3', 'agent'), 'name', 'type3')
+    xml = p.premis(child_elements=[agent1, agent2, agent3])
+    ag = a.find_agent_by_id(xml, 'id2')
+    assert p.parse_identifier_type_value(p.parse_identifier(ag, 'agent'),
+                                         'agent') == ('local', 'id2')
+
+
 def test_agent_count():
     """Test agent_count"""
     agent1 = a.agent(p.identifier('a', 'b', 'agent'), 'nimi', 'tyyppi1')

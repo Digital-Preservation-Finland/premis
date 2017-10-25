@@ -66,6 +66,22 @@ def iter_agents(premis):
         yield elem
 
 
+def find_agent_by_id(premis, agent_id):
+    """Find a PREMIS agent by its agentIdentifierValue
+
+    :premis: ElementTree element
+    :agent_id: The PREMIS agent's ID
+
+    :returns: Element if found, None otherwise
+    """
+    for elem in iter_agents(premis):
+        if elem.findtext( './/' + premis_ns(
+                'agentIdentifierValue')) == agent_id.decode('utf-8'):
+            return elem
+
+    return None
+
+
 def agent_count(premis):
     """Return number of agents in PREMIS data dictionary.
 

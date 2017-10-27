@@ -1,6 +1,7 @@
 """Test for the Premis class"""
 
 import lxml.etree as ET
+import xml_helpers.utils as u
 import premis.base as p
 import premis.object_base as o
 
@@ -12,7 +13,7 @@ def test_premis_ns():
 def test_element():
     """Test PREMIS _element"""
     xml = """<premis:xxx xmlns:premis="info:lc/xmlns/premis-v2"/>"""
-    assert ET.tostring(p._element('xxx')) == xml
+    assert u.compare_trees(p._element('xxx'), ET.fromstring(xml)) == True
 
 
 def test_subelement():
@@ -20,7 +21,7 @@ def test_subelement():
     xml = """<premis:xxx xmlns:premis="info:lc/xmlns/premis-v2"/>"""
     parent_xml = """<premis:premis xmlns:premis="info:lc/xmlns/premis-v2"/>"""
     parent = ET.fromstring(parent_xml)
-    assert ET.tostring(p._subelement(parent, 'xxx')) == xml
+    assert u.compare_trees(p._subelement(parent, 'xxx'), ET.fromstring(xml)) == True
 
 
 def test_identifier():
@@ -41,9 +42,9 @@ def test_identifier():
                 '<premis:eventIdentifierValue>id01</premis:eventIdentifierValue>' \
                 '</premis:eventIdentifier>'
 
-    assert ET.tostring(object_identifier) == object_id
-    assert ET.tostring(object_related) == xml_related
-    assert ET.tostring(event_identifier) == xml_event
+    assert u.compare_trees(object_identifier, ET.fromstring(object_id)) == True
+    assert u.compare_trees(object_related, ET.fromstring(xml_related)) == True
+    assert u.compare_trees(event_identifier, ET.fromstring(xml_event)) == True
 
 
 def test_parse_identifier_type_value():
@@ -96,5 +97,6 @@ def test_parse_identifier():
                 '<premis:objectIdentifierType>local</premis:objectIdentifierType>' \
                 '<premis:objectIdentifierValue>id01</premis:objectIdentifierValue>' \
                 '</premis:objectIdentifier>'
-    assert ET.tostring(p.parse_identifier(obj)) == object_id
+
+    assert u.compare_trees(p.parse_identifier(obj), ET.fromstring(object_id)) == True
 

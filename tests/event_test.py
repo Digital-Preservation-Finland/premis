@@ -1,6 +1,7 @@
 """Test for the Premis event class"""
 
 import lxml.etree as ET
+import xml_helpers.utils as u
 import premis.base as p
 import premis.event_base as e
 
@@ -12,7 +13,7 @@ def test_outcome():
           '<premis:eventOutcomeDetail><premis:eventOutcomeDetailNote>OK' \
           '</premis:eventOutcomeDetailNote></premis:eventOutcomeDetail>' \
           '</premis:eventOutcomeInformation>'
-    assert ET.tostring(outcome) == xml
+    assert u.compare_trees(outcome, ET.fromstring(xml)) == True 
 
 def test_event():
     """Test event"""
@@ -30,7 +31,7 @@ def test_event():
           '<premis:linkingObjectIdentifierType>f</premis:linkingObjectIdentifierType>' \
           '<premis:linkingObjectIdentifierValue>g</premis:linkingObjectIdentifierValue>' \
           '</premis:linkingObjectIdentifier></premis:event>'
-    assert ET.tostring(event) == xml
+    assert u.compare_trees(event, ET.fromstring(xml)) == True
 
 
 def test_iter_events():

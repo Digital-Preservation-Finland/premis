@@ -1,6 +1,7 @@
 """Test for the Premis agent class"""
 
 import lxml.etree as ET
+import xml_helpers.utils as u
 import premis.base as p
 import premis.agent_base as a
 
@@ -14,7 +15,7 @@ def test_agent():
           'b</premis:agentIdentifierValue></premis:agentIdentifier>' \
           '<premis:agentName>c</premis:agentName>' \
           '<premis:agentType>d</premis:agentType></premis:agent>'
-    assert ET.tostring(agent) == xml
+    assert u.compare_trees(agent, ET.fromstring(xml)) == True
 
 
 def test_iter_agents():

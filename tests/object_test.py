@@ -1,6 +1,7 @@
 """Test for the Premis object class"""
 
 import lxml.etree as ET
+import xml_helpers.utils as u
 import premis.base as p
 import premis.object_base as o
 
@@ -12,7 +13,7 @@ def test_fixity():
           '<premis:messageDigestAlgorithm>yyy</premis:messageDigestAlgorithm>' \
           '<premis:messageDigest>xxx</premis:messageDigest>' \
           '</premis:fixity>'
-    assert ET.tostring(fixity) == xml
+    assert u.compare_trees(fixity, ET.fromstring(xml)) == True
 
 
 def test_format_designation():
@@ -22,7 +23,7 @@ def test_format_designation():
           '<premis:formatName>xxx</premis:formatName>' \
           '<premis:formatVersion>yyy</premis:formatVersion>' \
           '</premis:formatDesignation>'
-    assert ET.tostring(fd) == xml
+    assert u.compare_trees(fd, ET.fromstring(xml)) == True
 
 
 def test_format():
@@ -34,7 +35,7 @@ def test_format():
           '<premis:formatName>xxx</premis:formatName>' \
           '<premis:formatVersion>yyy</premis:formatVersion>' \
           '</premis:formatDesignation></premis:format>'
-    assert ET.tostring(form) == xml
+    assert u.compare_trees(form, ET.fromstring(xml)) == True
 
 
 def test_date_created():
@@ -42,7 +43,7 @@ def test_date_created():
     date = o.date_created('2012-12-12T12:12:12')
     xml = '<premis:dateCreatedByApplication xmlns:premis="info:lc/xmlns/premis-v2">' \
           '2012-12-12T12:12:12</premis:dateCreatedByApplication>'
-    assert ET.tostring(date) == xml
+    assert u.compare_trees(date, ET.fromstring(xml)) == True
 
 
 def test_creating_application():
@@ -52,7 +53,7 @@ def test_creating_application():
     xml = '<premis:creatingApplication xmlns:premis="info:lc/xmlns/premis-v2">' \
           '<premis:dateCreatedByApplication>2012-12-12T12:12:12</premis:dateCreatedByApplication>' \
           '</premis:creatingApplication>'
-    assert ET.tostring(create) == xml
+    assert u.compare_trees(create, ET.fromstring(xml)) == True
 
 
 def test_object_characteristics():
@@ -64,7 +65,7 @@ def test_object_characteristics():
           '<premis:messageDigestAlgorithm>yyy</premis:messageDigestAlgorithm>' \
           '<premis:messageDigest>xxx</premis:messageDigest>' \
           '</premis:fixity></premis:objectCharacteristics>'
-    assert ET.tostring(oc) == xml
+    assert u.compare_trees(oc, ET.fromstring(xml)) == True
 
 
 def test_relationship():
@@ -77,25 +78,25 @@ def test_relationship():
           'c</premis:relatedObjectIdentifierType><premis:relatedObjectIdentifierValue>' \
           'd</premis:relatedObjectIdentifierValue>' \
           '</premis:relatedObjectIdentification></premis:relationship>'
-    assert ET.tostring(rel) == xml
+    assert u.compare_trees(rel, ET.fromstring(xml)) == True
 
 def test_environment():
     """Test premis_environment"""
-    rel = o.environment(p.identifier('c', 'd'))
+    env = o.environment(p.identifier('c', 'd'))
     xml = '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2"><premis:dependency>' \
           '<premis:dependencyIdentifier><premis:dependencyIdentifierType>' \
           'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>' \
           'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>' \
           '</premis:dependency></premis:environment>'
-    assert ET.tostring(rel) == xml
+    assert u.compare_trees(env, ET.fromstring(xml)) == True
 
-    rel = o.environment(p.identifier('c', 'd', 'dependency'))
+    env = o.environment(p.identifier('c', 'd', 'dependency'))
     xml = '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2"><premis:dependency>' \
           '<premis:dependencyIdentifier><premis:dependencyIdentifierType>' \
           'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>' \
           'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>' \
           '</premis:dependency></premis:environment>'
-    assert ET.tostring(rel) == xml
+    assert u.compare_trees(env, ET.fromstring(xml)) == True
 
 
 def test_object():
@@ -116,8 +117,8 @@ def test_object():
            '<premis:objectIdentifierValue>b</premis:objectIdentifierValue>' \
            '</premis:objectIdentifier></premis:object>'
 
-    assert ET.tostring(obj1) == xml1
-    assert ET.tostring(obj2) == xml2
+    assert u.compare_trees(obj1, ET.fromstring(xml1)) == True
+    assert u.compare_trees(obj2, ET.fromstring(xml2)) == True
 
 
 def test_iter_objects():
@@ -230,7 +231,7 @@ def test_parse_environment():
           'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>' \
           'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>' \
           '</premis:dependency></premis:environment>'
-    assert ET.tostring(penv) == xml
+    assert u.compare_trees(penv, ET.fromstring(xml)) == True
 
 
 def test_parse_dependency():
@@ -244,7 +245,7 @@ def test_parse_dependency():
           'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>' \
           'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>' \
           '</premis:dependency>'
-    assert ET.tostring(dep) == xml
+    assert u.compare_trees(dep, ET.fromstring(xml)) == True
 
 
 def test_parse_relationship():
@@ -260,7 +261,7 @@ def test_parse_relationship():
           'c</premis:relatedObjectIdentifierType><premis:relatedObjectIdentifierValue>' \
           'd</premis:relatedObjectIdentifierValue>' \
           '</premis:relatedObjectIdentification></premis:relationship>'
-    assert ET.tostring(rel2) == xml
+    assert u.compare_trees(rel2, ET.fromstring(xml)) == True
 
 
 def test_parse_relationship_type():

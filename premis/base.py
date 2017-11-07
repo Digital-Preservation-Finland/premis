@@ -11,7 +11,7 @@ References:
 
 
 import lxml.etree as ET
-from xml_helpers.utils import XSI_NS, xsi_ns
+from xml_helpers.utils import XSI_NS, xsi_ns, decode_utf8
 
 PREMIS_NS = 'info:lc/xmlns/premis-v2'
 NAMESPACES = {'premis': PREMIS_NS,
@@ -117,12 +117,12 @@ def identifier(identifier_type, identifier_value, prefix='object'):
 
     _type = _subelement(_identifier, 'IdentifierType', prefix)
     if identifier_type is not None:
-        identifier_type = identifier_type.decode('utf-8')
+        identifier_type = decode_utf8(identifier_type)
     _type.text = identifier_type
 
     _value = _subelement(_identifier, 'IdentifierValue', prefix)
     if identifier_value is not None:
-        identifier_value = identifier_value.decode('utf-8')
+        identifier_value = decode_utf8(identifier_value)
     _value.text = identifier_value
 
     return _identifier
@@ -142,15 +142,15 @@ def parse_identifier_type_value(id_elem, prefix='object'):
             id_elem = id_elem.find(premis_ns('relatedObjectIdentification'))
         if id_elem is not None:
             return (
-                id_elem.find('./' + premis_ns('relatedObjectIdentifierType')).text.encode('utf-8'),
-                id_elem.find('./' + premis_ns('relatedObjectIdentifierValue')).text.encode('utf-8'))
+                id_elem.find('./' + premis_ns('relatedObjectIdentifierType')).text,
+                id_elem.find('./' + premis_ns('relatedObjectIdentifierValue')).text )
         return None
     if id_elem.tag != premis_ns('Identifier', prefix):
         id_elem = id_elem.find(premis_ns('Identifier', prefix))
     if id_elem is not None:
         return (
-            id_elem.find('./' + premis_ns('IdentifierType', prefix)).text.encode('utf-8'),
-            id_elem.find('./' + premis_ns('IdentifierValue', prefix)).text.encode('utf-8'))
+            id_elem.find('./' + premis_ns('IdentifierType', prefix)).text,
+            id_elem.find('./' + premis_ns('IdentifierValue', prefix)).text )
     return None
 
 

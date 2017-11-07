@@ -12,7 +12,7 @@ References:
 
 from premis.base import _element, _subelement, iter_elements, premis_ns, \
     NAMESPACES
-
+from xml_helpers.utils import encode_utf8, decode_utf8
 
 def agent(
         agent_id, agent_name, agent_type, note=None):
@@ -43,14 +43,14 @@ def agent(
     _agent.append(agent_id)
 
     _agent_name = _subelement(_agent, 'agentName')
-    _agent_name.text = agent_name.decode('utf-8')
+    _agent_name.text = decode_utf8(agent_name)
 
     _agent_type = _subelement(_agent, 'agentType')
-    _agent_type.text = agent_type.decode('utf-8')
+    _agent_type.text = decode_utf8(agent_type)
 
     if note is not None:
         _agent_type = _subelement(_agent, 'agentNote')
-        _agent_type.text = note.decode('utf-8')
+        _agent_type.text = decode_utf8(note)
 
     return _agent
 
@@ -76,7 +76,7 @@ def find_agent_by_id(premis, agent_id):
     """
     for elem in iter_agents(premis):
         if elem.findtext( './/' + premis_ns(
-                'agentIdentifierValue')) == agent_id.decode('utf-8'):
+                'agentIdentifierValue')) == decode_utf8(agent_id):
             return elem
 
     return None
@@ -109,15 +109,15 @@ def agents_with_type(agents, agent_type='organization'):
 
 
 def parse_name(agent):
-    return agent.xpath(".//premis:agentName/text()",
-                          namespaces=NAMESPACES)[0].encode("utf-8")
+    return encode_utf8(agent.xpath(".//premis:agentName/text()",
+                                   namespaces=NAMESPACES)[0])
 
 def parse_agent_type(agent):
-    return agent.xpath(".//premis:agentType/text()",
-                          namespaces=NAMESPACES)[0].encode("utf-8")
+    return encode_utf8(agent.xpath(".//premis:agentType/text()",
+                                   namespaces=NAMESPACES)[0])
 
 def parse_note(agent):
-    return agent.xpath(".//premis:agentNote/text()",
-                      namespaces=NAMESPACES)[0].encode("utf-8")
+    return encode_utf8(agent.xpath(".//premis:agentNote/text()",
+                                   namespaces=NAMESPACES)[0])
 
 

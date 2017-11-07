@@ -11,6 +11,8 @@ References:
 
 from premis.base import _element, _subelement, premis_ns, \
     identifier, iter_elements, NAMESPACES
+from xml_helpers.utils import decode_utf8, encode_utf8
+
 
 def outcome(outcome, detail_note=None, detail_extension=None):
     """Create PREMIS event outcome DOM structure.
@@ -35,17 +37,17 @@ def outcome(outcome, detail_note=None, detail_extension=None):
     outcome_information = _element('eventOutcomeInformation')
 
     _outcome = _subelement(outcome_information, 'eventOutcome')
-    _outcome.text = outcome.decode('utf-8')
+    _outcome.text = decode_utf8(outcome)
 
     detail = _subelement(outcome_information, 'eventOutcomeDetail')
 
     if detail_note:
         _detail_note = _subelement(detail, 'eventOutcomeDetailNote')
-        _detail_note.text = detail_note.decode('utf-8')
+        _detail_note.text = decode_utf8(detail_note)
 
     if detail_extension:
         _detail_extension = _subelement(detail, 'eventOutcomeDetailExtension')
-        _detail_extension.text = detail_extension.decode('utf-8')
+        _detail_extension.text = decode_utf8(detail_extension)
 
     return outcome_information
 
@@ -76,7 +78,6 @@ def event(
 
         </premis:event>
 
-
     """
 
     _event = _element('event')
@@ -84,13 +85,13 @@ def event(
     _event.append(event_id)
 
     _event_type = _subelement(_event, 'eventType')
-    _event_type.text = event_type.decode('utf-8')
+    _event_type.text = decode_utf8(event_type)
 
     _event_date_time = _subelement(_event, 'eventDateTime')
-    _event_date_time.text = event_date_time.decode('utf-8')
+    _event_date_time.text = decode_utf8(event_date_time)
 
     _event_detail = _subelement(_event, 'eventDetail')
-    _event_detail.text = event_detail.decode('utf-8')
+    _event_detail.text = decode_utf8(event_detail)
 
     if child_elements:
         for elem in child_elements:
@@ -99,16 +100,16 @@ def event(
     if linking_agents:
         for _agent in linking_agents:
             linking_agent = identifier(
-                _agent.findtext('.//' + premis_ns('agentIdentifierType')).encode('utf-8'),
-                _agent.findtext('.//' + premis_ns('agentIdentifierValue')).encode('utf-8'),
+                _agent.findtext('.//' + premis_ns('agentIdentifierType')),
+                _agent.findtext('.//' + premis_ns('agentIdentifierValue')),
                 'linkingAgent')
             _event.append(linking_agent)
 
     if linking_objects:
         for _object in linking_objects:
             linking_object = identifier(
-                _object.findtext('.//' + premis_ns('objectIdentifierType')).encode('utf-8'),
-                _object.findtext('.//' + premis_ns('objectIdentifierValue')).encode('utf-8'),
+                _object.findtext('.//' + premis_ns('objectIdentifierType')),
+                _object.findtext('.//' + premis_ns('objectIdentifierValue')),
                 'linkingObject')
             _event.append(linking_object)
 
@@ -136,7 +137,7 @@ def find_event_by_id(premis, event_id):
     """
     for elem in iter_events(premis):
         if elem.findtext(
-                './/' + premis_ns('eventIdentifierValue')) == event_id.decode('utf-8'):
+                './/' + premis_ns('eventIdentifierValue')) == decode_utf8(event_id):
             return elem
 
     return None
@@ -163,8 +164,8 @@ def event_with_type_and_detail(events, event_type, event_detail):
     """
 
     for _event in events:
-        _event_type = _event.findtext(premis_ns('eventType')).encode('utf-8')
-        _event_detail = _event.findtext(premis_ns('eventDetail')).encode('utf-8')
+        _event_type = encode_utf8(_event.findtext(premis_ns('eventType')))
+        _event_detail = encode_utf8(_event.findtext(premis_ns('eventDetail')))
 
         if _event_type == event_type and _event_detail == event_detail:
             yield _event
@@ -179,54 +180,54 @@ def events_with_outcome(events, outcome):
 
     """
     for _event in events:
-        _event_outcome = _event.findtext('/'.join([
+        _event_outcome = encode_utf8(_event.findtext('/'.join([
             premis_ns('eventOutcomeInformation'),
-            premis_ns('eventOutcome')])).encode("utf-8")
+            premis_ns('eventOutcome')])))
         if _event_outcome == outcome:
             yield _event
 
 
 def parse_event_type(event_elem):
     try:
-        return event_elem.xpath(".//premis:eventType/text()",
-                                namespaces=NAMESPACES)[0].encode("utf-8")
+        return encode_utf8(event_elem.xpath(".//premis:eventType/text()",
+                                            namespaces=NAMESPACES)[0])
     except IndexError:
         return ""
 
 
 def parse_datetime(event_elem):
-    return event_elem.xpath(".//premis:eventDateTime/text()",
-                            namespaces=NAMESPACES)[0].encode("utf-8")
+    return encode_utf8(event_elem.xpath(".//premis:eventDateTime/text()",
+                            namespaces=NAMESPACES)[0])
 
 
 def parse_detail(event_elem):
     try:
-        return event_elem.xpath(".//premis:eventDetail/text()",
-                                namespaces=NAMESPACES)[0].encode("utf-8")
+        return encode_utf8(event_elem.xpath(".//premis:eventDetail/text()",
+                                namespaces=NAMESPACES)[0])
     except IndexError:
         return ""
 
 
 def parse_outcome(event_elem):
-    return event_elem.xpath(
+    return encode_utf8(event_elem.xpath(
         ".//premis:eventOutcomeInformation/premis:eventOutcome/text()",
-                      namespaces=NAMESPACES)[0].encode("utf-8")
+                      namespaces=NAMESPACES)[0])
 
 
 def parse_outcome_detail_note(event_elem):
     try:
-        return event_elem.xpath(
+        return encode_utf8(event_elem.xpath(
             ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailNote/text()",
-                          namespaces=NAMESPACES)[0].encode("utf-8")
+                          namespaces=NAMESPACES)[0])
     except IndexError:
         return ""
 
 
 def parse_outcome_detail_extension(event_elem):
     try:
-        return event_elem.xpath(
+        return encode_utf8(event_elem.xpath(
             ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailExtension/text()",
-                namespaces=NAMESPACES)[0].encode("utf-8")
+                namespaces=NAMESPACES)[0])
     except IndexError:
         return ""
 

@@ -17,7 +17,11 @@ Install the required software with command::
 Usage
 -----
 
-All the functions can be used with calling premis.<function>.
+Import the library with::
+
+    import premis
+
+All the functions can now be used with calling premis.<function>.
 
 For example, the fixity() function in object_base.py can be used with::
     

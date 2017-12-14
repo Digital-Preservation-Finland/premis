@@ -4,6 +4,7 @@ import lxml.etree as ET
 import xml_helpers.utils as u
 import premis.base as p
 import premis.event_base as e
+from pytest import raises
 
 def test_outcome():
     """Test event_outcome"""
@@ -93,6 +94,22 @@ def test_events_with_outcome():
         i = i + 1
     assert i == 2
 
+def test_outcome_extension():
+    """Test that event outcome with XML extension works"""
+    tree = ET.fromstring('<xxx />')
+    xml = '<premis:eventOutcomeInformation xmlns:premis="info:lc/xmlns/premis-v2">' \
+          '<premis:eventOutcome>success</premis:eventOutcome>' \
+          '<premis:eventOutcomeDetail><premis:eventOutcomeDetailExtension><xxx />' \
+          '</premis:eventOutcomeDetailExtension></premis:eventOutcomeDetail>' \
+          '</premis:eventOutcomeInformation>'
+    event = ET.fromstring(xml)
+    # Should fail, because detail_extension must not be string
+    with raises(TypeError) as excinfo:
+        e.outcome('success', detail_extension='<xxx />')
+    # Should work with XML tree or list of XML trees
+    assert u.compare_trees(e.outcome('success', detail_extension=tree), event)
+    assert u.compare_trees(e.outcome('success', detail_extension=[tree]), event)
+
 
 def test_parse_event_type():
     """Test parse_event_type"""
@@ -114,21 +131,24 @@ def test_parse_detail():
 
 def test_parse_outcome():
     """Test parse_outcome"""
-    outcome = e.outcome('success', detail_note='xxx', detail_extension='<xxx />')
+    tree = ET.fromstring('<xxx />')
+    outcome = e.outcome('success', detail_note='xxx', detail_extension=tree)
     event = e.event(p.identifier('a', 'b', 'event'), 'tyyppi', '2012-12-12T12:12:12', 'detaili', child_elements=[outcome])
     assert e.parse_outcome(event) == 'success'
 
 
 def test_parse_outcome_detail_note():
     """Test parse_outcome_detail_note"""
-    outcome = e.outcome('success', detail_note='xxx', detail_extension='<xxx />')
+    tree = ET.fromstring('<xxx />')
+    outcome = e.outcome('success', detail_note='xxx', detail_extension=tree)
     event = e.event(p.identifier('a', 'b', 'event'), 'tyyppi', '2012-12-12T12:12:12', 'detaili', child_elements=[outcome])
     assert e.parse_outcome_detail_note(event) == 'xxx'
 
 
 def test_parse_outcome_detail_extension():
     """Test parse_outcome_detail_extension"""
-    outcome = e.outcome('success', detail_note='xxx', detail_extension='<xxx />')
+    tree = ET.fromstring('<xxx />')
+    outcome = e.outcome('success', detail_note='xxx', detail_extension=tree)
     event = e.event(p.identifier('a', 'b', 'event'), 'tyyppi', '2012-12-12T12:12:12', 'detaili', child_elements=[outcome])
-    assert e.parse_outcome_detail_extension(event) == '<xxx />'
+    assert u.compare_trees(e.parse_outcome_detail_extension(event)[0], tree)
 

@@ -8,7 +8,8 @@ References:
     https://docs.python.org/2.6/library/xml.etree.elementtree.html
 
 """
-
+import lxml.etree
+from copy import deepcopy
 from premis.base import _element, _subelement, premis_ns, \
     identifier, iter_elements, NAMESPACES
 from xml_helpers.utils import decode_utf8, encode_utf8
@@ -41,13 +42,20 @@ def outcome(outcome, detail_note=None, detail_extension=None):
 
     detail = _subelement(outcome_information, 'eventOutcomeDetail')
 
-    if detail_note:
+    if detail_note is not None:
         _detail_note = _subelement(detail, 'eventOutcomeDetailNote')
         _detail_note.text = decode_utf8(detail_note)
 
-    if detail_extension:
-        _detail_extension = _subelement(detail, 'eventOutcomeDetailExtension')
-        _detail_extension.text = decode_utf8(detail_extension)
+    if detail_extension is not None:
+        if type(detail_extension) is list:
+            _detail_extension = _subelement(detail, 'eventOutcomeDetailExtension')
+            for ext in detail_extension:
+                _detail_extension.append(ext)
+        elif lxml.etree.iselement(detail_extension):
+            _detail_extension = _subelement(detail, 'eventOutcomeDetailExtension')
+            _detail_extension.append(detail_extension)
+        else:
+            raise TypeError
 
     return outcome_information
 
@@ -224,10 +232,10 @@ def parse_outcome_detail_note(event_elem):
 
 
 def parse_outcome_detail_extension(event_elem):
-    try:
-        return encode_utf8(event_elem.xpath(
-            ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailExtension/text()",
-                namespaces=NAMESPACES)[0])
-    except IndexError:
-        return ""
+    detail_extension = []
+    for ext in event_elem.findall(
+        ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailExtension/*",
+            namespaces=NAMESPACES):
+        detail_extension.append(deepcopy(ext))
+    return detail_extension
 

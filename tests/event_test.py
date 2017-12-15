@@ -147,8 +147,10 @@ def test_parse_outcome_detail_note():
 
 def test_parse_outcome_detail_extension():
     """Test parse_outcome_detail_extension"""
-    tree = ET.fromstring('<xxx />')
-    outcome = e.outcome('success', detail_note='xxx', detail_extension=tree)
+    xml = '<premis:eventOutcomeDetailExtension xmlns:premis="info:lc/xmlns/premis-v2">' \
+          '<xxx /></premis:eventOutcomeDetailExtension>'
+    tree = ET.fromstring(xml)
+    outcome = e.outcome('success', detail_note='xxx', detail_extension=ET.fromstring('<xxx />'))
     event = e.event(p.identifier('a', 'b', 'event'), 'tyyppi', '2012-12-12T12:12:12', 'detaili', child_elements=[outcome])
-    assert u.compare_trees(e.parse_outcome_detail_extension(event)[0], tree)
+    assert u.compare_trees(e.parse_outcome_detail_extension(event), tree)
 

@@ -219,23 +219,21 @@ def parse_detail(event_elem):
 def parse_outcome(event_elem):
     return encode_utf8(event_elem.xpath(
         ".//premis:eventOutcomeInformation/premis:eventOutcome/text()",
-                      namespaces=NAMESPACES)[0])
+                       namespaces=NAMESPACES)[0])
 
 
 def parse_outcome_detail_note(event_elem):
     try:
         return encode_utf8(event_elem.xpath(
             ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailNote/text()",
-                          namespaces=NAMESPACES)[0])
+                           namespaces=NAMESPACES)[0])
     except IndexError:
         return ""
 
 
 def parse_outcome_detail_extension(event_elem):
     detail_extension = []
-    for ext in event_elem.findall(
-        ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailExtension/*",
-            namespaces=NAMESPACES):
-        detail_extension.append(deepcopy(ext))
-    return detail_extension
+    return event_elem.find(
+        ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailExtension",
+        namespaces=NAMESPACES)
 

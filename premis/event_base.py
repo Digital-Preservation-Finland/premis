@@ -15,7 +15,8 @@ from premis.base import _element, _subelement, premis_ns, \
 from xml_helpers.utils import decode_utf8, encode_utf8
 
 
-def outcome(outcome, detail_note=None, detail_extension=None):
+def outcome(outcome, detail_note=None, detail_extension=None,
+            remove_wrapper=False):
     """Create PREMIS event outcome DOM structure.
 
     :outcome: Event outcome (success, failure)
@@ -47,15 +48,12 @@ def outcome(outcome, detail_note=None, detail_extension=None):
         _detail_note.text = decode_utf8(detail_note)
 
     if detail_extension is not None:
-        if type(detail_extension) is list:
-            _detail_extension = _subelement(detail, 'eventOutcomeDetailExtension')
-            for ext in detail_extension:
-                _detail_extension.append(ext)
-        elif lxml.etree.iselement(detail_extension):
-            _detail_extension = _subelement(detail, 'eventOutcomeDetailExtension')
-            _detail_extension.append(detail_extension)
+        _detail_extension = _subelement(detail, 'eventOutcomeDetailExtension')
+        if remove_wrapper:
+             for extension in detail_extension:
+                 _detail_extension.append(extension)
         else:
-            raise TypeError
+             _detail_extension.append(detail_extension)
 
     return outcome_information
 

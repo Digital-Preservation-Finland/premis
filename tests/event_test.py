@@ -106,9 +106,13 @@ def test_outcome_extension():
     # Should fail, because detail_extension must not be string
     with raises(TypeError) as excinfo:
         e.outcome('success', detail_extension='<xxx />')
-    # Should work with XML tree or list of XML trees
+    # Should work with XML tree
     assert u.compare_trees(e.outcome('success', detail_extension=tree), event)
-    assert u.compare_trees(e.outcome('success', detail_extension=[tree]), event)
+
+    # Should work with removable wrapper
+    tree2 = ET.fromstring('<Wrapper />')
+    tree2.append(tree)
+    assert u.compare_trees(e.outcome('success', detail_extension=tree2, remove_wrapper=True), event)
 
 
 def test_parse_event_type():

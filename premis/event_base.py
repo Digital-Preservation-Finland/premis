@@ -230,7 +230,6 @@ def parse_outcome_detail_note(event_elem):
 
 
 def parse_outcome_detail_extension(event_elem):
-    detail_extension = []
     return event_elem.find(
         ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailExtension",
         namespaces=NAMESPACES)

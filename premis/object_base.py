@@ -324,6 +324,8 @@ def parse_format(obj):
                                namespaces=NAMESPACES)
     if len(format_version) > 0:
         format_version = encode_utf8(format_version[0].text)
+    else:
+        format_version = None
     return (format_name, format_version)
 
 

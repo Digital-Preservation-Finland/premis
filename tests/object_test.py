@@ -214,6 +214,15 @@ def test_parse_format():
     assert o.parse_format(obj) == ('xxx', 'yyy')
 
 
+def test_parse_format_noversion():
+    """Test parse_format"""
+    fd = o.format_designation('xxx')
+    form = o.format(child_elements=[fd])
+    oc = o.object_characteristics(child_elements=[form])
+    obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[oc])
+    assert o.parse_format(obj) == ('xxx', None)
+
+
 def test_parse_original_name():
     """Test parse_original_name"""
     obj = o.object(p.identifier('x', 'y', 'object'), original_name='aaa')

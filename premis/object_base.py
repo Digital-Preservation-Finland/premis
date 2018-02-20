@@ -309,6 +309,11 @@ def objects_with_type(objects, object_identifier_type):
             yield _object
 
 
+def parse_object_type(obj):
+    return encode_utf8(obj.xpath('./@xsi:type',
+                       namespaces=NAMESPACES)[0])
+
+
 def parse_fixity(obj):
     algorithm = encode_utf8(obj.xpath(".//premis:messageDigestAlgorithm",
                                       namespaces=NAMESPACES)[0].text)

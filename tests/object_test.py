@@ -197,6 +197,12 @@ def test_objects_with_type():
     assert i == 2
 
 
+def test_parse_object_type():
+    """Test parse_object_type"""
+    obj = o.object(p.identifier('x', 'y', 'object'), representation=True)
+    assert o.parse_object_type(obj).endswith('representation')
+
+
 def test_parse_fixity():
     """Test parse_fixity"""
     fixity = o.fixity('xxx', 'yyy')

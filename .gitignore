@@ -24,3 +24,4 @@ Thumbs.db
 rpmbuild
 .venv/
 junit*.xml
+.pytest_cache

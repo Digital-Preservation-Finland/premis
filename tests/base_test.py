@@ -68,7 +68,7 @@ def test_premis():
     """Test PREMIS root generation"""
     tree = ET.tostring(p.premis())
     xml = """<premis:premis
-             xsi:schemaLocation="info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/premis.xsd"
+             xsi:schemaLocation="info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/v2/premis-v2-3.xsd"
              xmlns:premis = "info:lc/xmlns/premis-v2"
              xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
              version="2.2"/>"""

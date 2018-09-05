@@ -166,7 +166,7 @@ def premis(child_elements=None, namespaces=NAMESPACES):
             xmlns:premis="info:lc/xmlns/premis-v2"
             xmlns:xsi="http://www.w3.org/2001/xmlschema-instance"
             xsi:schemalocation="info:lc/xmlns/premis-v2
-                                http://www.loc.gov/standards/premis/premis.xsd"
+                                http://www.loc.gov/standards/premis/v2/premis-v2-3.xsd"
             version="2.2">
 
     """
@@ -174,7 +174,7 @@ def premis(child_elements=None, namespaces=NAMESPACES):
     _premis.set(
         xsi_ns('schemaLocation'),
         'info:lc/xmlns/premis-v2 '
-        'http://www.loc.gov/standards/premis/premis.xsd')
+        'http://www.loc.gov/standards/premis/v2/premis-v2-3.xsd')
     _premis.set('version', '2.2')
 
     if child_elements:

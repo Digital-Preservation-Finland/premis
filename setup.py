@@ -1,6 +1,7 @@
 """Install premis """
 
 from setuptools import setup, find_packages
+from version import get_version
 
 
 def main():
@@ -8,7 +9,7 @@ def main():
     setup(
         name='premis',
         packages=find_packages(exclude=['tests', 'tests.*']),
-        version='0.1',
+        version=get_version(),
         install_requires=['lxml', 'xml-helpers'],
         dependency_links=[
             'git+https://gitlab.csc.fi/dpres/xml-helpers.git'

@@ -35,6 +35,15 @@ def format_designation(format_name, format_version=None):
     return format_designation_el
 
 
+def format_registry(registry_name, registry_key):
+    format_registry_el = _element('formatRegistry')
+    registry_name_el = _subelement(format_registry_el, 'formatRegistryName')
+    registry_name_el.text = decode_utf8(registry_name)
+    registry_key_el = _subelement(format_registry_el, 'formatRegistryKey')
+    registry_key_el.text = decode_utf8(registry_key)
+    return format_registry_el
+
+
 def format(child_elements=None):
     format_el = _element('format')
     if child_elements:
@@ -332,6 +341,16 @@ def parse_format(obj):
     else:
         format_version = None
     return (format_name, format_version)
+
+
+def parse_format_registry(obj):
+    format_registry_name = encode_utf8(
+        obj.xpath(".//premis:formatRegistryName",
+                  namespaces=NAMESPACES)[0].text)
+    format_registry_key = encode_utf8(
+        obj.xpath(".//premis:formatRegistryKey",
+                  namespaces=NAMESPACES)[0].text)
+    return (format_registry_name, format_registry_key)
 
 
 def parse_original_name(premis_object):

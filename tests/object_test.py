@@ -26,6 +26,16 @@ def test_format_designation():
     assert u.compare_trees(fd, ET.fromstring(xml)) == True
 
 
+def test_format_registry():
+    """Test format_registry"""
+    fd = o.format_registry('xxx', 'yyy')
+    xml = '<premis:formatRegistry xmlns:premis="info:lc/xmlns/premis-v2">' \
+          '<premis:formatRegistryName>xxx</premis:formatRegistryName>' \
+          '<premis:formatRegistryKey>yyy</premis:formatRegistryKey>' \
+          '</premis:formatRegistry>'
+    assert u.compare_trees(fd, ET.fromstring(xml)) == True
+
+
 def test_format():
     """Test format"""
     fd = o.format_designation('xxx', 'yyy')
@@ -227,6 +237,15 @@ def test_parse_format_noversion():
     oc = o.object_characteristics(child_elements=[form])
     obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[oc])
     assert o.parse_format(obj) == ('xxx', None)
+
+
+def test_parse_format_registry():
+    """Test parse_format"""
+    fd = o.format_registry('xxx','yyy')
+    form = o.format(child_elements=[fd])
+    oc = o.object_characteristics(child_elements=[form])
+    obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[oc])
+    assert o.parse_format_registry(obj) == ('xxx', 'yyy')
 
 
 def test_parse_original_name():

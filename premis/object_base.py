@@ -176,14 +176,16 @@ def object(
         object_id,
         original_name=None,
         child_elements=None,
-        representation=False):
+        representation=False,
+        bitstream=False):
 
     """Return the PREMIS object.
 
         :object_id: PREMIS identifier
         :original_name: Original name field
         :child_elements=None: Any other element appended
-        :representation=False:
+        :representation=False: If true, representation object
+        :bitstream=False: If true, bitstream object
 
     Returns the following ElementTree structure::
 
@@ -205,6 +207,8 @@ def object(
 
     if representation:
         _object.set(xsi_ns('type'), 'premis:representation')
+    elif bitstream:
+        _object.set(xsi_ns('type'), 'premis:bitstream')
     else:
         _object.set(xsi_ns('type'), 'premis:file')
 

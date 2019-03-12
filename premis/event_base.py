@@ -13,11 +13,11 @@ from premis.base import (_element, _subelement, premis_ns, identifier,
                          iter_elements, NAMESPACES)
 
 
-def outcome(outcome_result, detail_note=None, detail_extension=None,
+def outcome(outcome, detail_note=None, detail_extension=None,
             remove_wrapper=False):
     """Create PREMIS event outcome DOM structure.
 
-    :param outcome_result: Event outcome (success, failure)
+    :param outcome: Event outcome (success, failure)
     :param detail_note: Description for the event outcome
 
     Returns the following ElementTree structure::
@@ -37,7 +37,7 @@ def outcome(outcome_result, detail_note=None, detail_extension=None,
     outcome_information = _element('eventOutcomeInformation')
 
     _outcome = _subelement(outcome_information, 'eventOutcome')
-    _outcome.text = decode_utf8(outcome_result)
+    _outcome.text = decode_utf8(outcome)
 
     detail = _subelement(outcome_information, 'eventOutcomeDetail')
 

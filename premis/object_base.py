@@ -9,12 +9,18 @@ References:
 
 """
 
-
-from premis.base import _element, _subelement, premis_ns, \
-    identifier, parse_identifier_type_value, iter_elements, xsi_ns, XSI_NS, NAMESPACES
 from xml_helpers.utils import encode_utf8, decode_utf8
+from premis.base import (_element, _subelement, premis_ns, identifier,
+                         parse_identifier_type_value, iter_elements, xsi_ns,
+                         XSI_NS, NAMESPACES)
+
 
 def fixity(message_digest, digest_algorithm='MD5'):
+    """
+    :param message_digest:
+    :param digest_algorithm:
+    :return: Element object for fixity.
+    """
     fixity_el = _element('fixity')
     fixity_algorithm = _subelement(
         fixity_el, 'messageDigestAlgorithm')
@@ -25,6 +31,11 @@ def fixity(message_digest, digest_algorithm='MD5'):
 
 
 def format_designation(format_name, format_version=None):
+    """
+    :param format_name:
+    :param format_version:
+    :return: Element object for format designation.
+    """
     format_designation_el = _element('formatDesignation')
     format_name_el = _subelement(format_designation_el, 'formatName')
     format_name_el.text = decode_utf8(format_name)
@@ -36,6 +47,11 @@ def format_designation(format_name, format_version=None):
 
 
 def format_registry(registry_name, registry_key):
+    """
+    :param registry_name:
+    :param registry_key:
+    :return: Element object for format registry.
+    """
     format_registry_el = _element('formatRegistry')
     registry_name_el = _subelement(format_registry_el, 'formatRegistryName')
     registry_name_el.text = decode_utf8(registry_name)
@@ -45,6 +61,10 @@ def format_registry(registry_name, registry_key):
 
 
 def format(child_elements=None):
+    """
+    :param child_elements:
+    :return: Element object for format.
+    """
     format_el = _element('format')
     if child_elements:
         for elem in child_elements:
@@ -53,12 +73,20 @@ def format(child_elements=None):
 
 
 def date_created(date):
+    """
+    :param date:
+    :return: Element object for date created.
+    """
     date_el = _element('dateCreatedByApplication')
     date_el.text = decode_utf8(date)
     return date_el
 
 
 def creating_application(child_elements=None):
+    """
+    :param child_elements:
+    :return: Element object for creating application.
+    """
     creating_app = _element('creatingApplication')
     if child_elements:
         for elem in child_elements:
@@ -67,6 +95,11 @@ def creating_application(child_elements=None):
 
 
 def object_characteristics(composition_level='0', child_elements=None):
+    """
+    :param composition_level:
+    :param child_elements:
+    :return: Element object for object characteristics.
+    """
     object_char = _element('objectCharacteristics')
 
     composition = _subelement(
@@ -81,7 +114,6 @@ def object_characteristics(composition_level='0', child_elements=None):
 def relationship(
         relationship_type, relationship_subtype,
         related_object):
-
     """Create PREMIS relationship DOM segment.
 
     :relationship_type: Relationship type from PREMIS vocabulary
@@ -200,7 +232,6 @@ def object(
         child_elements=None,
         representation=False,
         bitstream=False):
-
     """Return the PREMIS object.
 
         :object_id: PREMIS identifier
@@ -223,7 +254,7 @@ def object(
 
     """
 
-    _object = _element('object', ns={'xsi': XSI_NS})
+    _object = _element('object', namespace={'xsi': XSI_NS})
 
     _object.append(object_id)
 
@@ -300,8 +331,9 @@ def contains_object(object_element, search_from_element):
 
     """
 
-    key_identifier_value = iter_elements(
-        object_element, 'objectIdentifierValue').next()
+    key_identifier_value = next(
+        iter_elements(object_element, 'objectIdentifierValue')
+    )
 
     # Unfortunately Python 2.6 ElementTree does not support xpath search by
     # element value so we have to search with for-loop
@@ -345,11 +377,19 @@ def objects_with_type(objects, object_identifier_type):
 
 
 def parse_object_type(obj):
+    """
+    :param obj:
+    :return: String
+    """
     return encode_utf8(obj.xpath('./@xsi:type',
-                       namespaces=NAMESPACES)[0])
+                                 namespaces=NAMESPACES)[0])
 
 
 def parse_fixity(obj):
+    """
+    :param obj:
+    :return: Tuple of strings to represent algorithm and digest.
+    """
     algorithm = encode_utf8(obj.xpath(".//premis:messageDigestAlgorithm",
                                       namespaces=NAMESPACES)[0].text)
     digest = encode_utf8(obj.xpath(".//premis:messageDigest",
@@ -358,11 +398,15 @@ def parse_fixity(obj):
 
 
 def parse_format(obj):
+    """
+    :param obj:
+    :return: Tuple of strings to represent format name and version.
+    """
     format_name = encode_utf8(obj.xpath(".//premis:formatName",
                                         namespaces=NAMESPACES)[0].text)
     format_version = obj.xpath(".//premis:formatVersion",
                                namespaces=NAMESPACES)
-    if len(format_version) > 0:
+    if format_version:
         format_version = encode_utf8(format_version[0].text)
     else:
         format_version = None
@@ -370,6 +414,10 @@ def parse_format(obj):
 
 
 def parse_format_registry(obj):
+    """
+    :param obj:
+    :return: Tuple of strings to represent format registry name and key.
+    """
     format_registry_name = encode_utf8(
         obj.xpath(".//premis:formatRegistryName",
                   namespaces=NAMESPACES)[0].text)
@@ -380,18 +428,31 @@ def parse_format_registry(obj):
 
 
 def parse_original_name(premis_object):
+    """
+    :param premis_object:
+    :return: String
+    """
     return encode_utf8(premis_object.xpath(".//premis:originalName/text()",
                                            namespaces=NAMESPACES)[0])
 
 
 def parse_environment(premis_elem):
+    """
+    :param premis_elem:
+    :return: String
+    """
     try:
         return premis_elem.xpath(".//premis:environment",
                                  namespaces=NAMESPACES)[0]
     except IndexError:
         return ""
 
+
 def parse_dependency(premis_elem):
+    """
+    :param premis_elem:
+    :return: String
+    """
     try:
         return list(iter_elements(premis_elem, 'dependency'))
     except IndexError:
@@ -399,6 +460,10 @@ def parse_dependency(premis_elem):
 
 
 def parse_relationship(premis_elem):
+    """
+    :param premis_elem:
+    :return: String
+    """
     try:
         return premis_elem.xpath(".//premis:relationship",
                                  namespaces=NAMESPACES)[0]
@@ -407,6 +472,10 @@ def parse_relationship(premis_elem):
 
 
 def parse_relationship_type(premis_elem):
+    """
+    :param premis_elem:
+    :return: String
+    """
     try:
         return encode_utf8(premis_elem.xpath(
             ".//premis:relationshipType/text()",
@@ -414,7 +483,12 @@ def parse_relationship_type(premis_elem):
     except IndexError:
         return ""
 
+
 def parse_relationship_subtype(premis_elem):
+    """
+    :param premis_elem:
+    :return: String
+    """
     try:
         return encode_utf8(premis_elem.xpath(
             ".//premis:relationshipSubType/text()",

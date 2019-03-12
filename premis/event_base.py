@@ -8,19 +8,17 @@ References:
     https://docs.python.org/2.6/library/xml.etree.elementtree.html
 
 """
-import lxml.etree
-from copy import deepcopy
-from premis.base import _element, _subelement, premis_ns, \
-    identifier, iter_elements, NAMESPACES
 from xml_helpers.utils import decode_utf8, encode_utf8
+from premis.base import (_element, _subelement, premis_ns, identifier,
+                         iter_elements, NAMESPACES)
 
 
-def outcome(outcome, detail_note=None, detail_extension=None,
+def outcome(outcome_result, detail_note=None, detail_extension=None,
             remove_wrapper=False):
     """Create PREMIS event outcome DOM structure.
 
-    :outcome: Event outcome (success, failure)
-    :detail_note: Description for the event outcome
+    :param outcome_result: Event outcome (success, failure)
+    :param detail_note: Description for the event outcome
 
     Returns the following ElementTree structure::
 
@@ -39,7 +37,7 @@ def outcome(outcome, detail_note=None, detail_extension=None,
     outcome_information = _element('eventOutcomeInformation')
 
     _outcome = _subelement(outcome_information, 'eventOutcome')
-    _outcome.text = decode_utf8(outcome)
+    _outcome.text = decode_utf8(outcome_result)
 
     detail = _subelement(outcome_information, 'eventOutcomeDetail')
 
@@ -50,17 +48,18 @@ def outcome(outcome, detail_note=None, detail_extension=None,
     if detail_extension is not None:
         _detail_extension = _subelement(detail, 'eventOutcomeDetailExtension')
         if remove_wrapper:
-             for extension in detail_extension:
-                 _detail_extension.append(extension)
+            for extension in detail_extension:
+                _detail_extension.append(extension)
         else:
-             _detail_extension.append(detail_extension)
+            _detail_extension.append(detail_extension)
 
     return outcome_information
 
 
-def event(
-        event_id, event_type, event_date_time, event_detail,
-        child_elements=None, linking_objects=None, linking_agents=None):
+# pylint: disable=too-many-arguments, too-many-locals
+# too-many-arguments: The given arguments are used to form the Element obj.
+def event(event_id, event_type, event_date_time, event_detail,
+          child_elements=None, linking_objects=None, linking_agents=None):
     """Create PREMIS event element.
 
     :event_id: PREMIS event identifier
@@ -141,9 +140,9 @@ def find_event_by_id(premis, event_id):
 
     :returns: Element if found, None otherwise
     """
+    _e_id = decode_utf8(event_id)
     for elem in iter_events(premis):
-        if elem.findtext(
-                './/' + premis_ns('eventIdentifierValue')) == decode_utf8(event_id):
+        if elem.findtext('.//' + premis_ns('eventIdentifierValue')) == _e_id:
             return elem
 
     return None
@@ -177,11 +176,11 @@ def event_with_type_and_detail(events, event_type, event_detail):
             yield _event
 
 
-def events_with_outcome(events, outcome):
+def events_with_outcome(events, outcome_result):
     """Iterate over all events with given outcome
 
-    :events: Iterable of events
-    :outcome: Return all events that has the outcome
+    :param events: Iterable of events
+    :param outcome_result: Return all events that has the outcome
     :returns: Iterable of events
 
     """
@@ -189,11 +188,15 @@ def events_with_outcome(events, outcome):
         _event_outcome = encode_utf8(_event.findtext('/'.join([
             premis_ns('eventOutcomeInformation'),
             premis_ns('eventOutcome')])))
-        if _event_outcome == outcome:
+        if _event_outcome == outcome_result:
             yield _event
 
 
 def parse_event_type(event_elem):
+    """
+    :param event_elem: Premis event element.
+    :return: String
+    """
     try:
         return encode_utf8(event_elem.xpath(".//premis:eventType/text()",
                                             namespaces=NAMESPACES)[0])
@@ -202,35 +205,56 @@ def parse_event_type(event_elem):
 
 
 def parse_datetime(event_elem):
+    """
+    :param event_elem: Premis event element.
+    :return: String
+    """
     return encode_utf8(event_elem.xpath(".//premis:eventDateTime/text()",
-                            namespaces=NAMESPACES)[0])
+                                        namespaces=NAMESPACES)[0])
 
 
 def parse_detail(event_elem):
+    """
+    :param event_elem: Premis event element.
+    :return: String
+    """
     try:
         return encode_utf8(event_elem.xpath(".//premis:eventDetail/text()",
-                                namespaces=NAMESPACES)[0])
+                                            namespaces=NAMESPACES)[0])
     except IndexError:
         return ""
 
 
 def parse_outcome(event_elem):
+    """
+    :param event_elem: Premis event element.
+    :return: String
+    """
     return encode_utf8(event_elem.xpath(
         ".//premis:eventOutcomeInformation/premis:eventOutcome/text()",
-                       namespaces=NAMESPACES)[0])
+        namespaces=NAMESPACES)[0])
 
 
 def parse_outcome_detail_note(event_elem):
+    """
+    :param event_elem: Premis event element.
+    :return: String
+    """
     try:
         return encode_utf8(event_elem.xpath(
-            ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailNote/text()",
-                           namespaces=NAMESPACES)[0])
+            (".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/"
+             "premis:eventOutcomeDetailNote/text()"),
+            namespaces=NAMESPACES)[0])
     except IndexError:
         return ""
 
 
 def parse_outcome_detail_extension(event_elem):
+    """
+    :param event_elem: Premis event element.
+    :return: String
+    """
     return event_elem.find(
-        ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/premis:eventOutcomeDetailExtension",
+        (".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/"
+         "premis:eventOutcomeDetailExtension"),
         namespaces=NAMESPACES)
-

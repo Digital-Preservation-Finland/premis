@@ -9,13 +9,12 @@ References:
 
 """
 
-
-from premis.base import _element, _subelement, iter_elements, premis_ns, \
-    NAMESPACES
 from xml_helpers.utils import encode_utf8, decode_utf8
+from premis.base import (_element, _subelement, iter_elements, premis_ns,
+                         NAMESPACES)
 
-def agent(
-        agent_id, agent_name, agent_type, note=None):
+
+def agent(agent_id, agent_name, agent_type, note=None):
     """Returns PREMIS agent element
 
     :agent_id: PREMIS identifier for the agent
@@ -75,7 +74,7 @@ def find_agent_by_id(premis, agent_id):
     :returns: Element if found, None otherwise
     """
     for elem in iter_agents(premis):
-        if elem.findtext( './/' + premis_ns(
+        if elem.findtext('.//' + premis_ns(
                 'agentIdentifierValue')) == decode_utf8(agent_id):
             return elem
 
@@ -108,16 +107,28 @@ def agents_with_type(agents, agent_type='organization'):
             yield (agent_type, agent_name)
 
 
-def parse_name(agent):
-    return encode_utf8(agent.xpath(".//premis:agentName/text()",
-                                   namespaces=NAMESPACES)[0])
-
-def parse_agent_type(agent):
-    return encode_utf8(agent.xpath(".//premis:agentType/text()",
-                                   namespaces=NAMESPACES)[0])
-
-def parse_note(agent):
-    return encode_utf8(agent.xpath(".//premis:agentNote/text()",
-                                   namespaces=NAMESPACES)[0])
+def parse_name(agent_elem):
+    """
+    :param agent_elem: Agent Element object.
+    :return: String
+    """
+    return encode_utf8(agent_elem.xpath(".//premis:agentName/text()",
+                                        namespaces=NAMESPACES)[0])
 
 
+def parse_agent_type(agent_elem):
+    """
+    :param agent_elem: Agent Element object.
+    :return: String
+    """
+    return encode_utf8(agent_elem.xpath(".//premis:agentType/text()",
+                                        namespaces=NAMESPACES)[0])
+
+
+def parse_note(agent_elem):
+    """
+    :param agent_elem: Agent Element object.
+    :return: String
+    """
+    return encode_utf8(agent_elem.xpath(".//premis:agentNote/text()",
+                                        namespaces=NAMESPACES)[0])

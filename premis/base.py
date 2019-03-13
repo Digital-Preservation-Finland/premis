@@ -31,9 +31,10 @@ def premis_ns(tag, prefix=""):
     return '{%s}%s' % (PREMIS_NS, tag)
 
 
-# TODO: Rename this element when refactoring, because this is used in other
-#       modules as well.
-def _element(tag, prefix="", namespace=None):
+# TODO: Rename this element when doing actual refactoring,
+#       because this is used in other modules as well.
+# TODO: When doing actual refactoring, resolve redefined-outer-name warning.
+def _element(tag, prefix="", ns=None):
     """Return _ElementInterface with PREMIS namespace.
 
     Prefix parameter is useful for adding prefixed to lower case tags. It just
@@ -45,33 +46,34 @@ def _element(tag, prefix="", namespace=None):
 
     :param tag: Tagname
     :param prefix: Prefix for the tag (default="")
-    :param namespace: Optional namespace for the element
+    :param ns: Optional namespace for the element
     :returns: ElementTree element object
 
     """
-    if namespace is None:
-        namespace = {}
-    namespace['premis'] = PREMIS_NS
-    return ET.Element(premis_ns(tag, prefix), nsmap=namespace)
+    if ns is None:
+        ns = {}
+    ns['premis'] = PREMIS_NS
+    return ET.Element(premis_ns(tag, prefix), nsmap=ns)
 
 
 # TODO: Rename this element when doing actual refactoring,
 #       because this is used in other modules as well.
-def _subelement(parent, tag, prefix="", namespace=None):
+# TODO: When doing actual refactoring, resolve redefined-outer-name warning.
+def _subelement(parent, tag, prefix="", ns=None):
     """Return subelement for the given parent element. Created element is
     appended to parent element.
 
     :param parent: Parent element
     :param tag: Element tagname
     :param prefix: Prefix for the tag
-    :param namespace: Optional namespace for the element
+    :param ns: Optional namespace for the element
     :returns: Created subelement
 
     """
-    if namespace is None:
-        namespace = {}
-    namespace['premis'] = PREMIS_NS
-    return ET.SubElement(parent, premis_ns(tag, prefix), nsmap=namespace)
+    if ns is None:
+        ns = {}
+    ns['premis'] = PREMIS_NS
+    return ET.SubElement(parent, premis_ns(tag, prefix), nsmap=ns)
 
 
 def identifier(identifier_type, identifier_value, prefix='object'):
@@ -184,7 +186,7 @@ def premis(child_elements=None, namespaces=None):
     """
     if namespaces is None:
         namespaces = NAMESPACES
-    _premis = _element('premis', namespace=namespaces)
+    _premis = _element('premis', ns=namespaces)
     _premis.set(
         xsi_ns('schemaLocation'),
         'info:lc/xmlns/premis-v2 '

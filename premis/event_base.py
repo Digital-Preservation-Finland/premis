@@ -176,11 +176,12 @@ def event_with_type_and_detail(events, event_type, event_detail):
             yield _event
 
 
-def events_with_outcome(events, outcome_result):
+# TODO: When doing actual refactoring, resolve redefined-outer-name warning.
+def events_with_outcome(events, outcome):
     """Iterate over all events with given outcome
 
     :param events: Iterable of events
-    :param outcome_result: Return all events that has the outcome
+    :param outcome: Return all events that has the outcome
     :returns: Iterable of events
 
     """
@@ -188,7 +189,7 @@ def events_with_outcome(events, outcome_result):
         _event_outcome = encode_utf8(_event.findtext('/'.join([
             premis_ns('eventOutcomeInformation'),
             premis_ns('eventOutcome')])))
-        if _event_outcome == outcome_result:
+        if _event_outcome == outcome:
             yield _event
 
 

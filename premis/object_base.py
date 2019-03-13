@@ -254,7 +254,7 @@ def object(
 
     """
 
-    _object = _element('object', namespace={'xsi': XSI_NS})
+    _object = _element('object', ns={'xsi': XSI_NS})
 
     _object.append(object_id)
 

@@ -148,28 +148,50 @@ def environment(object_or_identifier=None):
     if object_or_identifier is None:
         return _environment
 
-    object_identifier = object_or_identifier.find(
-        premis_ns('objectIdentifier'))
+    if not isinstance(object_or_identifier, list):
+        object_or_identifier = [object_or_identifier]
 
-    if object_identifier is None:
-        object_identifier = object_or_identifier
-
-    dependency_identifier_type = object_identifier.find(
-        premis_ns('dependencyIdentifierType'))
-
-    if dependency_identifier_type is None:
-        (identifier_type, identifier_value) = parse_identifier_type_value(
-            object_identifier)
-
-        dependency_identifier = identifier(
-            identifier_type, identifier_value, 'dependency')
-    else:
-        dependency_identifier = object_identifier
-
-    dependency = _subelement(_environment, 'dependency')
-    dependency.append(dependency_identifier)
+    for _identifier in object_or_identifier:
+        dependency_identifier = get_dependency_identifier(_identifier)
+        dependency = _subelement(_environment, 'dependency')
+        dependency.append(dependency_identifier)
 
     return _environment
+
+
+def get_dependency_identifier(object_or_identifier):
+    """Create new dependency indentifier from object containing
+    objectIdentifier or return existing dependencyIdentifier. If both elements
+    exists in given ``object_or_identifier`` return dependencyIdentifier
+    generated from objectIdentifier"""
+
+    if object_or_identifier.tag == premis_ns("objectIdentifier"):
+        object_identifier = object_or_identifier
+    else:
+        object_identifier = object_or_identifier.find(
+            premis_ns('objectIdentifierType'))
+
+    if object_identifier is not None:
+        (identifier_type, identifier_value) = parse_identifier_type_value(
+            object_or_identifier)
+
+        return identifier(
+            identifier_type, identifier_value, 'dependency')
+
+    if object_or_identifier.tag == premis_ns("dependencyIdentifier"):
+        dependency_identifier = object_or_identifier
+    else:
+        dependency_identifier = object_or_identifier.find(
+            premis_ns('dependencyIdentifier'))
+
+    if dependency_identifier is not None:
+        return dependency_identifier
+
+    raise ValueError(
+        "Argument object_or_indentifier must contain"
+        "valid objectIdentifier or "
+        "dependencyIdentifier: {}".format(
+            object_or_identifier))
 
 
 def object(

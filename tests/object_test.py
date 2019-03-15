@@ -270,16 +270,35 @@ def test_parse_environment():
 
 def test_parse_dependency():
     """Test parse_dependency"""
-    env = o.environment(p.identifier('c', 'd'))
+
+    env = o.environment([
+        p.identifier('e', 'f', prefix='object'),
+        p.identifier('c', 'd', prefix='object')])
+
     obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[env])
     dep = o.parse_dependency(obj)
-    xml = '<premis:dependency xmlns:premis="info:lc/xmlns/premis-v2" ' \
-          'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' \
-          '<premis:dependencyIdentifier><premis:dependencyIdentifierType>' \
-          'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>' \
-          'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>' \
-          '</premis:dependency>'
-    assert u.compare_trees(dep, ET.fromstring(xml)) == True
+
+    xml1 = '<premis:dependency xmlns:premis="info:lc/xmlns/premis-v2" ' \
+           'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' \
+           '<premis:dependencyIdentifier><premis:dependencyIdentifierType>' \
+           'e</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>' \
+           'f</premis:dependencyIdentifierValue></premis:dependencyIdentifier>' \
+           '</premis:dependency>'
+
+    xml2 = '<premis:dependency xmlns:premis="info:lc/xmlns/premis-v2" ' \
+           'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' \
+           '<premis:dependencyIdentifier><premis:dependencyIdentifierType>' \
+           'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>' \
+           'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>' \
+           '</premis:dependency>'
+
+    test_list = [xml1, xml2]
+
+    i = 0
+
+    for iter_depend in dep:
+        assert u.compare_trees(iter_depend, ET.fromstring(test_list[i])) == True
+        i += 1
 
 
 def test_parse_relationship():

@@ -152,8 +152,8 @@ def environment(object_or_identifier=None):
         object_or_identifier = [object_or_identifier]
 
     for _identifier in object_or_identifier:
-        dependency_identifier = get_dependency_identifier(_identifier)
         dependency = _subelement(_environment, 'dependency')
+        dependency_identifier = get_dependency_identifier(_identifier)
         dependency.append(dependency_identifier)
 
     return _environment
@@ -393,8 +393,7 @@ def parse_environment(premis_elem):
 
 def parse_dependency(premis_elem):
     try:
-        return premis_elem.xpath(".//premis:environment/premis:dependency",
-                                 namespaces=NAMESPACES)[0]
+        return list(iter_elements(premis_elem, 'dependency'))
     except IndexError:
         return ""
 

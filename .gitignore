@@ -22,6 +22,7 @@ doc/source/tests
 ehthumbs.db
 Thumbs.db
 rpmbuild
-.venv/
+.venv*/
 junit*.xml
 .pytest_cache
+.tox

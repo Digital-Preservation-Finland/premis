@@ -1,4 +1,5 @@
 """Test for the Premis class"""
+from __future__ import unicode_literals
 
 import lxml.etree as ET
 import xml_helpers.utils as u

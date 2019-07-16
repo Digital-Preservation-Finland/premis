@@ -8,11 +8,12 @@ References:
     https://docs.python.org/2.6/library/xml.etree.elementtree.html
 
 """
+from __future__ import unicode_literals
 
-from xml_helpers.utils import encode_utf8, decode_utf8
-from premis.base import (_element, _subelement, premis_ns, identifier,
-                         parse_identifier_type_value, iter_elements, xsi_ns,
-                         XSI_NS, NAMESPACES)
+from premis.base import (NAMESPACES, XSI_NS, _element, _subelement, identifier,
+                         iter_elements, parse_identifier_type_value, premis_ns,
+                         xsi_ns)
+from xml_helpers.utils import decode_utf8
 
 
 def fixity(message_digest, digest_algorithm='MD5'):
@@ -26,7 +27,7 @@ def fixity(message_digest, digest_algorithm='MD5'):
         fixity_el, 'messageDigestAlgorithm')
     fixity_algorithm.text = decode_utf8(digest_algorithm)
     fixity_checksum = _subelement(fixity_el, 'messageDigest')
-    fixity_checksum.text = decode_utf8(message_digest)
+    fixity_checksum.text = message_digest
     return fixity_el
 
 
@@ -267,7 +268,7 @@ def object(
 
     if original_name:
         _original_name = _subelement(_object, 'originalName')
-        _original_name.text = decode_utf8(original_name)
+        _original_name.text = original_name
 
     if child_elements:
         for elem in child_elements:
@@ -297,7 +298,7 @@ def find_object_by_id(premis, object_id):
     """
     for elem in iter_objects(premis):
         if elem.findtext('.//' + premis_ns(
-                'objectIdentifierValue')) == decode_utf8(object_id):
+                'objectIdentifierValue')) == object_id:
             return elem
 
     return None
@@ -372,7 +373,7 @@ def objects_with_type(objects, object_identifier_type):
         _object_identifier_type = _object_identifier.findtext(
             premis_ns('objectIdentifierType'))
 
-        if _object_identifier_type == decode_utf8(object_identifier_type):
+        if _object_identifier_type == object_identifier_type:
             yield _object
 
 
@@ -381,8 +382,7 @@ def parse_object_type(obj):
     :param obj:
     :return: String
     """
-    return encode_utf8(obj.xpath('./@xsi:type',
-                                 namespaces=NAMESPACES)[0])
+    return obj.xpath('./@xsi:type', namespaces=NAMESPACES)[0]
 
 
 def parse_fixity(obj):
@@ -390,10 +390,12 @@ def parse_fixity(obj):
     :param obj:
     :return: Tuple of strings to represent algorithm and digest.
     """
-    algorithm = encode_utf8(obj.xpath(".//premis:messageDigestAlgorithm",
-                                      namespaces=NAMESPACES)[0].text)
-    digest = encode_utf8(obj.xpath(".//premis:messageDigest",
-                                   namespaces=NAMESPACES)[0].text)
+    algorithm = obj.xpath(
+        ".//premis:messageDigestAlgorithm",
+        namespaces=NAMESPACES)[0].text
+    digest = obj.xpath(
+        ".//premis:messageDigest",
+        namespaces=NAMESPACES)[0].text
     return (algorithm, digest)
 
 
@@ -402,12 +404,12 @@ def parse_format(obj):
     :param obj:
     :return: Tuple of strings to represent format name and version.
     """
-    format_name = encode_utf8(obj.xpath(".//premis:formatName",
-                                        namespaces=NAMESPACES)[0].text)
+    format_name = obj.xpath(
+        ".//premis:formatName", namespaces=NAMESPACES)[0].text
     format_version = obj.xpath(".//premis:formatVersion",
                                namespaces=NAMESPACES)
     if format_version:
-        format_version = encode_utf8(format_version[0].text)
+        format_version = format_version[0].text
     else:
         format_version = None
     return (format_name, format_version)
@@ -418,12 +420,12 @@ def parse_format_registry(obj):
     :param obj:
     :return: Tuple of strings to represent format registry name and key.
     """
-    format_registry_name = encode_utf8(
-        obj.xpath(".//premis:formatRegistryName",
-                  namespaces=NAMESPACES)[0].text)
-    format_registry_key = encode_utf8(
-        obj.xpath(".//premis:formatRegistryKey",
-                  namespaces=NAMESPACES)[0].text)
+    format_registry_name = obj.xpath(
+        ".//premis:formatRegistryName",
+        namespaces=NAMESPACES)[0].text
+    format_registry_key = obj.xpath(
+        ".//premis:formatRegistryKey",
+        namespaces=NAMESPACES)[0].text
     return (format_registry_name, format_registry_key)
 
 
@@ -432,8 +434,9 @@ def parse_original_name(premis_object):
     :param premis_object:
     :return: String
     """
-    return encode_utf8(premis_object.xpath(".//premis:originalName/text()",
-                                           namespaces=NAMESPACES)[0])
+    return premis_object.xpath(
+        ".//premis:originalName/text()",
+        namespaces=NAMESPACES)[0]
 
 
 def parse_environment(premis_elem):
@@ -477,9 +480,9 @@ def parse_relationship_type(premis_elem):
     :return: String
     """
     try:
-        return encode_utf8(premis_elem.xpath(
+        return premis_elem.xpath(
             ".//premis:relationshipType/text()",
-            namespaces=NAMESPACES)[0])
+            namespaces=NAMESPACES)[0]
     except IndexError:
         return ""
 
@@ -490,8 +493,8 @@ def parse_relationship_subtype(premis_elem):
     :return: String
     """
     try:
-        return encode_utf8(premis_elem.xpath(
+        return premis_elem.xpath(
             ".//premis:relationshipSubType/text()",
-            namespaces=NAMESPACES)[0])
+            namespaces=NAMESPACES)[0]
     except IndexError:
         return ""

@@ -1,10 +1,13 @@
 """Test for the Premis event class"""
+from __future__ import unicode_literals
 
+import six
 from pytest import raises
+
 import lxml.etree as ET
-import xml_helpers.utils as u
 import premis.base as p
 import premis.event_base as e
+import xml_helpers.utils as u
 
 
 def test_outcome():
@@ -51,7 +54,7 @@ def test_iter_events():
     i = 0
     for event in e.iter_events(premisroot):
         i = i + 1
-        assert e.parse_event_type(event) == 'tyyppi' + str(i)
+        assert e.parse_event_type(event) == 'tyyppi' + six.text_type(i)
     assert i == 3
 
 

@@ -8,6 +8,7 @@ References:
     https://docs.python.org/2.6/library/xml.etree.elementtree.html
 
 """
+from __future__ import unicode_literals
 
 from xml_helpers.utils import encode_utf8, decode_utf8
 from premis.base import (_element, _subelement, iter_elements, premis_ns,
@@ -98,6 +99,7 @@ def agents_with_type(agents, agent_type='organization'):
     :returns: Generator object which iterates all (agent_type, agent_name)
 
     """
+    agent_type = decode_utf8(agent_type)
 
     for _agent in agents:
         agent_name = _agent.findtext(premis_ns('agentName'))
@@ -111,9 +113,9 @@ def agents_with_type(agents, agent_type='organization'):
 def parse_name(agent):
     """
     :param agent: Agent Element object.
-    :return: String
+    :return: Unicode string
     """
-    return encode_utf8(agent.xpath(".//premis:agentName/text()",
+    return decode_utf8(agent.xpath(".//premis:agentName/text()",
                                    namespaces=NAMESPACES)[0])
 
 
@@ -121,9 +123,9 @@ def parse_name(agent):
 def parse_agent_type(agent):
     """
     :param agent: Agent Element object.
-    :return: String
+    :return: Unicode string
     """
-    return encode_utf8(agent.xpath(".//premis:agentType/text()",
+    return decode_utf8(agent.xpath(".//premis:agentType/text()",
                                    namespaces=NAMESPACES)[0])
 
 
@@ -131,7 +133,7 @@ def parse_agent_type(agent):
 def parse_note(agent):
     """
     :param agent: Agent Element object.
-    :return: String
+    :return: Unicode string
     """
-    return encode_utf8(agent.xpath(".//premis:agentNote/text()",
+    return decode_utf8(agent.xpath(".//premis:agentNote/text()",
                                    namespaces=NAMESPACES)[0])

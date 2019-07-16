@@ -8,9 +8,13 @@ References:
     https://docs.python.org/2.6/library/xml.etree.elementtree.html
 
 """
-from xml_helpers.utils import decode_utf8, encode_utf8
+from __future__ import unicode_literals
+
+import six
+
 from premis.base import (_element, _subelement, premis_ns, identifier,
                          iter_elements, NAMESPACES)
+from xml_helpers.utils import decode_utf8
 
 
 def outcome(outcome, detail_note=None, detail_extension=None,
@@ -84,7 +88,6 @@ def event(event_id, event_type, event_date_time, event_detail,
         </premis:event>
 
     """
-
     _event = _element('event')
 
     _event.append(event_id)
@@ -140,9 +143,10 @@ def find_event_by_id(premis, event_id):
 
     :returns: Element if found, None otherwise
     """
-    _e_id = decode_utf8(event_id)
+    event_id = decode_utf8(event_id)
+
     for elem in iter_events(premis):
-        if elem.findtext('.//' + premis_ns('eventIdentifierValue')) == _e_id:
+        if elem.findtext('.//' + premis_ns('eventIdentifierValue')) == event_id:
             return elem
 
     return None
@@ -169,8 +173,8 @@ def event_with_type_and_detail(events, event_type, event_detail):
     """
 
     for _event in events:
-        _event_type = encode_utf8(_event.findtext(premis_ns('eventType')))
-        _event_detail = encode_utf8(_event.findtext(premis_ns('eventDetail')))
+        _event_type = _event.findtext(premis_ns('eventType'))
+        _event_detail = _event.findtext(premis_ns('eventDetail'))
 
         if _event_type == event_type and _event_detail == event_detail:
             yield _event
@@ -185,10 +189,12 @@ def events_with_outcome(events, outcome):
     :returns: Iterable of events
 
     """
+    outcome = decode_utf8(outcome)
+
     for _event in events:
-        _event_outcome = encode_utf8(_event.findtext('/'.join([
+        _event_outcome = _event.findtext('/'.join([
             premis_ns('eventOutcomeInformation'),
-            premis_ns('eventOutcome')])))
+            premis_ns('eventOutcome')]))
         if _event_outcome == outcome:
             yield _event
 
@@ -199,8 +205,9 @@ def parse_event_type(event_elem):
     :return: String
     """
     try:
-        return encode_utf8(event_elem.xpath(".//premis:eventType/text()",
-                                            namespaces=NAMESPACES)[0])
+        return event_elem.xpath(
+            ".//premis:eventType/text()",
+            namespaces=NAMESPACES)[0]
     except IndexError:
         return ""
 
@@ -210,8 +217,9 @@ def parse_datetime(event_elem):
     :param event_elem: Premis event element.
     :return: String
     """
-    return encode_utf8(event_elem.xpath(".//premis:eventDateTime/text()",
-                                        namespaces=NAMESPACES)[0])
+    return event_elem.xpath(
+        ".//premis:eventDateTime/text()",
+        namespaces=NAMESPACES)[0]
 
 
 def parse_detail(event_elem):
@@ -220,8 +228,9 @@ def parse_detail(event_elem):
     :return: String
     """
     try:
-        return encode_utf8(event_elem.xpath(".//premis:eventDetail/text()",
-                                            namespaces=NAMESPACES)[0])
+        return event_elem.xpath(
+            ".//premis:eventDetail/text()",
+            namespaces=NAMESPACES)[0]
     except IndexError:
         return ""
 
@@ -231,9 +240,9 @@ def parse_outcome(event_elem):
     :param event_elem: Premis event element.
     :return: String
     """
-    return encode_utf8(event_elem.xpath(
+    return event_elem.xpath(
         ".//premis:eventOutcomeInformation/premis:eventOutcome/text()",
-        namespaces=NAMESPACES)[0])
+        namespaces=NAMESPACES)[0]
 
 
 def parse_outcome_detail_note(event_elem):
@@ -242,10 +251,10 @@ def parse_outcome_detail_note(event_elem):
     :return: String
     """
     try:
-        return encode_utf8(event_elem.xpath(
+        return event_elem.xpath(
             (".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/"
              "premis:eventOutcomeDetailNote/text()"),
-            namespaces=NAMESPACES)[0])
+            namespaces=NAMESPACES)[0]
     except IndexError:
         return ""
 

@@ -8,6 +8,7 @@ References:
     https://docs.python.org/2.6/library/xml.etree.elementtree.html
 
 """
+from __future__ import unicode_literals
 
 import lxml.etree as ET
 from xml_helpers.utils import XSI_NS, xsi_ns, decode_utf8
@@ -25,7 +26,10 @@ def premis_ns(tag, prefix=""):
     :returns: Prefixed tag
 
     """
+    tag = decode_utf8(tag)
+
     if prefix:
+        prefix = decode_utf8(prefix)
         tag = tag[0].upper() + tag[1:]
         return '{%s}%s%s' % (PREMIS_NS, prefix, tag)
     return '{%s}%s' % (PREMIS_NS, tag)
@@ -121,6 +125,7 @@ def identifier(identifier_type, identifier_value, prefix='object'):
         </premis:linkingObjectIdentifier>
 
     """
+    prefix = decode_utf8(prefix)
 
     if prefix == 'relatedObject':
         _identifier = _element('Identification', prefix)
@@ -149,6 +154,8 @@ def parse_identifier_type_value(id_elem, prefix='object'):
     :returns: (identifier_type, identifier_value)
 
     """
+    prefix = decode_utf8(prefix)
+
     if prefix == 'relatedObject':
         if id_elem.tag != premis_ns('relatedObjectIdentification'):
             id_elem = id_elem.find(premis_ns('relatedObjectIdentification'))
@@ -218,6 +225,8 @@ def parse_identifier(section, prefix='object'):
     :param prefix:
     :return: Element object.
     """
+    prefix = decode_utf8(prefix)
+
     if prefix == 'relatedObject':
         return section.find('.//' + premis_ns('Identification', prefix))
     return section.find('.//' + premis_ns('Identifier', prefix))

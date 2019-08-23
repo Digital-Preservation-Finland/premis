@@ -124,26 +124,39 @@ def test_events_with_outcome():
 
 
 def test_outcome_extension():
+    # Ignore continuation and long lines to make xml human-readable
+    # noqa: E131, E501
+    # pylint: disable=bad-continuation, line-too-long
     """Test that event outcome with XML extension works"""
-    tree = ET.fromstring('<xxx />')
-    xml = (
+    extensions = [ET.fromstring('<xxx />'), ET.fromstring('<yyy />')]
+    xml_multiple_extensions = (
         '<premis:eventOutcomeInformation xmlns:premis="info:lc/xmlns/premis-v2">'
-        '<premis:eventOutcome>success</premis:eventOutcome>'
-        '<premis:eventOutcomeDetail><premis:eventOutcomeDetailExtension><xxx />'
-        '</premis:eventOutcomeDetailExtension></premis:eventOutcomeDetail>'
+            '<premis:eventOutcome>success</premis:eventOutcome>'
+            '<premis:eventOutcomeDetail>'
+                '<premis:eventOutcomeDetailExtension><xxx /></premis:eventOutcomeDetailExtension>'
+                '<premis:eventOutcomeDetailExtension><yyy /></premis:eventOutcomeDetailExtension>'
+            '</premis:eventOutcomeDetail>'
         '</premis:eventOutcomeInformation>')
-    event = ET.fromstring(xml)
+
+    xml_single_extension = (
+        '<premis:eventOutcomeInformation xmlns:premis="info:lc/xmlns/premis-v2">'
+            '<premis:eventOutcome>success</premis:eventOutcome>'
+            '<premis:eventOutcomeDetail>'
+                '<premis:eventOutcomeDetailExtension><xxx /><yyy /></premis:eventOutcomeDetailExtension>'
+            '</premis:eventOutcomeDetail>'
+        '</premis:eventOutcomeInformation>')
+
+    event = ET.fromstring(xml_multiple_extensions)
     # Should fail, because detail_extension must not be string
     with raises(TypeError):
         e.outcome('success', detail_extension='<xxx />')
     # Should work with XML tree
-    assert u.compare_trees(e.outcome('success', detail_extension=tree), event)
+    assert u.compare_trees(e.outcome('success', detail_extension=extensions), event)
 
-    # Should work with removable wrapper
-    tree2 = ET.fromstring('<Wrapper />')
-    tree2.append(tree)
+    # Test that extensions are placed in single eventOutcomeDetailExtension element
+    event = ET.fromstring(xml_single_extension)
     assert u.compare_trees(
-        e.outcome('success', detail_extension=tree2, remove_wrapper=True),
+        e.outcome('success', detail_extension=extensions, single_extension_element=True),
         event)
 
 
@@ -170,8 +183,9 @@ def test_parse_detail():
 
 def test_parse_outcome():
     """Test parse_outcome"""
-    tree = ET.fromstring('<xxx />')
-    outcome = e.outcome('success', detail_note='xxx', detail_extension=tree)
+    extensions = [ET.fromstring('<xxx />')]
+    outcome = e.outcome('success', detail_note='xxx',
+                        detail_extension=extensions)
     event = e.event(p.identifier('a', 'b', 'event'), 'tyyppi',
                     '2012-12-12T12:12:12', 'detaili', child_elements=[outcome])
     assert e.parse_outcome(event) == 'success'
@@ -179,8 +193,9 @@ def test_parse_outcome():
 
 def test_parse_outcome_detail_note():
     """Test parse_outcome_detail_note"""
-    tree = ET.fromstring('<xxx />')
-    outcome = e.outcome('success', detail_note='xxx', detail_extension=tree)
+    extensions = [ET.fromstring('<xxx />')]
+    outcome = e.outcome('success', detail_note='xxx',
+                        detail_extension=extensions)
     event = e.event(p.identifier('a', 'b', 'event'), 'tyyppi',
                     '2012-12-12T12:12:12', 'detaili', child_elements=[outcome])
     assert e.parse_outcome_detail_note(event) == 'xxx'
@@ -192,7 +207,7 @@ def test_parse_outcome_detail_extension():
           '<xxx /></premis:eventOutcomeDetailExtension>'
     tree = ET.fromstring(xml)
     outcome = e.outcome('success', detail_note='xxx',
-                        detail_extension=ET.fromstring('<xxx />'))
+                        detail_extension=[ET.fromstring('<xxx />')])
     event = e.event(p.identifier('a', 'b', 'event'), 'tyyppi',
                     '2012-12-12T12:12:12', 'detaili', child_elements=[outcome])
     assert u.compare_trees(e.parse_outcome_detail_extension(event), tree)

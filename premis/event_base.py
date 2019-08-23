@@ -10,19 +10,23 @@ References:
 """
 from __future__ import unicode_literals
 
-import six
-
 from premis.base import (_element, _subelement, premis_ns, identifier,
                          iter_elements, NAMESPACES)
 from xml_helpers.utils import decode_utf8
 
 
 def outcome(outcome, detail_note=None, detail_extension=None,
-            remove_wrapper=False):
+            single_extension_element=False):
     """Create PREMIS event outcome DOM structure.
 
-    :param outcome: Event outcome (success, failure)
-    :param detail_note: Description for the event outcome
+    :outcome: Event outcome (success, failure)
+    :detail_note: String description for the event outcome
+    :detail_extension: List of detail extension etree elements
+    :single_extension_element:
+        True: all element trees in detail_extension are placed in a single
+              eventOutcomeDetailExtension element.
+        False: each element tree in detail_extension is placed in a separate
+               eventOutcomeDetailExtension element.
 
     Returns the following ElementTree structure::
 
@@ -34,7 +38,6 @@ def outcome(outcome, detail_note=None, detail_extension=None,
                 </premis:eventOutcomeDetailNote>
             </premis:eventOutcomeDetail>
         </premis:eventOutcomeInformation>
-
 
     """
 
@@ -49,13 +52,19 @@ def outcome(outcome, detail_note=None, detail_extension=None,
         _detail_note = _subelement(detail, 'eventOutcomeDetailNote')
         _detail_note.text = decode_utf8(detail_note)
 
-    if detail_extension is not None:
-        _detail_extension = _subelement(detail, 'eventOutcomeDetailExtension')
-        if remove_wrapper:
+    if detail_extension:
+        if single_extension_element:
+            # Add all extensions into one eventOutcomeDetailExtension element
+            _detail_extension = _subelement(detail,
+                                            'eventOutcomeDetailExtension')
             for extension in detail_extension:
                 _detail_extension.append(extension)
         else:
-            _detail_extension.append(detail_extension)
+            # Separate eventOutcomeDetailExtension element for each extension
+            for extension in detail_extension:
+                _detail_extension = _subelement(detail,
+                                                'eventOutcomeDetailExtension')
+                _detail_extension.append(extension)
 
     return outcome_information
 

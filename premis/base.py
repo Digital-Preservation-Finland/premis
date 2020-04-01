@@ -80,7 +80,7 @@ def _subelement(parent, tag, prefix="", ns=None):
     return ET.SubElement(parent, premis_ns(tag, prefix), nsmap=ns)
 
 
-def identifier(identifier_type, identifier_value, prefix='object'):
+def identifier(identifier_type, identifier_value, prefix='object', role=None):
     """Return PREMIS identifier segments.
 
     Produces without prefix the following PREMIS segment::
@@ -124,6 +124,17 @@ def identifier(identifier_type, identifier_value, prefix='object'):
                 1ac641ec</premis:linkingObjectIdentifierValue>
         </premis:linkingObjectIdentifier>
 
+    With prefix='linking' and role the following PREMIS segment::
+
+        <premis:linkingAgentIdentifier>
+            <premis:linkingAgentIdentifierType>
+                preservation-agent-id</premis:linkingAgentIdentifierType>
+            <premis:linkingAgentIdentifierValue>
+                1ac641ec</premis:linkingAgentIdentifierValue>
+            <premis:linkingAgentRole>
+                validator</premis:linkingAgentRole>
+        </premis:linkingAgentIdentifier>
+
     """
     prefix = decode_utf8(prefix)
 
@@ -141,6 +152,10 @@ def identifier(identifier_type, identifier_value, prefix='object'):
     if identifier_value is not None:
         identifier_value = decode_utf8(identifier_value)
     _value.text = identifier_value
+
+    if 'linking' in prefix and role is not None:
+        _role = _subelement(_identifier, 'Role', prefix)
+        _role.text = role
 
     return _identifier
 

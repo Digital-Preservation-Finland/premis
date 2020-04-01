@@ -31,6 +31,8 @@ def test_identifier():
     object_identifier = p.identifier('local', 'id01')
     object_related = p.identifier('local', 'id01', 'relatedObject')
     event_identifier = p.identifier('local', 'id01', 'event')
+    linking_agent_identifier = p.identifier(
+        'local', 'id01', prefix='linkingAgent', role='tester')
     object_id = (
         '<premis:objectIdentifier xmlns:premis="info:lc/xmlns/premis-v2">'
         '<premis:objectIdentifierType>local</premis:objectIdentifierType>'
@@ -49,10 +51,19 @@ def test_identifier():
         '<premis:eventIdentifierValue>id01</premis:eventIdentifierValue>'
         '</premis:eventIdentifier>'
     )
+    xml_linking_agent = (
+        '<premis:linkingAgentIdentifier xmlns:premis="info:lc/xmlns/premis-v2">'
+        '<premis:linkingAgentIdentifierType>local</premis:linkingAgentIdentifierType>'
+        '<premis:linkingAgentIdentifierValue>id01</premis:linkingAgentIdentifierValue>'
+        '<premis:linkingAgentRole>tester</premis:linkingAgentRole>'
+        '</premis:linkingAgentIdentifier>'
+    )
 
     assert u.compare_trees(object_identifier, ET.fromstring(object_id))
     assert u.compare_trees(object_related, ET.fromstring(xml_related))
     assert u.compare_trees(event_identifier, ET.fromstring(xml_event))
+    assert u.compare_trees(linking_agent_identifier,
+                           ET.fromstring(xml_linking_agent))
 
 
 def test_parse_identifier_type_value():

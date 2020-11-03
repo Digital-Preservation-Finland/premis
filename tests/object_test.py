@@ -123,6 +123,32 @@ def test_environment():
     assert u.compare_trees(env, ET.fromstring(xml))
 
 
+def test_environment2():
+    """Test premis_environment2"""
+    env = o.environment2(characteristic='a', child_elements=[o.dependency()])
+    xml = (
+        '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2">'
+        '<premis:environmentCharacteristic>a'
+        '</premis:environmentCharacteristic>'
+        '<premis:dependency></premis:dependency></premis:environment>')
+    assert u.compare_trees(env, ET.fromstring(xml))
+
+
+def test_dependency():
+    """Test premis_dependency"""
+    env = o.dependency(
+        names=['a'],
+        identifiers=[p.identifier('c', 'd', prefix='dependency')])
+    xml = (
+        '<premis:dependency xmlns:premis="info:lc/xmlns/premis-v2">'
+        '<premis:dependencyName>a</premis:dependencyName>'
+        '<premis:dependencyIdentifier><premis:dependencyIdentifierType>'
+        'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>'
+        'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>'
+        '</premis:dependency>')
+    assert u.compare_trees(env, ET.fromstring(xml))
+
+
 def test_object():
     """Test premis_premis"""
     obj1 = o.object(p.identifier('a', 'b'), original_name='c')

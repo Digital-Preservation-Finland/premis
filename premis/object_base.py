@@ -192,6 +192,49 @@ def environment(object_or_identifier=None):
     return _environment
 
 
+def environment2(characteristic=None, child_elements=None):
+    """Return the PREMIS environment structure.
+
+    :characteristic: The environment characteristic as a string
+    :child_elements: A list of child elements to be appended
+    :returns:  ElementTree DOM tree
+    """
+
+    _environment = _element('environment')
+
+    if characteristic:
+        char_elem = _subelement(
+            _environment, 'environmentCharacteristic')
+        char_elem.text = decode_utf8(characteristic)
+
+    if child_elements:
+        for elem in child_elements:
+            _environment.append(elem)
+
+    return _environment
+
+
+def dependency(names=None, identifiers=None):
+    """Returns the PREMIS dependency structure.
+
+    :names: A list of strings of dependency names
+    :identifiers: A list of PREMIS identifier structures
+    :returns: ElementTree DOM tree
+    """
+    _dependency = _element('dependency')
+    if names:
+        for name in names:
+            name_elem = _subelement(
+                _dependency, 'dependencyName')
+            name_elem.text = decode_utf8(name)
+
+    if identifiers:
+        for identifier_elem in identifiers:
+            _dependency.append(identifier_elem)
+
+    return _dependency
+
+
 def get_dependency_identifier(object_or_identifier):
     """Create new dependency indentifier from object containing
     objectIdentifier or return existing dependencyIdentifier. If both elements

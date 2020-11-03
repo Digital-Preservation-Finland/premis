@@ -4,9 +4,9 @@ from __future__ import unicode_literals
 import six
 
 import lxml.etree as ET
+import xml_helpers.utils as u
 import premis.base as p
 import premis.object_base as o
-import xml_helpers.utils as u
 
 
 def test_fixity():
@@ -58,7 +58,8 @@ def test_date_created():
     """Test date_created"""
     date = o.date_created('2012-12-12T12:12:12')
     xml = (
-        '<premis:dateCreatedByApplication xmlns:premis="info:lc/xmlns/premis-v2">'
+        '<premis:dateCreatedByApplication '
+        'xmlns:premis="info:lc/xmlns/premis-v2">'
         '2012-12-12T12:12:12</premis:dateCreatedByApplication>'
     )
     assert u.compare_trees(date, ET.fromstring(xml))
@@ -68,8 +69,10 @@ def test_creating_application():
     """Test creating_application"""
     date = o.date_created('2012-12-12T12:12:12')
     create = o.creating_application(child_elements=[date])
-    xml = ('<premis:creatingApplication xmlns:premis="info:lc/xmlns/premis-v2">'
-           '<premis:dateCreatedByApplication>2012-12-12T12:12:12</premis:dateCreatedByApplication>'
+    xml = ('<premis:creatingApplication '
+           'xmlns:premis="info:lc/xmlns/premis-v2">'
+           '<premis:dateCreatedByApplication>2012-12-12T12:12:12'
+           '</premis:dateCreatedByApplication>'
            '</premis:creatingApplication>')
     assert u.compare_trees(create, ET.fromstring(xml))
 
@@ -95,8 +98,10 @@ def test_relationship():
     xml = ('<premis:relationship xmlns:premis="info:lc/xmlns/premis-v2">'
            '<premis:relationshipType>a</premis:relationshipType>'
            '<premis:relationshipSubType>b</premis:relationshipSubType>'
-           '<premis:relatedObjectIdentification><premis:relatedObjectIdentifierType>'
-           'c</premis:relatedObjectIdentifierType><premis:relatedObjectIdentifierValue>'
+           '<premis:relatedObjectIdentification>'
+           '<premis:relatedObjectIdentifierType>'
+           'c</premis:relatedObjectIdentifierType>'
+           '<premis:relatedObjectIdentifierValue>'
            'd</premis:relatedObjectIdentifierValue>'
            '</premis:relatedObjectIdentification></premis:relationship>')
     assert u.compare_trees(rel, ET.fromstring(xml))
@@ -106,7 +111,8 @@ def test_environment():
     """Test premis_environment"""
     env = o.environment(p.identifier('c', 'd'))
     xml = (
-        '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2"><premis:dependency>'
+        '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2">'
+        '<premis:dependency>'
         '<premis:dependencyIdentifier><premis:dependencyIdentifierType>'
         'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>'
         'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>'
@@ -115,17 +121,15 @@ def test_environment():
 
     env = o.environment(p.identifier('c', 'd', 'dependency'))
     xml = (
-        '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2"><premis:dependency>'
+        '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2">'
+        '<premis:dependency>'
         '<premis:dependencyIdentifier><premis:dependencyIdentifierType>'
         'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>'
         'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>'
         '</premis:dependency></premis:environment>')
     assert u.compare_trees(env, ET.fromstring(xml))
 
-
-def test_environment2():
-    """Test premis_environment2"""
-    env = o.environment2(characteristic='a', child_elements=[o.dependency()])
+    env = o.environment(characteristic='a', child_elements=[o.dependency()])
     xml = (
         '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2">'
         '<premis:environmentCharacteristic>a'
@@ -308,9 +312,11 @@ def test_parse_environment():
     obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[env])
     penv = o.parse_environment(obj)
     xml = ('<premis:environment xmlns:premis="info:lc/xmlns/premis-v2" '
-           'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><premis:dependency>'
+           'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
+           '<premis:dependency>'
            '<premis:dependencyIdentifier><premis:dependencyIdentifierType>'
-           'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>'
+           'c</premis:dependencyIdentifierType>'
+           '<premis:dependencyIdentifierValue>'
            'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>'
            '</premis:dependency></premis:environment>')
     assert u.compare_trees(penv, ET.fromstring(xml))
@@ -329,15 +335,19 @@ def test_parse_dependency():
     xml1 = ('<premis:dependency xmlns:premis="info:lc/xmlns/premis-v2" '
             'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
             '<premis:dependencyIdentifier><premis:dependencyIdentifierType>'
-            'e</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>'
-            'f</premis:dependencyIdentifierValue></premis:dependencyIdentifier>'
+            'e</premis:dependencyIdentifierType>'
+            '<premis:dependencyIdentifierValue>'
+            'f</premis:dependencyIdentifierValue>'
+            '</premis:dependencyIdentifier>'
             '</premis:dependency>')
 
     xml2 = ('<premis:dependency xmlns:premis="info:lc/xmlns/premis-v2" '
             'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
             '<premis:dependencyIdentifier><premis:dependencyIdentifierType>'
-            'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>'
-            'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>'
+            'c</premis:dependencyIdentifierType>'
+            '<premis:dependencyIdentifierValue>'
+            'd</premis:dependencyIdentifierValue>'
+            '</premis:dependencyIdentifier>'
             '</premis:dependency>')
 
     test_list = [xml1, xml2]
@@ -358,8 +368,10 @@ def test_parse_relationship():
            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
            '<premis:relationshipType>a</premis:relationshipType>'
            '<premis:relationshipSubType>b</premis:relationshipSubType>'
-           '<premis:relatedObjectIdentification><premis:relatedObjectIdentifierType>'
-           'c</premis:relatedObjectIdentifierType><premis:relatedObjectIdentifierValue>'
+           '<premis:relatedObjectIdentification>'
+           '<premis:relatedObjectIdentifierType>'
+           'c</premis:relatedObjectIdentifierType>'
+           '<premis:relatedObjectIdentifierValue>'
            'd</premis:relatedObjectIdentifierValue>'
            '</premis:relatedObjectIdentification></premis:relationship>')
     assert u.compare_trees(rel2, ET.fromstring(xml))

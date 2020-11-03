@@ -109,32 +109,15 @@ def test_relationship():
 
 def test_environment():
     """Test premis_environment"""
-    env = o.environment(p.identifier('c', 'd'))
-    xml = (
-        '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2">'
-        '<premis:dependency>'
-        '<premis:dependencyIdentifier><premis:dependencyIdentifierType>'
-        'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>'
-        'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>'
-        '</premis:dependency></premis:environment>')
-    assert u.compare_trees(env, ET.fromstring(xml))
-
-    env = o.environment(p.identifier('c', 'd', 'dependency'))
-    xml = (
-        '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2">'
-        '<premis:dependency>'
-        '<premis:dependencyIdentifier><premis:dependencyIdentifierType>'
-        'c</premis:dependencyIdentifierType><premis:dependencyIdentifierValue>'
-        'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>'
-        '</premis:dependency></premis:environment>')
-    assert u.compare_trees(env, ET.fromstring(xml))
-
-    env = o.environment(characteristic='a', child_elements=[o.dependency()])
+    env = o.environment(characteristic='a', child_elements=[o.dependency(),
+                                                            o.dependency()])
     xml = (
         '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2">'
         '<premis:environmentCharacteristic>a'
         '</premis:environmentCharacteristic>'
-        '<premis:dependency></premis:dependency></premis:environment>')
+        '<premis:dependency></premis:dependency>'
+        '<premis:dependency></premis:dependency>'
+        '</premis:environment>')
     assert u.compare_trees(env, ET.fromstring(xml))
 
 
@@ -308,7 +291,11 @@ def test_parse_original_name():
 
 def test_parse_environment():
     """Test parse_environment"""
-    env = o.environment(p.identifier('c', 'd'))
+    env = o.environment(child_elements=[
+        o.dependency(identifiers=[
+            p.identifier('c', 'd', 'dependency')
+        ])
+    ])
     obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[env])
     penv = o.parse_environment(obj)
     xml = ('<premis:environment xmlns:premis="info:lc/xmlns/premis-v2" '
@@ -325,10 +312,11 @@ def test_parse_environment():
 def test_parse_dependency():
     """Test parse_dependency"""
 
-    env = o.environment([
-        p.identifier('e', 'f', prefix='object'),
-        p.identifier('c', 'd', prefix='object')])
-
+    env = o.environment(child_elements=[
+        o.dependency(identifiers=[
+            p.identifier('e', 'f', prefix='dependency')]),
+        o.dependency(identifiers=[
+            p.identifier('c', 'd', prefix='dependency')])])
     obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[env])
     dep = o.parse_dependency(obj)
 

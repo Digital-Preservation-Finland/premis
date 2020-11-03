@@ -158,17 +158,10 @@ def relationship(
     return _relationship
 
 
-def environment(object_or_identifier=None,
-                characteristic=None,
+def environment(characteristic=None,
                 child_elements=None):
     """Return the PREMIS environment structure.
 
-    If object_or_identifier is given, that section's identifier
-    is used as the dependency child element. Otherwise,
-    eventual child_elements are appended to the environment.
-
-    :param object_or_identifier: A PREMIS object or identifier
-                                 structure
     :param characteristic: PREMIS environment characteristic a a string
     :param child_elements: A list of child elements to be appended
     :returns: ElementTree DOM tree
@@ -181,17 +174,7 @@ def environment(object_or_identifier=None,
             _environment, 'environmentCharacteristic')
         char_elem.text = decode_utf8(characteristic)
 
-    if object_or_identifier:
-
-        if not isinstance(object_or_identifier, list):
-            object_or_identifier = [object_or_identifier]
-
-        for _identifier in object_or_identifier:
-            dependency_elem = _subelement(_environment, 'dependency')
-            dependency_identifier = get_dependency_identifier(_identifier)
-            dependency_elem.append(dependency_identifier)
-
-    elif child_elements:
+    if child_elements:
         for elem in child_elements:
             _environment.append(elem)
 

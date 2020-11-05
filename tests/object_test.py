@@ -109,12 +109,14 @@ def test_relationship():
 
 def test_environment():
     """Test premis_environment"""
-    env = o.environment(characteristic='a', child_elements=[o.dependency(),
-                                                            o.dependency()])
+    env = o.environment(characteristic='a',
+                        purposes=['b'],
+                        child_elements=[o.dependency(), o.dependency()])
     xml = (
         '<premis:environment xmlns:premis="info:lc/xmlns/premis-v2">'
         '<premis:environmentCharacteristic>a'
         '</premis:environmentCharacteristic>'
+        '<premis:environmentPurpose>b</premis:environmentPurpose>'
         '<premis:dependency></premis:dependency>'
         '<premis:dependency></premis:dependency>'
         '</premis:environment>')
@@ -306,7 +308,28 @@ def test_parse_environment():
            '<premis:dependencyIdentifierValue>'
            'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>'
            '</premis:dependency></premis:environment>')
-    assert u.compare_trees(penv, ET.fromstring(xml))
+    assert u.compare_trees(penv[0], ET.fromstring(xml))
+
+    # Add another environment to the object, only the one with the purpose 'a'
+    # should be returned
+    env2 = o.environment(
+        purposes=['a'],
+        child_elements=[o.dependency(
+            identifiers=[p.identifier('c', 'd', 'dependency')])])
+    obj = o.object(p.identifier('x', 'y', 'object'),
+                   child_elements=[env, env2])
+    penv = o.parse_environment(obj, purpose='a')
+    assert len(penv) == 1
+    xml = ('<premis:environment xmlns:premis="info:lc/xmlns/premis-v2" '
+           'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
+           '<premis:environmentPurpose>a</premis:environmentPurpose>'
+           '<premis:dependency>'
+           '<premis:dependencyIdentifier><premis:dependencyIdentifierType>'
+           'c</premis:dependencyIdentifierType>'
+           '<premis:dependencyIdentifierValue>'
+           'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>'
+           '</premis:dependency></premis:environment>')
+    assert u.compare_trees(penv[0], ET.fromstring(xml))
 
 
 def test_parse_dependency():

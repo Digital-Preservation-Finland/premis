@@ -159,10 +159,14 @@ def relationship(
 
 
 def environment(characteristic=None,
+                purposes=None,
+                notes=None,
                 child_elements=None):
     """Return the PREMIS environment structure.
 
-    :param characteristic: PREMIS environment characteristic a a string
+    :param characteristic: PREMIS environment characteristic as a string
+    :param purposes: A list of environment purposes to be appended
+    :param child_elements: A list of environment notes to be appended
     :param child_elements: A list of child elements to be appended
     :returns: ElementTree DOM tree
     """
@@ -173,6 +177,18 @@ def environment(characteristic=None,
         char_elem = _subelement(
             _environment, 'environmentCharacteristic')
         char_elem.text = decode_utf8(characteristic)
+
+    if purposes:
+        for purpose in purposes:
+            purpose_elem = _subelement(
+                _environment, 'environmentPurpose')
+            purpose_elem.text = decode_utf8(purpose)
+
+    if notes:
+        for note in notes:
+            note_elem = _subelement(
+                _environment, 'environmentNote')
+            note_elem.text = decode_utf8(note)
 
     if child_elements:
         for elem in child_elements:
@@ -449,16 +465,32 @@ def parse_original_name(premis_object):
         namespaces=NAMESPACES)[0]
 
 
-def parse_environment(premis_elem):
+def parse_environment(premis_elem, purpose=None):
+    """Parses the premis environment sectionis. If purpose is
+    given, returns only the environments with the purpose in the
+    premis:environmentPurpose contents.
+
+    :param premis_elem: ElementTree element
+    :param purpose: The purpose as a string
+    :return: A list of environment sections
     """
-    :param premis_elem:
-    :return: String
-    """
+    environments = []
     try:
-        return premis_elem.xpath(".//premis:environment",
-                                 namespaces=NAMESPACES)[0]
+        env_elems = premis_elem.xpath(".//premis:environment",
+                                      namespaces=NAMESPACES)
     except IndexError:
-        return ""
+        return environments
+
+    if not purpose:
+        environments = env_elems
+    else:
+        for env_elem in env_elems:
+            for purpose_elem in env_elem.xpath("./premis:environmentPurpose",
+                                               namespaces=NAMESPACES):
+                if purpose_elem.text == purpose:
+                    environments.append(env_elem)
+
+    return environments
 
 
 def parse_dependency(premis_elem):

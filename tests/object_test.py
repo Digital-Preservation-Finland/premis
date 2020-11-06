@@ -292,7 +292,7 @@ def test_parse_original_name():
 
 
 def test_parse_environment():
-    """Test parse_environment"""
+    """Test the parse_environment function."""
     env = o.environment(child_elements=[
         o.dependency(identifiers=[
             p.identifier('c', 'd', 'dependency')
@@ -331,7 +331,11 @@ def test_parse_environment():
            '</premis:dependency></premis:environment>')
     assert u.compare_trees(penv[0], ET.fromstring(xml))
 
-    # Test that non-existing environment results to an empty list
+
+def test_parse_environment_empty():
+    """Test that non-existing environment results to an empty list with
+    the function parse_environment.
+    """
     obj = o.object(p.identifier('x', 'y', 'object'))
     penv = o.parse_environment(obj)
     assert penv == []

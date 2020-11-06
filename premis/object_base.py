@@ -466,7 +466,7 @@ def parse_original_name(premis_object):
 
 
 def parse_environment(premis_elem, purpose=None):
-    """Parses the premis environment sectionis. If purpose is
+    """Parses the premis environment sections. If purpose is
     given, returns only the environments with the purpose in the
     premis:environmentPurpose contents.
 
@@ -475,11 +475,8 @@ def parse_environment(premis_elem, purpose=None):
     :return: A list of environment sections
     """
     environments = []
-    try:
-        env_elems = premis_elem.xpath(".//premis:environment",
-                                      namespaces=NAMESPACES)
-    except IndexError:
-        return environments
+    env_elems = premis_elem.xpath(".//premis:environment",
+                                  namespaces=NAMESPACES)
 
     if not purpose:
         environments = env_elems

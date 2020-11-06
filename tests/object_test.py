@@ -331,6 +331,11 @@ def test_parse_environment():
            '</premis:dependency></premis:environment>')
     assert u.compare_trees(penv[0], ET.fromstring(xml))
 
+    # Test that non-existing environment results to an empty list
+    obj = o.object(p.identifier('x', 'y', 'object'))
+    penv = o.parse_environment(obj)
+    assert penv == []
+
 
 def test_parse_dependency():
     """Test parse_dependency"""

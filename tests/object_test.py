@@ -310,15 +310,23 @@ def test_parse_environment():
            '</premis:dependency></premis:environment>')
     assert u.compare_trees(penv[0], ET.fromstring(xml))
 
-    # Add another environment to the object, only the one with the purpose 'a'
-    # should be returned
+
+def test_environment_with_purpose():
+    """Test the environment_with_purpose function. Only one
+    environment should be returned.
+    """
+    env = o.environment(child_elements=[
+        o.dependency(identifiers=[
+            p.identifier('c', 'd', 'dependency')
+        ])
+    ])
     env2 = o.environment(
         purposes=['a'],
         child_elements=[o.dependency(
             identifiers=[p.identifier('c', 'd', 'dependency')])])
     obj = o.object(p.identifier('x', 'y', 'object'),
                    child_elements=[env, env2])
-    penv = o.parse_environment(obj, purpose='a')
+    penv = o.environment_with_purpose(obj, purpose='a')
     assert len(penv) == 1
     xml = ('<premis:environment xmlns:premis="info:lc/xmlns/premis-v2" '
            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'

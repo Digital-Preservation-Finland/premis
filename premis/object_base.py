@@ -166,7 +166,7 @@ def environment(characteristic=None,
 
     :param characteristic: PREMIS environment characteristic as a string
     :param purposes: A list of environment purposes to be appended
-    :param child_elements: A list of environment notes to be appended
+    :param notes: A list of environment notes to be appended
     :param child_elements: A list of child elements to be appended
     :returns: ElementTree DOM tree
     """
@@ -465,28 +465,35 @@ def parse_original_name(premis_object):
         namespaces=NAMESPACES)[0]
 
 
-def parse_environment(premis_elem, purpose=None):
-    """Parses the premis environment sections. If purpose is
-    given, returns only the environments with the purpose in the
-    premis:environmentPurpose contents.
+def parse_environment(premis_elem):
+    """Parses the premis environment sections.
+
+    :param premis_elem: ElementTree element
+    :return: A list of environment sections
+    """
+    try:
+        return list(iter_elements(premis_elem, 'environment'))
+    except IndexError:
+        return ""
+
+
+def environment_with_purpose(premis_elem, purpose):
+    """Finds the premis environment sections with a specific purpose.
+    The function returns only the environments with the given purpose in
+    the premis:environmentPurpose contents.
 
     :param premis_elem: ElementTree element
     :param purpose: The purpose as a string
     :return: A list of environment sections
     """
     environments = []
-    env_elems = premis_elem.xpath(".//premis:environment",
-                                  namespaces=NAMESPACES)
-
-    if not purpose:
-        environments = env_elems
-    else:
-        for env_elem in env_elems:
-            for purpose_elem in env_elem.xpath("./premis:environmentPurpose",
-                                               namespaces=NAMESPACES):
+    try:
+        for env_elem in parse_environment(premis_elem):
+            for purpose_elem in iter_elements(env_elem, 'environmentPurpose'):
                 if purpose_elem.text == purpose:
                     environments.append(env_elem)
-
+    except IndexError:
+        pass
     return environments
 
 

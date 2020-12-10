@@ -465,36 +465,29 @@ def parse_original_name(premis_object):
         namespaces=NAMESPACES)[0]
 
 
-def parse_environment(premis_elem):
-    """Parses the premis environment sections.
+def iter_environments(premis_elem):
+    """Iterate all PREMIS environments from starting element.
 
     :param premis_elem: ElementTree element
-    :return: A list of environment sections
+    :return: Iterable of premis environments
     """
-    try:
-        return list(iter_elements(premis_elem, 'environment'))
-    except IndexError:
-        return ""
+    for _environment in iter_elements(premis_elem, 'environment'):
+        yield _environment
 
 
-def environment_with_purpose(premis_elem, purpose):
+def environments_with_purpose(environments, purpose):
     """Finds the premis environment sections with a specific purpose.
-    The function returns only the environments with the given purpose in
+    The function yields only the environments with the given purpose in
     the premis:environmentPurpose contents.
 
-    :param premis_elem: ElementTree element
-    :param purpose: The purpose as a string
-    :return: A list of environment sections
+    :param environments: Iterable of premis environments
+    :param purpose: The environment purpose as a string
+    :return: Iterable of premis environments
     """
-    environments = []
-    try:
-        for env_elem in parse_environment(premis_elem):
-            for purpose_elem in iter_elements(env_elem, 'environmentPurpose'):
-                if purpose_elem.text == purpose:
-                    environments.append(env_elem)
-    except IndexError:
-        pass
-    return environments
+    for _environment in environments:
+        for purpose_elem in iter_elements(_environment, 'environmentPurpose'):
+            if purpose_elem.text == purpose:
+                yield _environment
 
 
 def parse_dependency(premis_elem):

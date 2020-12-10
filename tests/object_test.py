@@ -291,15 +291,18 @@ def test_parse_original_name():
     assert o.parse_original_name(obj) == 'aaa'
 
 
-def test_parse_environment():
-    """Test the parse_environment function."""
+def test_iter_environments():
+    """Test the iter_environments function. Test asserts that the
+    environment was yielded from the created test data and that its
+    contents matches the expected premis XML.
+    """
     env = o.environment(child_elements=[
         o.dependency(identifiers=[
             p.identifier('c', 'd', 'dependency')
         ])
     ])
     obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[env])
-    penv = o.parse_environment(obj)
+
     xml = ('<premis:environment xmlns:premis="info:lc/xmlns/premis-v2" '
            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
            '<premis:dependency>'
@@ -308,12 +311,18 @@ def test_parse_environment():
            '<premis:dependencyIdentifierValue>'
            'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>'
            '</premis:dependency></premis:environment>')
-    assert u.compare_trees(penv[0], ET.fromstring(xml))
+
+    i = 0
+    for penv in o.iter_environments(obj):
+        i = i + 1
+        assert u.compare_trees(penv, ET.fromstring(xml))
+    assert i == 1
 
 
-def test_environment_with_purpose():
-    """Test the environment_with_purpose function. Only one
-    environment should be returned.
+def test_environments_with_purpose():
+    """Test the environments_with_purpose function. Only one
+    environment should be returned from the created test data
+    containing two environments.
     """
     env = o.environment(child_elements=[
         o.dependency(identifiers=[
@@ -326,8 +335,6 @@ def test_environment_with_purpose():
             identifiers=[p.identifier('c', 'd', 'dependency')])])
     obj = o.object(p.identifier('x', 'y', 'object'),
                    child_elements=[env, env2])
-    penv = o.environment_with_purpose(obj, purpose='a')
-    assert len(penv) == 1
     xml = ('<premis:environment xmlns:premis="info:lc/xmlns/premis-v2" '
            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
            '<premis:environmentPurpose>a</premis:environmentPurpose>'
@@ -337,16 +344,21 @@ def test_environment_with_purpose():
            '<premis:dependencyIdentifierValue>'
            'd</premis:dependencyIdentifierValue></premis:dependencyIdentifier>'
            '</premis:dependency></premis:environment>')
-    assert u.compare_trees(penv[0], ET.fromstring(xml))
+
+    environments = o.iter_environments(obj)
+
+    penvs = o.environments_with_purpose(environments, purpose='a')
+    assert len(list(penvs)) == 1
+    for penv in penvs:
+        assert u.compare_trees(penv, ET.fromstring(xml))
 
 
-def test_parse_environment_empty():
-    """Test that non-existing environment results to an empty list with
-    the function parse_environment.
+def test_iter_environments_empty():
+    """Test that non-existing environment results in no elements being
+    yielded.
     """
     obj = o.object(p.identifier('x', 'y', 'object'))
-    penv = o.parse_environment(obj)
-    assert penv == []
+    assert not list(o.iter_environments(obj))
 
 
 def test_parse_dependency():

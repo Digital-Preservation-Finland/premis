@@ -15,7 +15,7 @@ def main():
             'lxml',
             'six',
             'xml-helpers@git+https://gitlab.ci.csc.fi/dpres/xml-helpers.git'
-            '@develop'
+            '@develop#egg=xml_helpers'
         ]
     )
 

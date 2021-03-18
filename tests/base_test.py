@@ -44,9 +44,14 @@ def test_identifier():
         '</premis:objectIdentifier>'
     )
     xml_related = (
-        '<premis:relatedObjectIdentification xmlns:premis="info:lc/xmlns/premis-v2">'
-        '<premis:relatedObjectIdentifierType>local</premis:relatedObjectIdentifierType>'
-        '<premis:relatedObjectIdentifierValue>id01</premis:relatedObjectIdentifierValue>'
+        '<premis:relatedObjectIdentification'
+        ' xmlns:premis="info:lc/xmlns/premis-v2">'
+        '<premis:relatedObjectIdentifierType>'
+        'local'
+        '</premis:relatedObjectIdentifierType>'
+        '<premis:relatedObjectIdentifierValue>'
+        'id01'
+        '</premis:relatedObjectIdentifierValue>'
         '</premis:relatedObjectIdentification>'
     )
     xml_event = (
@@ -56,9 +61,14 @@ def test_identifier():
         '</premis:eventIdentifier>'
     )
     xml_linking_agent = (
-        '<premis:linkingAgentIdentifier xmlns:premis="info:lc/xmlns/premis-v2">'
-        '<premis:linkingAgentIdentifierType>local</premis:linkingAgentIdentifierType>'
-        '<premis:linkingAgentIdentifierValue>id01</premis:linkingAgentIdentifierValue>'
+        '<premis:linkingAgentIdentifier'
+        ' xmlns:premis="info:lc/xmlns/premis-v2">'
+        '<premis:linkingAgentIdentifierType>'
+        'local'
+        '</premis:linkingAgentIdentifierType>'
+        '<premis:linkingAgentIdentifierValue>'
+        'id01'
+        '</premis:linkingAgentIdentifierValue>'
         '<premis:linkingAgentRole>tester</premis:linkingAgentRole>'
         '</premis:linkingAgentIdentifier>'
     )
@@ -92,11 +102,12 @@ def test_parse_identifier_type_value():
 def test_premis():
     """Test PREMIS root generation"""
     tree = ET.tostring(p.premis())
-    xml = """<premis:premis
-             xsi:schemaLocation="info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/v2/premis-v2-3.xsd"
-             xmlns:premis = "info:lc/xmlns/premis-v2"
-             xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
-             version="2.2"/>"""
+    xml = ('<premis:premis'
+           ' xsi:schemaLocation="info:lc/xmlns/premis-v2'
+           ' http://www.loc.gov/standards/premis/v2/premis-v2-3.xsd"'
+           ' xmlns:premis = "info:lc/xmlns/premis-v2"'
+           ' xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"'
+           '  version="2.2"/>')
     tree_xml = ET.tostring(ET.fromstring(xml))
     assert tree == tree_xml
 

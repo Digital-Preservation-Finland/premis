@@ -19,7 +19,8 @@ def test_outcome():
     """Test event_outcome"""
     outcome = e.outcome('success', 'OK')
     xml = (
-        '<premis:eventOutcomeInformation xmlns:premis="info:lc/xmlns/premis-v2">'
+        '<premis:eventOutcomeInformation'
+        ' xmlns:premis="info:lc/xmlns/premis-v2">'
         '<premis:eventOutcome>success</premis:eventOutcome>'
         '<premis:eventOutcomeDetail><premis:eventOutcomeDetailNote>OK'
         '</premis:eventOutcomeDetailNote></premis:eventOutcomeDetail>'
@@ -41,8 +42,12 @@ def test_event():
            '<premis:eventDateTime>d</premis:eventDateTime>'
            '<premis:eventDetail>e</premis:eventDetail>'
            '<premis:linkingObjectIdentifier>'
-           '<premis:linkingObjectIdentifierType>f</premis:linkingObjectIdentifierType>'
-           '<premis:linkingObjectIdentifierValue>g</premis:linkingObjectIdentifierValue>'
+           '<premis:linkingObjectIdentifierType>'
+           'f'
+           '</premis:linkingObjectIdentifierType>'
+           '<premis:linkingObjectIdentifierValue>'
+           'g'
+           '</premis:linkingObjectIdentifierValue>'
            '</premis:linkingObjectIdentifier></premis:event>')
     assert u.compare_trees(event, ET.fromstring(xml))
 
@@ -156,12 +161,16 @@ def test_outcome_extension():
     with raises(TypeError):
         e.outcome('success', detail_extension='<xxx />')
     # Should work with XML tree
-    assert u.compare_trees(e.outcome('success', detail_extension=extensions), event)
+    assert u.compare_trees(e.outcome('success',
+                           detail_extension=extensions), event)
 
-    # Test that extensions are placed in single eventOutcomeDetailExtension element
+    # Test that extensions are placed in single eventOutcomeDetailExtension
+    # element
     event = ET.fromstring(xml_single_extension)
     assert u.compare_trees(
-        e.outcome('success', detail_extension=extensions, single_extension_element=True),
+        e.outcome('success',
+                  detail_extension=extensions,
+                  single_extension_element=True),
         event)
 
 
@@ -208,8 +217,10 @@ def test_parse_outcome_detail_note():
 
 def test_parse_outcome_detail_extension():
     """Test parse_outcome_detail_extension"""
-    xml = '<premis:eventOutcomeDetailExtension xmlns:premis="info:lc/xmlns/premis-v2">' \
-          '<xxx /></premis:eventOutcomeDetailExtension>'
+    xml = ('<premis:eventOutcomeDetailExtension'
+           ' xmlns:premis="info:lc/xmlns/premis-v2">'
+           '<xxx />'
+           '</premis:eventOutcomeDetailExtension>')
     tree = ET.fromstring(xml)
     outcome = e.outcome('success', detail_note='xxx',
                         detail_extension=[ET.fromstring('<xxx />')])

@@ -19,11 +19,11 @@ def test_element():
 
 
 def test_subelement():
-    """Test PREMIS _subelement"""
+    """Test PREMIS subelement"""
     xml = """<premis:xxx xmlns:premis="info:lc/xmlns/premis-v2"/>"""
     parent_xml = """<premis:premis xmlns:premis="info:lc/xmlns/premis-v2"/>"""
     parent = ET.fromstring(parent_xml)
-    assert u.compare_trees(p._subelement(parent, 'xxx'), ET.fromstring(xml))
+    assert u.compare_trees(p.subelement(parent, 'xxx'), ET.fromstring(xml))
 
 
 def test_identifier():

@@ -11,7 +11,7 @@ References:
 from __future__ import unicode_literals
 
 from xml_helpers.utils import decode_utf8
-from premis.base import (element, _subelement, iter_elements, premis_ns,
+from premis.base import (element, subelement, iter_elements, premis_ns,
                          NAMESPACES)
 
 
@@ -42,14 +42,14 @@ def agent(agent_id, agent_name, agent_type, note=None):
 
     _agent.append(agent_id)
 
-    _agent_name = _subelement(_agent, 'agentName')
+    _agent_name = subelement(_agent, 'agentName')
     _agent_name.text = decode_utf8(agent_name)
 
-    _agent_type = _subelement(_agent, 'agentType')
+    _agent_type = subelement(_agent, 'agentType')
     _agent_type.text = decode_utf8(agent_type)
 
     if note is not None:
-        _agent_type = _subelement(_agent, 'agentNote')
+        _agent_type = subelement(_agent, 'agentNote')
         _agent_type.text = decode_utf8(note)
 
     return _agent

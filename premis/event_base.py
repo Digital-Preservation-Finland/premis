@@ -12,7 +12,7 @@ from __future__ import unicode_literals
 
 from xml_helpers.utils import decode_utf8
 
-from premis.base import (element, _subelement, premis_ns, identifier,
+from premis.base import (element, subelement, premis_ns, identifier,
                          iter_elements, NAMESPACES)
 
 
@@ -44,26 +44,26 @@ def outcome(event_outcome, detail_note=None, detail_extension=None,
 
     outcome_information = element('eventOutcomeInformation')
 
-    _outcome = _subelement(outcome_information, 'eventOutcome')
+    _outcome = subelement(outcome_information, 'eventOutcome')
     _outcome.text = decode_utf8(event_outcome)
 
-    detail = _subelement(outcome_information, 'eventOutcomeDetail')
+    detail = subelement(outcome_information, 'eventOutcomeDetail')
 
     if detail_note is not None:
-        _detail_note = _subelement(detail, 'eventOutcomeDetailNote')
+        _detail_note = subelement(detail, 'eventOutcomeDetailNote')
         _detail_note.text = decode_utf8(detail_note)
 
     if detail_extension:
         if single_extension_element:
             # Add all extensions into one eventOutcomeDetailExtension element
-            _detail_extension = _subelement(detail,
+            _detail_extension = subelement(detail,
                                             'eventOutcomeDetailExtension')
             for extension in detail_extension:
                 _detail_extension.append(extension)
         else:
             # Separate eventOutcomeDetailExtension element for each extension
             for extension in detail_extension:
-                _detail_extension = _subelement(detail,
+                _detail_extension = subelement(detail,
                                                 'eventOutcomeDetailExtension')
                 _detail_extension.append(extension)
 
@@ -102,13 +102,13 @@ def event(event_id, event_type, event_date_time, event_detail,
 
     _event.append(event_id)
 
-    _event_type = _subelement(_event, 'eventType')
+    _event_type = subelement(_event, 'eventType')
     _event_type.text = decode_utf8(event_type)
 
-    _event_date_time = _subelement(_event, 'eventDateTime')
+    _event_date_time = subelement(_event, 'eventDateTime')
     _event_date_time.text = decode_utf8(event_date_time)
 
-    _event_detail = _subelement(_event, 'eventDetail')
+    _event_detail = subelement(_event, 'eventDetail')
     _event_detail.text = decode_utf8(event_detail)
 
     if child_elements:

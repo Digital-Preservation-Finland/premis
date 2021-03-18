@@ -12,7 +12,7 @@ from __future__ import unicode_literals
 
 from xml_helpers.utils import decode_utf8
 
-from premis.base import (NAMESPACES, XSI_NS, element, _subelement, identifier,
+from premis.base import (NAMESPACES, XSI_NS, element, subelement, identifier,
                          iter_elements, parse_identifier_type_value, premis_ns,
                          xsi_ns)
 
@@ -24,10 +24,10 @@ def fixity(message_digest, digest_algorithm='MD5'):
     :return: Element object for fixity.
     """
     fixity_el = element('fixity')
-    fixity_algorithm = _subelement(
+    fixity_algorithm = subelement(
         fixity_el, 'messageDigestAlgorithm')
     fixity_algorithm.text = decode_utf8(digest_algorithm)
-    fixity_checksum = _subelement(fixity_el, 'messageDigest')
+    fixity_checksum = subelement(fixity_el, 'messageDigest')
     fixity_checksum.text = message_digest
     return fixity_el
 
@@ -39,10 +39,10 @@ def format_designation(format_name, format_version=None):
     :return: Element object for format designation.
     """
     format_designation_el = element('formatDesignation')
-    format_name_el = _subelement(format_designation_el, 'formatName')
+    format_name_el = subelement(format_designation_el, 'formatName')
     format_name_el.text = decode_utf8(format_name)
     if format_version:
-        format_version_el = _subelement(
+        format_version_el = subelement(
             format_designation_el, 'formatVersion')
         format_version_el.text = decode_utf8(format_version)
     return format_designation_el
@@ -55,9 +55,9 @@ def format_registry(registry_name, registry_key):
     :return: Element object for format registry.
     """
     format_registry_el = element('formatRegistry')
-    registry_name_el = _subelement(format_registry_el, 'formatRegistryName')
+    registry_name_el = subelement(format_registry_el, 'formatRegistryName')
     registry_name_el.text = decode_utf8(registry_name)
-    registry_key_el = _subelement(format_registry_el, 'formatRegistryKey')
+    registry_key_el = subelement(format_registry_el, 'formatRegistryKey')
     registry_key_el.text = decode_utf8(registry_key)
     return format_registry_el
 
@@ -104,7 +104,7 @@ def object_characteristics(composition_level='0', child_elements=None):
     """
     object_char = element('objectCharacteristics')
 
-    composition = _subelement(
+    composition = subelement(
         object_char, 'compositionLevel')
     composition.text = decode_utf8(composition_level)
     if child_elements:
@@ -142,10 +142,10 @@ def relationship(
 
     _relationship = element('relationship')
 
-    _type = _subelement(_relationship, 'relationshipType')
+    _type = subelement(_relationship, 'relationshipType')
     _type.text = decode_utf8(relationship_type)
 
-    _subtype = _subelement(_relationship, 'relationshipSubType')
+    _subtype = subelement(_relationship, 'relationshipSubType')
     _subtype.text = decode_utf8(relationship_subtype)
 
     (related_type, related_value) = parse_identifier_type_value(
@@ -175,19 +175,19 @@ def environment(characteristic=None,
     _environment = element('environment')
 
     if characteristic:
-        char_elem = _subelement(
+        char_elem = subelement(
             _environment, 'environmentCharacteristic')
         char_elem.text = decode_utf8(characteristic)
 
     if purposes:
         for purpose in purposes:
-            purpose_elem = _subelement(
+            purpose_elem = subelement(
                 _environment, 'environmentPurpose')
             purpose_elem.text = decode_utf8(purpose)
 
     if notes:
         for note in notes:
-            note_elem = _subelement(
+            note_elem = subelement(
                 _environment, 'environmentNote')
             note_elem.text = decode_utf8(note)
 
@@ -208,7 +208,7 @@ def dependency(names=None, identifiers=None):
     _dependency = element('dependency')
     if names:
         for name in names:
-            name_elem = _subelement(
+            name_elem = subelement(
                 _dependency, 'dependencyName')
             name_elem.text = decode_utf8(name)
 
@@ -294,7 +294,7 @@ def object(
         _object.set(xsi_ns('type'), 'premis:file')
 
     if original_name:
-        _original_name = _subelement(_object, 'originalName')
+        _original_name = subelement(_object, 'originalName')
         _original_name.text = original_name
 
     if child_elements:

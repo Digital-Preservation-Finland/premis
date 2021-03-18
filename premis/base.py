@@ -65,12 +65,10 @@ def element(tag, prefix="", ns=None):
     return ET.Element(premis_ns(tag, prefix), nsmap=ns)
 
 
-# TODO: Rename this element when doing actual refactoring,
-#       because this is used in other modules as well.
-# TODO: When doing actual refactoring, resolve redefined-outer-name warning.
-def _subelement(parent, tag, prefix="", ns=None):
-    """Return subelement for the given parent element. Created element is
-    appended to parent element.
+def subelement(parent, tag, prefix="", ns=None):
+    """Return subelement for the given parent element.
+
+    Created element is appended to parent element.
 
     :param parent: Parent element
     :param tag: Element tagname
@@ -148,18 +146,18 @@ def identifier(identifier_type, identifier_value, prefix='object', role=None):
     else:
         _identifier = element('Identifier', prefix)
 
-    _type = _subelement(_identifier, 'IdentifierType', prefix)
+    _type = subelement(_identifier, 'IdentifierType', prefix)
     if identifier_type is not None:
         identifier_type = decode_utf8(identifier_type)
     _type.text = identifier_type
 
-    _value = _subelement(_identifier, 'IdentifierValue', prefix)
+    _value = subelement(_identifier, 'IdentifierValue', prefix)
     if identifier_value is not None:
         identifier_value = decode_utf8(identifier_value)
     _value.text = identifier_value
 
     if 'linking' in prefix and role is not None:
-        _role = _subelement(_identifier, 'Role', prefix)
+        _role = subelement(_identifier, 'Role', prefix)
         _role.text = role
 
     return _identifier

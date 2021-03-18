@@ -77,6 +77,9 @@ def subelement(parent, tag, prefix="", ns=None):
     :returns: Created subelement
 
     """
+    # `ns` is a fine name in this context as it is a clear abbreviation for a
+    # long word.
+    # pylint: disable=invalid-name
     if ns is None:
         ns = {}
     ns['premis'] = PREMIS_NS

@@ -109,31 +109,28 @@ def agents_with_type(agents, agent_type='organization'):
             yield (agent_type, agent_name)
 
 
-# TODO: When doing actual refactoring, resolve redefined-outer-name warning.
-def parse_name(agent):
+def parse_name(agent_element):
     """
-    :param agent: Agent Element object.
+    :param agent_element: Agent Element object.
     :return: Unicode string
     """
-    return decode_utf8(agent.xpath(".//premis:agentName/text()",
-                                   namespaces=NAMESPACES)[0])
+    return decode_utf8(agent_element.xpath(".//premis:agentName/text()",
+                                           namespaces=NAMESPACES)[0])
 
 
-# TODO: When doing actual refactoring, resolve redefined-outer-name warning.
-def parse_agent_type(agent):
+def parse_agent_type(agent_element):
     """
-    :param agent: Agent Element object.
+    :param agent_element: Agent Element object.
     :return: Unicode string
     """
-    return decode_utf8(agent.xpath(".//premis:agentType/text()",
-                                   namespaces=NAMESPACES)[0])
+    return decode_utf8(agent_element.xpath(".//premis:agentType/text()",
+                                           namespaces=NAMESPACES)[0])
 
 
-# TODO: When doing actual refactoring, resolve redefined-outer-name warning.
-def parse_note(agent):
+def parse_note(agent_element):
     """
-    :param agent: Agent Element object.
+    :param agent_element: Agent Element object.
     :return: Unicode string
     """
-    return decode_utf8(agent.xpath(".//premis:agentNote/text()",
-                                   namespaces=NAMESPACES)[0])
+    return decode_utf8(agent_element.xpath(".//premis:agentNote/text()",
+                                           namespaces=NAMESPACES)[0])

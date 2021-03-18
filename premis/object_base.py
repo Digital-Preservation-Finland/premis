@@ -10,10 +10,11 @@ References:
 """
 from __future__ import unicode_literals
 
-from premis.base import (NAMESPACES, XSI_NS, _element, _subelement, identifier,
+from xml_helpers.utils import decode_utf8
+
+from premis.base import (NAMESPACES, XSI_NS, element, _subelement, identifier,
                          iter_elements, parse_identifier_type_value, premis_ns,
                          xsi_ns)
-from xml_helpers.utils import decode_utf8
 
 
 def fixity(message_digest, digest_algorithm='MD5'):
@@ -22,7 +23,7 @@ def fixity(message_digest, digest_algorithm='MD5'):
     :param digest_algorithm:
     :return: Element object for fixity.
     """
-    fixity_el = _element('fixity')
+    fixity_el = element('fixity')
     fixity_algorithm = _subelement(
         fixity_el, 'messageDigestAlgorithm')
     fixity_algorithm.text = decode_utf8(digest_algorithm)
@@ -37,7 +38,7 @@ def format_designation(format_name, format_version=None):
     :param format_version:
     :return: Element object for format designation.
     """
-    format_designation_el = _element('formatDesignation')
+    format_designation_el = element('formatDesignation')
     format_name_el = _subelement(format_designation_el, 'formatName')
     format_name_el.text = decode_utf8(format_name)
     if format_version:
@@ -53,7 +54,7 @@ def format_registry(registry_name, registry_key):
     :param registry_key:
     :return: Element object for format registry.
     """
-    format_registry_el = _element('formatRegistry')
+    format_registry_el = element('formatRegistry')
     registry_name_el = _subelement(format_registry_el, 'formatRegistryName')
     registry_name_el.text = decode_utf8(registry_name)
     registry_key_el = _subelement(format_registry_el, 'formatRegistryKey')
@@ -66,7 +67,7 @@ def format(child_elements=None):
     :param child_elements:
     :return: Element object for format.
     """
-    format_el = _element('format')
+    format_el = element('format')
     if child_elements:
         for elem in child_elements:
             format_el.append(elem)
@@ -78,7 +79,7 @@ def date_created(date):
     :param date:
     :return: Element object for date created.
     """
-    date_el = _element('dateCreatedByApplication')
+    date_el = element('dateCreatedByApplication')
     date_el.text = decode_utf8(date)
     return date_el
 
@@ -88,7 +89,7 @@ def creating_application(child_elements=None):
     :param child_elements:
     :return: Element object for creating application.
     """
-    creating_app = _element('creatingApplication')
+    creating_app = element('creatingApplication')
     if child_elements:
         for elem in child_elements:
             creating_app.append(elem)
@@ -101,7 +102,7 @@ def object_characteristics(composition_level='0', child_elements=None):
     :param child_elements:
     :return: Element object for object characteristics.
     """
-    object_char = _element('objectCharacteristics')
+    object_char = element('objectCharacteristics')
 
     composition = _subelement(
         object_char, 'compositionLevel')
@@ -139,7 +140,7 @@ def relationship(
     if related_object is None:
         return None
 
-    _relationship = _element('relationship')
+    _relationship = element('relationship')
 
     _type = _subelement(_relationship, 'relationshipType')
     _type.text = decode_utf8(relationship_type)
@@ -171,7 +172,7 @@ def environment(characteristic=None,
     :returns: ElementTree DOM tree
     """
 
-    _environment = _element('environment')
+    _environment = element('environment')
 
     if characteristic:
         char_elem = _subelement(
@@ -204,7 +205,7 @@ def dependency(names=None, identifiers=None):
     :param identifiers: A list of PREMIS identifier structures
     :returns: ElementTree DOM tree
     """
-    _dependency = _element('dependency')
+    _dependency = element('dependency')
     if names:
         for name in names:
             name_elem = _subelement(
@@ -281,7 +282,7 @@ def object(
 
     """
 
-    _object = _element('object', ns={'xsi': XSI_NS})
+    _object = element('object', ns={'xsi': XSI_NS})
 
     _object.append(object_id)
 

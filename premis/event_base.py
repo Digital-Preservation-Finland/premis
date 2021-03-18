@@ -10,16 +10,17 @@ References:
 """
 from __future__ import unicode_literals
 
-from premis.base import (_element, _subelement, premis_ns, identifier,
-                         iter_elements, NAMESPACES)
 from xml_helpers.utils import decode_utf8
 
+from premis.base import (element, _subelement, premis_ns, identifier,
+                         iter_elements, NAMESPACES)
 
-def outcome(outcome, detail_note=None, detail_extension=None,
+
+def outcome(event_outcome, detail_note=None, detail_extension=None,
             single_extension_element=False):
     """Create PREMIS event outcome DOM structure.
 
-    :outcome: Event outcome (success, failure)
+    :event_outcome: Event outcome (success, failure)
     :detail_note: String description for the event outcome
     :detail_extension: List of detail extension etree elements
     :single_extension_element:
@@ -41,10 +42,10 @@ def outcome(outcome, detail_note=None, detail_extension=None,
 
     """
 
-    outcome_information = _element('eventOutcomeInformation')
+    outcome_information = element('eventOutcomeInformation')
 
     _outcome = _subelement(outcome_information, 'eventOutcome')
-    _outcome.text = decode_utf8(outcome)
+    _outcome.text = decode_utf8(event_outcome)
 
     detail = _subelement(outcome_information, 'eventOutcomeDetail')
 
@@ -97,7 +98,7 @@ def event(event_id, event_type, event_date_time, event_detail,
         </premis:event>
 
     """
-    _event = _element('event')
+    _event = element('event')
 
     _event.append(event_id)
 
@@ -155,7 +156,8 @@ def find_event_by_id(premis, event_id):
     event_id = decode_utf8(event_id)
 
     for elem in iter_events(premis):
-        if elem.findtext('.//' + premis_ns('eventIdentifierValue')) == event_id:
+        identifier_ = elem.findtext('.//' + premis_ns('eventIdentifierValue'))
+        if identifier_ == event_id:
             return elem
 
     return None
@@ -189,22 +191,21 @@ def event_with_type_and_detail(events, event_type, event_detail):
             yield _event
 
 
-# TODO: When doing actual refactoring, resolve redefined-outer-name warning.
-def events_with_outcome(events, outcome):
+def events_with_outcome(events, event_outcome):
     """Iterate over all events with given outcome
 
     :param events: Iterable of events
-    :param outcome: Return all events that has the outcome
+    :param event_outcome: Return all events that have this outcome
     :returns: Iterable of events
 
     """
-    outcome = decode_utf8(outcome)
+    outcome_ = decode_utf8(event_outcome)
 
     for _event in events:
         _event_outcome = _event.findtext('/'.join([
             premis_ns('eventOutcomeInformation'),
             premis_ns('eventOutcome')]))
-        if _event_outcome == outcome:
+        if _event_outcome == outcome_:
             yield _event
 
 

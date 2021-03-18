@@ -10,8 +10,8 @@ References:
 """
 from __future__ import unicode_literals
 
-from xml_helpers.utils import encode_utf8, decode_utf8
-from premis.base import (_element, _subelement, iter_elements, premis_ns,
+from xml_helpers.utils import decode_utf8
+from premis.base import (element, _subelement, iter_elements, premis_ns,
                          NAMESPACES)
 
 
@@ -38,7 +38,7 @@ def agent(agent_id, agent_name, agent_type, note=None):
 
     """
 
-    _agent = _element('agent')
+    _agent = element('agent')
 
     _agent.append(agent_id)
 

@@ -17,6 +17,10 @@ PREMIS_NS = 'info:lc/xmlns/premis-v2'
 NAMESPACES = {'premis': PREMIS_NS,
               'xsi': XSI_NS}
 
+# using lxml.etree causes these, but importing c extensions is not a problem
+# for us
+# pylint: disable=c-extension-no-member
+
 
 def premis_ns(tag, prefix=""):
     """Prefix ElementTree tags with PREMIS namespace.
@@ -35,17 +39,14 @@ def premis_ns(tag, prefix=""):
     return '{%s}%s' % (PREMIS_NS, tag)
 
 
-# TODO: Rename this element when doing actual refactoring,
-#       because this is used in other modules as well.
-# TODO: When doing actual refactoring, resolve redefined-outer-name warning.
-def _element(tag, prefix="", ns=None):
+def element(tag, prefix="", ns=None):
     """Return _ElementInterface with PREMIS namespace.
 
     Prefix parameter is useful for adding prefixed to lower case tags. It just
     uppercases first letter of tag and appends it to prefix::
 
-        element = _element('objectIdentifier', 'linking')
-        element.tag
+        premis_element = element('objectIdentifier', 'linking')
+        premis_element.tag
         'linkingObjectIdentifier'
 
     :param tag: Tagname
@@ -54,6 +55,10 @@ def _element(tag, prefix="", ns=None):
     :returns: ElementTree element object
 
     """
+    # `ns` is a fine name in this context as it is a clear abbreviation for a
+    # long word.
+    # pylint: disable=invalid-name
+
     if ns is None:
         ns = {}
     ns['premis'] = PREMIS_NS
@@ -139,9 +144,9 @@ def identifier(identifier_type, identifier_value, prefix='object', role=None):
     prefix = decode_utf8(prefix)
 
     if prefix == 'relatedObject':
-        _identifier = _element('Identification', prefix)
+        _identifier = element('Identification', prefix)
     else:
-        _identifier = _element('Identifier', prefix)
+        _identifier = element('Identifier', prefix)
 
     _type = _subelement(_identifier, 'IdentifierType', prefix)
     if identifier_type is not None:
@@ -208,7 +213,7 @@ def premis(child_elements=None, namespaces=None):
     """
     if namespaces is None:
         namespaces = NAMESPACES
-    _premis = _element('premis', ns=namespaces)
+    _premis = element('premis', ns=namespaces)
     _premis.set(
         xsi_ns('schemaLocation'),
         'info:lc/xmlns/premis-v2 '

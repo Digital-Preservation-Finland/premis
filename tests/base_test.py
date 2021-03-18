@@ -13,9 +13,9 @@ def test_premis_ns():
 
 
 def test_element():
-    """Test PREMIS _element"""
+    """Test PREMIS element"""
     xml = """<premis:xxx xmlns:premis="info:lc/xmlns/premis-v2"/>"""
-    assert u.compare_trees(p._element('xxx'), ET.fromstring(xml))
+    assert u.compare_trees(p.element('xxx'), ET.fromstring(xml))
 
 
 def test_subelement():

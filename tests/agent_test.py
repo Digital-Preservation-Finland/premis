@@ -6,6 +6,10 @@ import xml_helpers.utils as u
 import premis.base as p
 import premis.agent_base as a
 
+# using lxml.etree causes these, but importing c extensions is not a problem
+# for us
+# pylint: disable=c-extension-no-member
+
 
 def test_agent():
     """Test agent"""

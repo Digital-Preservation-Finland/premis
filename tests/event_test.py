@@ -9,6 +9,10 @@ import premis.base as p
 import premis.event_base as e
 import xml_helpers.utils as u
 
+# using lxml.etree causes these, but importing c extensions is not a problem
+# for us
+# pylint: disable=c-extension-no-member
+
 
 def test_outcome():
     """Test event_outcome"""

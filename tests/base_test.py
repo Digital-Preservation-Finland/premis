@@ -6,6 +6,10 @@ import xml_helpers.utils as u
 import premis.base as p
 import premis.object_base as o
 
+# using lxml.etree causes these, but importing c extensions is not a problem
+# for us
+# pylint: disable=c-extension-no-member
+
 
 def test_premis_ns():
     """Test premis_ns"""

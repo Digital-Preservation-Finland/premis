@@ -5,9 +5,10 @@ import six
 from pytest import raises
 
 import lxml.etree as ET
+import xml_helpers.utils as u
+
 import premis.base as p
 import premis.event_base as e
-import xml_helpers.utils as u
 
 # using lxml.etree causes these, but importing c extensions is not a problem
 # for us

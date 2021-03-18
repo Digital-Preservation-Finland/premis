@@ -57,14 +57,14 @@ def outcome(event_outcome, detail_note=None, detail_extension=None,
         if single_extension_element:
             # Add all extensions into one eventOutcomeDetailExtension element
             _detail_extension = subelement(detail,
-                                            'eventOutcomeDetailExtension')
+                                           'eventOutcomeDetailExtension')
             for extension in detail_extension:
                 _detail_extension.append(extension)
         else:
             # Separate eventOutcomeDetailExtension element for each extension
             for extension in detail_extension:
                 _detail_extension = subelement(detail,
-                                                'eventOutcomeDetailExtension')
+                                               'eventOutcomeDetailExtension')
                 _detail_extension.append(extension)
 
     return outcome_information

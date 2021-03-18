@@ -129,25 +129,25 @@ def test_events_with_outcome():
 
 
 def test_outcome_extension():
-    # Ignore continuation and long lines to make xml human-readable
-    # noqa: E131, E501
+    # Ignore continuation and long lines to make xml human-readable. For flake8
+    # this has to be done on a per-line basis using 'noqa'.
     # pylint: disable=bad-continuation, line-too-long
     """Test that event outcome with XML extension works"""
     extensions = [ET.fromstring('<xxx />'), ET.fromstring('<yyy />')]
     xml_multiple_extensions = (
-        '<premis:eventOutcomeInformation xmlns:premis="info:lc/xmlns/premis-v2">'
-            '<premis:eventOutcome>success</premis:eventOutcome>'
+        '<premis:eventOutcomeInformation xmlns:premis="info:lc/xmlns/premis-v2">'  # noqa
+            '<premis:eventOutcome>success</premis:eventOutcome>'  # noqa
             '<premis:eventOutcomeDetail>'
-                '<premis:eventOutcomeDetailExtension><xxx /></premis:eventOutcomeDetailExtension>'
-                '<premis:eventOutcomeDetailExtension><yyy /></premis:eventOutcomeDetailExtension>'
+                '<premis:eventOutcomeDetailExtension><xxx /></premis:eventOutcomeDetailExtension>'  # noqa
+                '<premis:eventOutcomeDetailExtension><yyy /></premis:eventOutcomeDetailExtension>'  # noqa
             '</premis:eventOutcomeDetail>'
         '</premis:eventOutcomeInformation>')
 
     xml_single_extension = (
-        '<premis:eventOutcomeInformation xmlns:premis="info:lc/xmlns/premis-v2">'
-            '<premis:eventOutcome>success</premis:eventOutcome>'
+        '<premis:eventOutcomeInformation xmlns:premis="info:lc/xmlns/premis-v2">'  # noqa
+            '<premis:eventOutcome>success</premis:eventOutcome>'  # noqa
             '<premis:eventOutcomeDetail>'
-                '<premis:eventOutcomeDetailExtension><xxx /><yyy /></premis:eventOutcomeDetailExtension>'
+                '<premis:eventOutcomeDetailExtension><xxx /><yyy /></premis:eventOutcomeDetailExtension>'  # noqa
             '</premis:eventOutcomeDetail>'
         '</premis:eventOutcomeInformation>')
 

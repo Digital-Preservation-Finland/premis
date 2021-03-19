@@ -39,14 +39,14 @@ def premis_ns(tag, prefix=""):
     return '{%s}%s' % (PREMIS_NS, tag)
 
 
-def element(tag, prefix="", ns=None):
+def _element(tag, prefix="", ns=None):
     """Return _ElementInterface with PREMIS namespace.
 
     Prefix parameter is useful for adding prefixed to lower case tags. It just
     uppercases first letter of tag and appends it to prefix::
 
-        premis_element = element('objectIdentifier', 'linking')
-        premis_element.tag
+        element = _element('objectIdentifier', 'linking')
+        element.tag
         'linkingObjectIdentifier'
 
     :param tag: Tagname
@@ -58,14 +58,13 @@ def element(tag, prefix="", ns=None):
     # `ns` is a fine name in this context as it is a clear abbreviation for a
     # long word.
     # pylint: disable=invalid-name
-
     if ns is None:
         ns = {}
     ns['premis'] = PREMIS_NS
     return ET.Element(premis_ns(tag, prefix), nsmap=ns)
 
 
-def subelement(parent, tag, prefix="", ns=None):
+def _subelement(parent, tag, prefix="", ns=None):
     """Return subelement for the given parent element.
 
     Created element is appended to parent element.
@@ -145,22 +144,22 @@ def identifier(identifier_type, identifier_value, prefix='object', role=None):
     prefix = decode_utf8(prefix)
 
     if prefix == 'relatedObject':
-        _identifier = element('Identification', prefix)
+        _identifier = _element('Identification', prefix)
     else:
-        _identifier = element('Identifier', prefix)
+        _identifier = _element('Identifier', prefix)
 
-    _type = subelement(_identifier, 'IdentifierType', prefix)
+    _type = _subelement(_identifier, 'IdentifierType', prefix)
     if identifier_type is not None:
         identifier_type = decode_utf8(identifier_type)
     _type.text = identifier_type
 
-    _value = subelement(_identifier, 'IdentifierValue', prefix)
+    _value = _subelement(_identifier, 'IdentifierValue', prefix)
     if identifier_value is not None:
         identifier_value = decode_utf8(identifier_value)
     _value.text = identifier_value
 
     if 'linking' in prefix and role is not None:
-        _role = subelement(_identifier, 'Role', prefix)
+        _role = _subelement(_identifier, 'Role', prefix)
         _role.text = role
 
     return _identifier
@@ -214,7 +213,7 @@ def premis(child_elements=None, namespaces=None):
     """
     if namespaces is None:
         namespaces = NAMESPACES
-    _premis = element('premis', ns=namespaces)
+    _premis = _element('premis', ns=namespaces)
     _premis.set(
         xsi_ns('schemaLocation'),
         'info:lc/xmlns/premis-v2 '

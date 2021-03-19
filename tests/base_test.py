@@ -17,17 +17,17 @@ def test_premis_ns():
 
 
 def test_element():
-    """Test PREMIS element"""
+    """Test PREMIS _element"""
     xml = """<premis:xxx xmlns:premis="info:lc/xmlns/premis-v2"/>"""
-    assert u.compare_trees(p.element('xxx'), ET.fromstring(xml))
+    assert u.compare_trees(p._element('xxx'), ET.fromstring(xml))
 
 
 def test_subelement():
-    """Test PREMIS subelement"""
+    """Test PREMIS _subelement"""
     xml = """<premis:xxx xmlns:premis="info:lc/xmlns/premis-v2"/>"""
     parent_xml = """<premis:premis xmlns:premis="info:lc/xmlns/premis-v2"/>"""
     parent = ET.fromstring(parent_xml)
-    assert u.compare_trees(p.subelement(parent, 'xxx'), ET.fromstring(xml))
+    assert u.compare_trees(p._subelement(parent, 'xxx'), ET.fromstring(xml))
 
 
 def test_identifier():

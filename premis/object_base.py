@@ -11,8 +11,7 @@ References:
 from __future__ import unicode_literals
 
 from xml_helpers.utils import decode_utf8
-
-from premis.base import (NAMESPACES, XSI_NS, element, subelement, identifier,
+from premis.base import (NAMESPACES, XSI_NS, _element, _subelement, identifier,
                          iter_elements, parse_identifier_type_value, premis_ns,
                          xsi_ns)
 
@@ -23,11 +22,11 @@ def fixity(message_digest, digest_algorithm='MD5'):
     :param digest_algorithm:
     :return: Element object for fixity.
     """
-    fixity_el = element('fixity')
-    fixity_algorithm = subelement(
+    fixity_el = _element('fixity')
+    fixity_algorithm = _subelement(
         fixity_el, 'messageDigestAlgorithm')
     fixity_algorithm.text = decode_utf8(digest_algorithm)
-    fixity_checksum = subelement(fixity_el, 'messageDigest')
+    fixity_checksum = _subelement(fixity_el, 'messageDigest')
     fixity_checksum.text = message_digest
     return fixity_el
 
@@ -38,11 +37,11 @@ def format_designation(format_name, format_version=None):
     :param format_version:
     :return: Element object for format designation.
     """
-    format_designation_el = element('formatDesignation')
-    format_name_el = subelement(format_designation_el, 'formatName')
+    format_designation_el = _element('formatDesignation')
+    format_name_el = _subelement(format_designation_el, 'formatName')
     format_name_el.text = decode_utf8(format_name)
     if format_version:
-        format_version_el = subelement(
+        format_version_el = _subelement(
             format_designation_el, 'formatVersion')
         format_version_el.text = decode_utf8(format_version)
     return format_designation_el
@@ -54,10 +53,10 @@ def format_registry(registry_name, registry_key):
     :param registry_key:
     :return: Element object for format registry.
     """
-    format_registry_el = element('formatRegistry')
-    registry_name_el = subelement(format_registry_el, 'formatRegistryName')
+    format_registry_el = _element('formatRegistry')
+    registry_name_el = _subelement(format_registry_el, 'formatRegistryName')
     registry_name_el.text = decode_utf8(registry_name)
-    registry_key_el = subelement(format_registry_el, 'formatRegistryKey')
+    registry_key_el = _subelement(format_registry_el, 'formatRegistryKey')
     registry_key_el.text = decode_utf8(registry_key)
     return format_registry_el
 
@@ -67,7 +66,7 @@ def format(child_elements=None):
     :param child_elements:
     :return: Element object for format.
     """
-    format_el = element('format')
+    format_el = _element('format')
     if child_elements:
         for elem in child_elements:
             format_el.append(elem)
@@ -79,7 +78,7 @@ def date_created(date):
     :param date:
     :return: Element object for date created.
     """
-    date_el = element('dateCreatedByApplication')
+    date_el = _element('dateCreatedByApplication')
     date_el.text = decode_utf8(date)
     return date_el
 
@@ -89,7 +88,7 @@ def creating_application(child_elements=None):
     :param child_elements:
     :return: Element object for creating application.
     """
-    creating_app = element('creatingApplication')
+    creating_app = _element('creatingApplication')
     if child_elements:
         for elem in child_elements:
             creating_app.append(elem)
@@ -102,9 +101,9 @@ def object_characteristics(composition_level='0', child_elements=None):
     :param child_elements:
     :return: Element object for object characteristics.
     """
-    object_char = element('objectCharacteristics')
+    object_char = _element('objectCharacteristics')
 
-    composition = subelement(
+    composition = _subelement(
         object_char, 'compositionLevel')
     composition.text = decode_utf8(composition_level)
     if child_elements:
@@ -140,12 +139,12 @@ def relationship(
     if related_object is None:
         return None
 
-    _relationship = element('relationship')
+    _relationship = _element('relationship')
 
-    _type = subelement(_relationship, 'relationshipType')
+    _type = _subelement(_relationship, 'relationshipType')
     _type.text = decode_utf8(relationship_type)
 
-    _subtype = subelement(_relationship, 'relationshipSubType')
+    _subtype = _subelement(_relationship, 'relationshipSubType')
     _subtype.text = decode_utf8(relationship_subtype)
 
     (related_type, related_value) = parse_identifier_type_value(
@@ -172,22 +171,22 @@ def environment(characteristic=None,
     :returns: ElementTree DOM tree
     """
 
-    _environment = element('environment')
+    _environment = _element('environment')
 
     if characteristic:
-        char_elem = subelement(
+        char_elem = _subelement(
             _environment, 'environmentCharacteristic')
         char_elem.text = decode_utf8(characteristic)
 
     if purposes:
         for purpose in purposes:
-            purpose_elem = subelement(
+            purpose_elem = _subelement(
                 _environment, 'environmentPurpose')
             purpose_elem.text = decode_utf8(purpose)
 
     if notes:
         for note in notes:
-            note_elem = subelement(
+            note_elem = _subelement(
                 _environment, 'environmentNote')
             note_elem.text = decode_utf8(note)
 
@@ -205,10 +204,10 @@ def dependency(names=None, identifiers=None):
     :param identifiers: A list of PREMIS identifier structures
     :returns: ElementTree DOM tree
     """
-    _dependency = element('dependency')
+    _dependency = _element('dependency')
     if names:
         for name in names:
-            name_elem = subelement(
+            name_elem = _subelement(
                 _dependency, 'dependencyName')
             name_elem.text = decode_utf8(name)
 
@@ -282,7 +281,7 @@ def object(
 
     """
 
-    _object = element('object', ns={'xsi': XSI_NS})
+    _object = _element('object', ns={'xsi': XSI_NS})
 
     _object.append(object_id)
 
@@ -294,7 +293,7 @@ def object(
         _object.set(xsi_ns('type'), 'premis:file')
 
     if original_name:
-        _original_name = subelement(_object, 'originalName')
+        _original_name = _subelement(_object, 'originalName')
         _original_name.text = original_name
 
     if child_elements:

@@ -12,15 +12,15 @@ from __future__ import unicode_literals
 
 from xml_helpers.utils import decode_utf8
 
-from premis.base import (element, subelement, premis_ns, identifier,
+from premis.base import (_element, _subelement, premis_ns, identifier,
                          iter_elements, NAMESPACES)
 
 
-def outcome(event_outcome, detail_note=None, detail_extension=None,
+def outcome(outcome, detail_note=None, detail_extension=None,
             single_extension_element=False):
     """Create PREMIS event outcome DOM structure.
 
-    :event_outcome: Event outcome (success, failure)
+    :outcome: Event outcome (success, failure)
     :detail_note: String description for the event outcome
     :detail_extension: List of detail extension etree elements
     :single_extension_element:
@@ -42,29 +42,29 @@ def outcome(event_outcome, detail_note=None, detail_extension=None,
 
     """
 
-    outcome_information = element('eventOutcomeInformation')
+    outcome_information = _element('eventOutcomeInformation')
 
-    _outcome = subelement(outcome_information, 'eventOutcome')
-    _outcome.text = decode_utf8(event_outcome)
+    _outcome = _subelement(outcome_information, 'eventOutcome')
+    _outcome.text = decode_utf8(outcome)
 
-    detail = subelement(outcome_information, 'eventOutcomeDetail')
+    detail = _subelement(outcome_information, 'eventOutcomeDetail')
 
     if detail_note is not None:
-        _detail_note = subelement(detail, 'eventOutcomeDetailNote')
+        _detail_note = _subelement(detail, 'eventOutcomeDetailNote')
         _detail_note.text = decode_utf8(detail_note)
 
     if detail_extension:
         if single_extension_element:
             # Add all extensions into one eventOutcomeDetailExtension element
-            _detail_extension = subelement(detail,
-                                           'eventOutcomeDetailExtension')
+            _detail_extension = _subelement(detail,
+                                            'eventOutcomeDetailExtension')
             for extension in detail_extension:
                 _detail_extension.append(extension)
         else:
             # Separate eventOutcomeDetailExtension element for each extension
             for extension in detail_extension:
-                _detail_extension = subelement(detail,
-                                               'eventOutcomeDetailExtension')
+                _detail_extension = _subelement(detail,
+                                                'eventOutcomeDetailExtension')
                 _detail_extension.append(extension)
 
     return outcome_information
@@ -98,17 +98,17 @@ def event(event_id, event_type, event_date_time, event_detail,
         </premis:event>
 
     """
-    _event = element('event')
+    _event = _element('event')
 
     _event.append(event_id)
 
-    _event_type = subelement(_event, 'eventType')
+    _event_type = _subelement(_event, 'eventType')
     _event_type.text = decode_utf8(event_type)
 
-    _event_date_time = subelement(_event, 'eventDateTime')
+    _event_date_time = _subelement(_event, 'eventDateTime')
     _event_date_time.text = decode_utf8(event_date_time)
 
-    _event_detail = subelement(_event, 'eventDetail')
+    _event_detail = _subelement(_event, 'eventDetail')
     _event_detail.text = decode_utf8(event_detail)
 
     if child_elements:
@@ -156,8 +156,8 @@ def find_event_by_id(premis, event_id):
     event_id = decode_utf8(event_id)
 
     for elem in iter_events(premis):
-        identifier_ = elem.findtext('.//' + premis_ns('eventIdentifierValue'))
-        if identifier_ == event_id:
+        identifier = elem.findtext('.//' + premis_ns('eventIdentifierValue'))
+        if identifier == event_id:
             return elem
 
     return None
@@ -191,21 +191,22 @@ def event_with_type_and_detail(events, event_type, event_detail):
             yield _event
 
 
-def events_with_outcome(events, event_outcome):
+# TODO: When doing actual refactoring, resolve redefined-outer-name warning.
+def events_with_outcome(events, outcome):
     """Iterate over all events with given outcome
 
     :param events: Iterable of events
-    :param event_outcome: Return all events that have this outcome
+    :param outcome: Return all events that has the outcome
     :returns: Iterable of events
 
     """
-    outcome_ = decode_utf8(event_outcome)
+    outcome = decode_utf8(outcome)
 
     for _event in events:
         _event_outcome = _event.findtext('/'.join([
             premis_ns('eventOutcomeInformation'),
             premis_ns('eventOutcome')]))
-        if _event_outcome == outcome_:
+        if _event_outcome == outcome:
             yield _event
 
 

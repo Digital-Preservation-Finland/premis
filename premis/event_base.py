@@ -16,6 +16,8 @@ from premis.base import (_element, _subelement, premis_ns, identifier,
                          iter_elements, NAMESPACES)
 
 
+# pylint: disable=redefined-outer-name
+# Listed as requiring a fix in KDKPAS-2522
 def outcome(outcome, detail_note=None, detail_extension=None,
             single_extension_element=False):
     """Create PREMIS event outcome DOM structure.
@@ -191,7 +193,6 @@ def event_with_type_and_detail(events, event_type, event_detail):
             yield _event
 
 
-# TODO: When doing actual refactoring, resolve redefined-outer-name warning.
 def events_with_outcome(events, outcome):
     """Iterate over all events with given outcome
 

@@ -109,28 +109,30 @@ def agents_with_type(agents, agent_type='organization'):
             yield (agent_type, agent_name)
 
 
-def parse_name(agent_element):
+# pylint: disable=redefined-outer-name
+# Listed as requiring a fix in KDKPAS-2522
+def parse_name(agent):
     """
-    :param agent_element: Agent Element object.
+    :param agent: Agent Element object.
     :return: Unicode string
     """
-    return decode_utf8(agent_element.xpath(".//premis:agentName/text()",
-                                           namespaces=NAMESPACES)[0])
+    return decode_utf8(agent.xpath(".//premis:agentName/text()",
+                                   namespaces=NAMESPACES)[0])
 
 
-def parse_agent_type(agent_element):
+def parse_agent_type(agent):
     """
-    :param agent_element: Agent Element object.
+    :param agent: Agent Element object.
     :return: Unicode string
     """
-    return decode_utf8(agent_element.xpath(".//premis:agentType/text()",
-                                           namespaces=NAMESPACES)[0])
+    return decode_utf8(agent.xpath(".//premis:agentType/text()",
+                                   namespaces=NAMESPACES)[0])
 
 
-def parse_note(agent_element):
+def parse_note(agent):
     """
-    :param agent_element: Agent Element object.
+    :param agent: Agent Element object.
     :return: Unicode string
     """
-    return decode_utf8(agent_element.xpath(".//premis:agentNote/text()",
-                                           namespaces=NAMESPACES)[0])
+    return decode_utf8(agent.xpath(".//premis:agentNote/text()",
+                                   namespaces=NAMESPACES)[0])

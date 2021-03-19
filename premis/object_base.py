@@ -61,6 +61,8 @@ def format_registry(registry_name, registry_key):
     return format_registry_el
 
 
+# pylint: disable=redefined-builtin
+# Listed as requiring a fix in KDKPAS-2522
 def format(child_elements=None):
     """
     :param child_elements:

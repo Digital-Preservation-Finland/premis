@@ -24,7 +24,7 @@ from premis.base import (_element,
 
 
 def _object_elems_order(elem):
-    """Return order number for given element in PREMIS:object schema.
+    """Return order number for given element in premis:object schema.
     This can be used for example with sort().
 
     All elements for file, representation and bitstream are included,

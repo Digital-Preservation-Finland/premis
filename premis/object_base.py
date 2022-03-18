@@ -11,9 +11,34 @@ References:
 from __future__ import unicode_literals
 
 from xml_helpers.utils import decode_utf8
-from premis.base import (NAMESPACES, XSI_NS, _element, _subelement, identifier,
-                         iter_elements, parse_identifier_type_value, premis_ns,
+from premis.base import (_element,
+                         _subelement,
+                         identifier,
+                         iter_elements,
+                         NAMESPACES,
+                         parse_identifier_type_value,
+                         PREMIS_NS,
+                         premis_ns,
+                         XSI_NS,
                          xsi_ns)
+
+
+def _object_elems_order(elem):
+    """Return order number for given element in PREMIS:object schema.
+    This can be used for example with sort().
+    """
+    return [
+        '{%s}preservationLevel' % PREMIS_NS,
+        '{%s}significantProperties' % PREMIS_NS,
+        '{%s}objectCharacteristics' % PREMIS_NS,
+        '{%s}originalName' % PREMIS_NS,
+        '{%s}storage' % PREMIS_NS,
+        '{%s}environment' % PREMIS_NS,
+        '{%s}signatureInformation' % PREMIS_NS,
+        '{%s}relationship' % PREMIS_NS,
+        '{%s}linkingEventIdentifier' % PREMIS_NS,
+        '{%s}linkingIntellectualEntityIdentifier' % PREMIS_NS,
+        '{%s}linkingRightsStatementIdentifier' % PREMIS_NS].index(elem.tag)
 
 
 def fixity(message_digest, digest_algorithm='MD5'):
@@ -294,13 +319,19 @@ def object(
     else:
         _object.set(xsi_ns('type'), 'premis:file')
 
+    _object_elements = []
+
     if original_name:
-        _original_name = _subelement(_object, 'originalName')
+        _original_name = _element('originalName')
         _original_name.text = original_name
+        _object_elements.append(_original_name)
 
     if child_elements:
-        for elem in child_elements:
-            _object.append(elem)
+        _object_elements.extend(child_elements)
+
+    _object_elements.sort(key=_object_elems_order)
+    for elem in _object_elements:
+        _object.append(elem)
 
     return _object
 

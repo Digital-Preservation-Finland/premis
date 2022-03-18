@@ -164,6 +164,35 @@ def test_object():
     assert u.compare_trees(obj2, ET.fromstring(xml2))
 
 
+def test_object_order():
+    """Test that elements in premis:object are ordered as intended."""
+    fixity = o.fixity('xxx', 'yyy')
+    oc = o.object_characteristics(child_elements=[fixity])
+    env = o.environment(child_elements=[])
+    obj1 = o.object(p.identifier('a', 'b'),
+                    original_name='c',
+                    child_elements=[env, oc])
+    xml1 = ('<premis:object xmlns:premis="info:lc/xmlns/premis-v2" '
+            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+            'xsi:type="premis:file"><premis:objectIdentifier>'
+            '<premis:objectIdentifierType>a</premis:objectIdentifierType>'
+            '<premis:objectIdentifierValue>b</premis:objectIdentifierValue>'
+            '</premis:objectIdentifier><premis:objectCharacteristics '
+            'xmlns:premis="info:lc/xmlns/premis-v2"><premis:compositionLevel>'
+            '0</premis:compositionLevel><premis:fixity>'
+            '<premis:messageDigestAlgorithm>yyy'
+            '</premis:messageDigestAlgorithm>'
+            '<premis:messageDigest>xxx</premis:messageDigest>'
+            '</premis:fixity></premis:objectCharacteristics>'
+            '<premis:originalName>c</premis:originalName>'
+            '<premis:environment/></premis:object>')
+    assert u.compare_trees(obj1, ET.fromstring(xml1))
+    assert obj1[0].tag == '{info:lc/xmlns/premis-v2}objectIdentifier'
+    assert obj1[1].tag == '{info:lc/xmlns/premis-v2}objectCharacteristics'
+    assert obj1[2].tag == '{info:lc/xmlns/premis-v2}originalName'
+    assert obj1[3].tag == '{info:lc/xmlns/premis-v2}environment'
+
+
 def test_iter_objects():
     """Test iter_objects"""
     obj1 = o.object(p.identifier('x', 'y1', 'object'))

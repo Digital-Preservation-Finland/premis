@@ -26,8 +26,12 @@ from premis.base import (_element,
 def _object_elems_order(elem):
     """Return order number for given element in PREMIS:object schema.
     This can be used for example with sort().
+
+    All elements for file, representation and bitstream are included,
+    the sort order is the same for all these three types.
     """
     return [
+        '{%s}objectIdentifier' % PREMIS_NS,
         '{%s}preservationLevel' % PREMIS_NS,
         '{%s}significantProperties' % PREMIS_NS,
         '{%s}objectCharacteristics' % PREMIS_NS,
@@ -329,6 +333,7 @@ def object(
     if child_elements:
         _object_elements.extend(child_elements)
 
+    # Sort elements before appending them to the _object
     _object_elements.sort(key=_object_elems_order)
     for elem in _object_elements:
         _object.append(elem)

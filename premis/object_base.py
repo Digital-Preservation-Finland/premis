@@ -10,17 +10,14 @@ References:
 """
 from __future__ import unicode_literals
 
-from xml_helpers.utils import decode_utf8
+from xml_helpers.utils import decode_utf8, xsi_ns
 from premis.base import (_element,
                          _subelement,
                          identifier,
                          iter_elements,
                          NAMESPACES,
                          parse_identifier_type_value,
-                         PREMIS_NS,
-                         premis_ns,
-                         XSI_NS,
-                         xsi_ns)
+                         premis_ns)
 
 
 def _object_elems_order(elem):
@@ -31,18 +28,18 @@ def _object_elems_order(elem):
     the sort order is the same for all these three types.
     """
     return [
-        '{%s}objectIdentifier' % PREMIS_NS,
-        '{%s}preservationLevel' % PREMIS_NS,
-        '{%s}significantProperties' % PREMIS_NS,
-        '{%s}objectCharacteristics' % PREMIS_NS,
-        '{%s}originalName' % PREMIS_NS,
-        '{%s}storage' % PREMIS_NS,
-        '{%s}environment' % PREMIS_NS,
-        '{%s}signatureInformation' % PREMIS_NS,
-        '{%s}relationship' % PREMIS_NS,
-        '{%s}linkingEventIdentifier' % PREMIS_NS,
-        '{%s}linkingIntellectualEntityIdentifier' % PREMIS_NS,
-        '{%s}linkingRightsStatementIdentifier' % PREMIS_NS].index(elem.tag)
+        premis_ns('objectIdentifier'),
+        premis_ns('preservationLevel'),
+        premis_ns('significantProperties'),
+        premis_ns('objectCharacteristics'),
+        premis_ns('originalName'),
+        premis_ns('storage'),
+        premis_ns('environment'),
+        premis_ns('signatureInformation'),
+        premis_ns('relationship'),
+        premis_ns('linkingEventIdentifier'),
+        premis_ns('linkingIntellectualEntityIdentifier'),
+        premis_ns('linkingRightsStatementIdentifier')].index(elem.tag)
 
 
 def fixity(message_digest, digest_algorithm='MD5'):
@@ -312,7 +309,7 @@ def object(
 
     """
 
-    _object = _element('object', ns={'xsi': XSI_NS})
+    _object = _element('object', ns=NAMESPACES)
 
     _object.append(object_id)
 

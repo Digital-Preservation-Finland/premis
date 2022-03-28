@@ -84,6 +84,23 @@ def date_created(date):
     date_el.text = decode_utf8(date)
     return date_el
 
+def creating_application_name(name):
+    """
+    :param name:
+    :return: Element object for software name.
+    """
+    name_el = _element('creatingApplicationName')
+    name_el.text = decode_utf8(name)
+    return name_el
+
+def creating_application_version(version):
+    """
+    :param version:
+    :return: Element object for software version.
+    """
+    version_el = _element('creatingApplicationVersion')
+    version_el.text = decode_utf8(version)
+    return version_el
 
 def creating_application(child_elements=None):
     """

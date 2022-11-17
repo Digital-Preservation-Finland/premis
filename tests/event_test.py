@@ -29,6 +29,18 @@ def test_outcome():
     assert u.compare_trees(outcome, ET.fromstring(xml))
 
 
+def test_outcome_without_detail_notes():
+    """Test event_outcome without providing details"""
+    outcome = e.outcome('success')
+    xml = (
+        '<premis:eventOutcomeInformation'
+        ' xmlns:premis="info:lc/xmlns/premis-v2">'
+        '<premis:eventOutcome>success</premis:eventOutcome>'
+        '</premis:eventOutcomeInformation>'
+    )
+    assert u.compare_trees(outcome, ET.fromstring(xml))
+
+
 def test_event():
     """Test event"""
     event = e.event(

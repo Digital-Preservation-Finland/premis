@@ -49,25 +49,30 @@ def outcome(outcome, detail_note=None, detail_extension=None,
     _outcome = _subelement(outcome_information, 'eventOutcome')
     _outcome.text = decode_utf8(outcome)
 
-    detail = _subelement(outcome_information, 'eventOutcomeDetail')
+    if detail_note or detail_extension:
+        detail = _subelement(outcome_information, 'eventOutcomeDetail')
 
-    if detail_note is not None:
-        _detail_note = _subelement(detail, 'eventOutcomeDetailNote')
-        _detail_note.text = decode_utf8(detail_note)
+        if detail_note is not None:
+            _detail_note = _subelement(detail, 'eventOutcomeDetailNote')
+            _detail_note.text = decode_utf8(detail_note)
 
-    if detail_extension:
-        if single_extension_element:
-            # Add all extensions into one eventOutcomeDetailExtension element
-            _detail_extension = _subelement(detail,
-                                            'eventOutcomeDetailExtension')
-            for extension in detail_extension:
-                _detail_extension.append(extension)
-        else:
-            # Separate eventOutcomeDetailExtension element for each extension
-            for extension in detail_extension:
-                _detail_extension = _subelement(detail,
-                                                'eventOutcomeDetailExtension')
-                _detail_extension.append(extension)
+        if detail_extension:
+            if single_extension_element:
+                # Add all extensions into one eventOutcomeDetailExtension
+                # element
+                _detail_extension = _subelement(
+                    detail, 'eventOutcomeDetailExtension'
+                )
+                for extension in detail_extension:
+                    _detail_extension.append(extension)
+            else:
+                # Separate eventOutcomeDetailExtension element for each
+                # extension
+                for extension in detail_extension:
+                    _detail_extension = _subelement(
+                        detail, 'eventOutcomeDetailExtension'
+                    )
+                    _detail_extension.append(extension)
 
     return outcome_information
 

@@ -110,6 +110,7 @@ def date_created(date):
     date_el.text = decode_utf8(date)
     return date_el
 
+
 def creating_application_name(name):
     """
     :param name:
@@ -119,6 +120,7 @@ def creating_application_name(name):
     name_el.text = decode_utf8(name)
     return name_el
 
+
 def creating_application_version(version):
     """
     :param version:
@@ -127,6 +129,7 @@ def creating_application_version(version):
     version_el = _element('creatingApplicationVersion')
     version_el.text = decode_utf8(version)
     return version_el
+
 
 def creating_application(child_elements=None):
     """

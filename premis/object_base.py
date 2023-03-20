@@ -162,12 +162,12 @@ def object_characteristics(composition_level='0', child_elements=None):
 
 def relationship(
         relationship_type, relationship_subtype,
-        related_object):
+        related_objects):
     """Create PREMIS relationship DOM segment.
 
     :relationship_type: Relationship type from PREMIS vocabulary
     :relationship_subtype: Relationship subtype from PREMIS vocabulary
-    :related_object: Related object linked to relationship
+    :related_objects: Iterable of related objects linked to relationship
     :returns: ElementTree DOM tree
 
     Produces the following PREMIS segment::
@@ -184,7 +184,7 @@ def relationship(
       </premis:relationship>
 
     """
-    if related_object is None:
+    if not related_objects:
         return None
 
     _relationship = _element('relationship')
@@ -195,13 +195,14 @@ def relationship(
     _subtype = _subelement(_relationship, 'relationshipSubType')
     _subtype.text = decode_utf8(relationship_subtype)
 
-    (related_type, related_value) = parse_identifier_type_value(
-        related_object)
+    for related_object in related_objects:
+        (related_type, related_value) = parse_identifier_type_value(
+            related_object)
 
-    related_identifier = identifier(
-        related_type, related_value, prefix='relatedObject')
+        related_identifier = identifier(
+            related_type, related_value, prefix='relatedObject')
 
-    _relationship.append(related_identifier)
+        _relationship.append(related_identifier)
 
     return _relationship
 

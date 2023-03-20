@@ -1,6 +1,7 @@
 """Test for the Premis object class"""
 from __future__ import unicode_literals
 
+import pytest
 import six
 
 import lxml.etree as ET
@@ -98,7 +99,7 @@ def test_object_characteristics():
 
 def test_relationship():
     """Test relationship"""
-    rel = o.relationship('a', 'b', p.identifier('c', 'd'))
+    rel = o.relationship('a', 'b', [p.identifier('c', 'd')])
     xml = ('<premis:relationship xmlns:premis="info:lc/xmlns/premis-v2">'
            '<premis:relationshipType>a</premis:relationshipType>'
            '<premis:relationshipSubType>b</premis:relationshipSubType>'
@@ -109,6 +110,46 @@ def test_relationship():
            'd</premis:relatedObjectIdentifierValue>'
            '</premis:relatedObjectIdentification></premis:relationship>')
     assert u.compare_trees(rel, ET.fromstring(xml))
+
+
+def test_relationship_with_many_related_objects():
+    """Test relationship providing many related objects."""
+    rel = o.relationship(
+        'a', 'b', [p.identifier('c', 'd'), p.identifier('e', 'f')]
+    )
+    xml = ('<premis:relationship xmlns:premis="info:lc/xmlns/premis-v2">'
+           '<premis:relationshipType>a</premis:relationshipType>'
+           '<premis:relationshipSubType>b</premis:relationshipSubType>'
+           '<premis:relatedObjectIdentification>'
+           '<premis:relatedObjectIdentifierType>'
+           'c</premis:relatedObjectIdentifierType>'
+           '<premis:relatedObjectIdentifierValue>'
+           'd</premis:relatedObjectIdentifierValue>'
+           '</premis:relatedObjectIdentification>'
+           '<premis:relatedObjectIdentification>'
+           '<premis:relatedObjectIdentifierType>'
+           'e</premis:relatedObjectIdentifierType>'
+           '<premis:relatedObjectIdentifierValue>'
+           'f</premis:relatedObjectIdentifierValue>'
+           '</premis:relatedObjectIdentification>'
+           '</premis:relationship>')
+    assert u.compare_trees(rel, ET.fromstring(xml))
+
+
+@pytest.mark.parametrize(
+    "related_object",
+    (
+        (None),
+        ([]),
+        (set())
+    )
+)
+def test_relationship_without_related_object(related_object):
+    """Test that providing no related objects when creating relationhip element
+    returns None.
+    """
+    rel = o.relationship('a', 'b', related_object)
+    assert rel is None
 
 
 def test_environment():
@@ -434,7 +475,7 @@ def test_parse_dependency():
 
 def test_parse_relationship():
     """Test parse_relationship"""
-    rel = o.relationship('a', 'b', p.identifier('c', 'd'))
+    rel = o.relationship('a', 'b', [p.identifier('c', 'd')])
     obj = o.object(p.identifier('x', 'y', 'object'), child_elements=[rel])
     rel2 = o.parse_relationship(obj)
     xml = ('<premis:relationship xmlns:premis="info:lc/xmlns/premis-v2" '
@@ -452,11 +493,11 @@ def test_parse_relationship():
 
 def test_parse_relationship_type():
     """Test parse_relationship_type"""
-    rel = o.relationship('a', 'b', p.identifier('c', 'd'))
+    rel = o.relationship('a', 'b', [p.identifier('c', 'd')])
     assert o.parse_relationship_type(rel) == 'a'
 
 
 def test_parse_relationship_subtype():
     """Test parse_relationship_subtype"""
-    rel = o.relationship('a', 'b', p.identifier('c', 'd'))
+    rel = o.relationship('a', 'b', [p.identifier('c', 'd')])
     assert o.parse_relationship_subtype(rel) == 'b'

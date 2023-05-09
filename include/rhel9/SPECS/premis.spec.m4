@@ -9,7 +9,7 @@
 %define file_build_number M4_FILE_BUILD_NUMBER
 %define file_commit_ref M4_FILE_COMMIT_REF
 
-Name:           python3-premis
+Name:           python-premis
 Version:        %{file_version}
 Release:        %{file_release_number}%{file_release_tag}.%{file_build_number}.git%{file_commit_ref}%{?dist}
 Summary:        PREMIS tools
@@ -17,29 +17,43 @@ Group:          Applications/Archiving
 License:        LGPLv3+
 URL:            https://www.digitalpreservation.fi
 Source0:        %{file_prefix}-v%{file_version}%{?file_release_tag}-%{file_build_number}-g%{file_commit_ref}.%{file_ext}
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 
-Requires:       python3 python3-lxml python3-six python3-xml-helpers
-BuildRequires:  python3-setuptools
+BuildRequires:  python3-devel
+BuildRequires:  pyproject-rpm-macros
+BuildRequires:  %{py3_dist pip}
+BuildRequires:  %{py3_dist setuptools}
+BuildRequires:  %{py3_dist wheel}
 
-%description
-PREMIS tools
+%global _description %{expand:
+Premis tools
+}
+
+%description %_description
+
+%package -n python3-premis
+Summary: %{summary}
+# List internal runtime dependencies manually. URL-based dependencies should
+# be removed from Python package metadata, as they prevent installation on the
+# newer pip shipped starting with RHEL9.
+Requires:       %{py3_dist xml_helpers}
+
+%description -n python3-premis %_description
+
 
 %prep
-%setup -n %{file_prefix}-v%{file_version}%{?file_release_tag}-%{file_build_number}-g%{file_commit_ref}
+%autosetup -n %{file_prefix}-v%{file_version}%{?file_release_tag}-%{file_build_number}-g%{file_commit_ref}
 
 %build
+%pyproject_wheel
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install3 PREFIX="%{_prefix}" ROOT="%{buildroot}"
+%pyproject_install
+%pyproject_save_files premis
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-%files -f INSTALLED_FILES
-%defattr(-,root,root,-)
+%files -n python3-premis -f %{pyproject_files}
+%license LICENSE
+%doc README.rst
 
 # TODO: For now changelog must be last, because it is generated automatically
 # from git log command. Appending should be fixed to happen only after %changelog macro

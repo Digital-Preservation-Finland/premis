@@ -1,6 +1,11 @@
 Release notes
 =============
 
+Version 0.28
+------------
+- Add RHEL9 RPM spec file
+- Fix Python package build
+
 Version 0.27
 ------------
 

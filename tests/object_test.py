@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 import pytest
-import six
 
 import lxml.etree as ET
 import xml_helpers.utils as u
@@ -246,7 +245,7 @@ def test_iter_objects():
         i = i + 1
         (_, id_value) = p.parse_identifier_type_value(
             p.parse_identifier(iter_elem, 'object'), 'object')
-        assert id_value == 'y' + six.text_type(i)
+        assert id_value == 'y' + str(i)
     assert i == 3
 
 

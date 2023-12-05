@@ -8,7 +8,6 @@ References:
     https://docs.python.org/2.6/library/xml.etree.elementtree.html
 
 """
-from __future__ import unicode_literals
 
 import lxml.etree as ET
 from xml_helpers.utils import XSI_NS, xsi_ns, decode_utf8
@@ -35,8 +34,8 @@ def premis_ns(tag, prefix=""):
     if prefix:
         prefix = decode_utf8(prefix)
         tag = tag[0].upper() + tag[1:]
-        return '{%s}%s%s' % (PREMIS_NS, prefix, tag)
-    return '{%s}%s' % (PREMIS_NS, tag)
+        return '{{{}}}{}{}'.format(PREMIS_NS, prefix, tag)
+    return '{{{}}}{}'.format(PREMIS_NS, tag)
 
 
 def _element(tag, prefix="", ns=None):
@@ -235,8 +234,7 @@ def iter_elements(starting_element, tag):
     :returns: Generator object for iterating all elements
 
     """
-    for elem in starting_element.findall('.//' + premis_ns(tag)):
-        yield elem
+    yield from starting_element.findall('.//' + premis_ns(tag))
 
 
 def parse_identifier(section, prefix='object'):

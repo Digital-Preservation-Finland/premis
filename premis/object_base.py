@@ -8,7 +8,6 @@ References:
     https://docs.python.org/2.6/library/xml.etree.elementtree.html
 
 """
-from __future__ import unicode_literals
 
 from xml_helpers.utils import decode_utf8, xsi_ns
 from premis.base import (_element,
@@ -367,8 +366,7 @@ def iter_objects(premis_el):
 
     """
 
-    for elem in iter_elements(premis_el, 'object'):
-        yield elem
+    yield from iter_elements(premis_el, 'object')
 
 
 def find_object_by_id(premis, object_id):
@@ -527,8 +525,7 @@ def iter_environments(premis_elem):
     :param premis_elem: ElementTree element
     :return: Iterable of premis environments
     """
-    for _environment in iter_elements(premis_elem, 'environment'):
-        yield _environment
+    yield from iter_elements(premis_elem, 'environment')
 
 
 def environments_with_purpose(environments, purpose):

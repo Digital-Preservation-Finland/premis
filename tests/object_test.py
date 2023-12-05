@@ -1,5 +1,4 @@
 """Test for the Premis object class"""
-from __future__ import unicode_literals
 
 import pytest
 

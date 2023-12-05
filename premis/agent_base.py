@@ -8,7 +8,6 @@ References:
     https://docs.python.org/2.6/library/xml.etree.elementtree.html
 
 """
-from __future__ import unicode_literals
 
 from xml_helpers.utils import decode_utf8
 from premis.base import (_element, _subelement, iter_elements, premis_ns,
@@ -62,8 +61,7 @@ def iter_agents(premis):
     :returns: Generator object for iterating all elements
 
     """
-    for elem in iter_elements(premis, 'agent'):
-        yield elem
+    yield from iter_elements(premis, 'agent')
 
 
 def find_agent_by_id(premis, agent_id):

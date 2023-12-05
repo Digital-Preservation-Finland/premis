@@ -8,7 +8,6 @@ References:
     https://docs.python.org/2.6/library/xml.etree.elementtree.html
 
 """
-from __future__ import unicode_literals
 
 from xml_helpers.utils import decode_utf8
 
@@ -148,8 +147,7 @@ def iter_events(premis):
     :returns: Generator object for iterating all elements
 
     """
-    for elem in iter_elements(premis, 'event'):
-        yield elem
+    yield from iter_elements(premis, 'event')
 
 
 def find_event_by_id(premis, event_id):

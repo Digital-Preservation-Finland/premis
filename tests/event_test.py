@@ -1,5 +1,4 @@
 """Test for the Premis event class"""
-from __future__ import unicode_literals
 
 from pytest import raises
 

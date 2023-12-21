@@ -34,8 +34,8 @@ def premis_ns(tag, prefix=""):
     if prefix:
         prefix = decode_utf8(prefix)
         tag = tag[0].upper() + tag[1:]
-        return '{{{}}}{}{}'.format(PREMIS_NS, prefix, tag)
-    return '{{{}}}{}'.format(PREMIS_NS, tag)
+        return f'{{{PREMIS_NS}}}{prefix}{tag}'
+    return f'{{{PREMIS_NS}}}{tag}'
 
 
 def _element(tag, prefix="", ns=None):
@@ -54,9 +54,6 @@ def _element(tag, prefix="", ns=None):
     :returns: ElementTree element object
 
     """
-    # `ns` is a fine name in this context as it is a clear abbreviation for a
-    # long word.
-    # pylint: disable=invalid-name
     if ns is None:
         ns = {}
     ns['premis'] = PREMIS_NS
@@ -75,9 +72,6 @@ def _subelement(parent, tag, prefix="", ns=None):
     :returns: Created subelement
 
     """
-    # `ns` is a fine name in this context as it is a clear abbreviation for a
-    # long word.
-    # pylint: disable=invalid-name
     if ns is None:
         ns = {}
     ns['premis'] = PREMIS_NS

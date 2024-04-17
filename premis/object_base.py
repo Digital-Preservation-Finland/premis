@@ -303,6 +303,7 @@ def get_dependency_identifier(object_or_identifier):
 
 def object(
         object_id,
+        alt_ids=[],
         original_name=None,
         child_elements=None,
         representation=False,
@@ -310,6 +311,7 @@ def object(
     """Return the PREMIS object.
 
         :object_id: PREMIS identifier
+        :alt_ids: List of alternative identifiers
         :original_name: Original name field
         :child_elements=None: Any other element appended
         :representation=False: If true, representation object
@@ -332,6 +334,10 @@ def object(
     _object = _element('object', ns=NAMESPACES)
 
     _object.append(object_id)
+
+    if alt_ids:
+        for alt_id in alt_ids:
+            _object.append(alt_id)
 
     if representation:
         _object.set(xsi_ns('type'), 'premis:representation')

@@ -185,6 +185,10 @@ def test_object():
     """Test premis_premis"""
     obj1 = o.object(p.identifier('a', 'b'), original_name='c')
     obj2 = o.object(p.identifier('a', 'b'), representation=True)
+    obj3 = o.object(p.identifier('a', 'b'),
+                    alt_ids=[p.identifier('alt1', 'c'),
+                             p.identifier('alt2', 'd')],
+                    representation=True)
     xml1 = ('<premis:object xmlns:premis="info:lc/xmlns/premis-v2" '
             'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
             'xsi:type="premis:file"><premis:objectIdentifier>'
@@ -198,9 +202,22 @@ def test_object():
             '<premis:objectIdentifierType>a</premis:objectIdentifierType>'
             '<premis:objectIdentifierValue>b</premis:objectIdentifierValue>'
             '</premis:objectIdentifier></premis:object>')
+    xml3 = ('<premis:object xmlns:premis="info:lc/xmlns/premis-v2" '
+            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+            'xsi:type="premis:representation"><premis:objectIdentifier>'
+            '<premis:objectIdentifierType>a</premis:objectIdentifierType>'
+            '<premis:objectIdentifierValue>b</premis:objectIdentifierValue>'
+            '</premis:objectIdentifier><premis:objectIdentifier>'
+            '<premis:objectIdentifierType>alt1</premis:objectIdentifierType>'
+            '<premis:objectIdentifierValue>c</premis:objectIdentifierValue>'
+            '</premis:objectIdentifier><premis:objectIdentifier>'
+            '<premis:objectIdentifierType>alt2</premis:objectIdentifierType>'
+            '<premis:objectIdentifierValue>d</premis:objectIdentifierValue>'
+            '</premis:objectIdentifier></premis:object>')
 
     assert u.compare_trees(obj1, ET.fromstring(xml1))
     assert u.compare_trees(obj2, ET.fromstring(xml2))
+    assert u.compare_trees(obj3, ET.fromstring(xml3))
 
 
 def test_object_order():

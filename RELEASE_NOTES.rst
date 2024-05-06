@@ -1,6 +1,11 @@
 Release notes
 =============
 
+Unreleased
+----------
+
+- Add ``alt_ids`` parameter to ``object`` functon call
+
 Version 0.30
 ------------
 

@@ -8,18 +8,25 @@ References:
     https://docs.python.org/2.6/library/xml.etree.elementtree.html
 
 """
+from __future__ import annotations
 
+from collections.abc import Generator, Iterable, Iterator
+
+import lxml.etree as ET
 from xml_helpers.utils import decode_utf8, xsi_ns
-from premis.base import (_element,
-                         _subelement,
-                         identifier,
-                         iter_elements,
-                         NAMESPACES,
-                         parse_identifier_type_value,
-                         premis_ns)
+
+from premis.base import (
+    NAMESPACES,
+    _element,
+    _subelement,
+    identifier,
+    iter_elements,
+    parse_identifier_type_value,
+    premis_ns,
+)
 
 
-def _object_elems_order(elem):
+def _object_elems_order(elem: ET._Element) -> int:
     """Return order number for given element in premis:object schema.
     This can be used for example with sort().
 
@@ -41,7 +48,7 @@ def _object_elems_order(elem):
         premis_ns('linkingRightsStatementIdentifier')].index(elem.tag)
 
 
-def fixity(message_digest, digest_algorithm='MD5'):
+def fixity(message_digest: str, digest_algorithm: str = 'MD5') -> ET._Element:
     """
     :param message_digest:
     :param digest_algorithm:
@@ -56,7 +63,9 @@ def fixity(message_digest, digest_algorithm='MD5'):
     return fixity_el
 
 
-def format_designation(format_name, format_version=None):
+def format_designation(
+    format_name: str, format_version: str | None = None
+) -> ET._Element:
     """
     :param format_name:
     :param format_version:
@@ -72,7 +81,7 @@ def format_designation(format_name, format_version=None):
     return format_designation_el
 
 
-def format_registry(registry_name, registry_key):
+def format_registry(registry_name: str, registry_key: str) -> ET._Element:
     """
     :param registry_name:
     :param registry_key:
@@ -88,7 +97,7 @@ def format_registry(registry_name, registry_key):
 
 # pylint: disable=redefined-builtin
 # Listed as requiring a fix in KDKPAS-2522
-def format(child_elements=None):
+def format(child_elements: Iterable[ET._Element] | None = None) -> ET._Element:
     """
     :param child_elements:
     :return: Element object for format.
@@ -100,7 +109,7 @@ def format(child_elements=None):
     return format_el
 
 
-def date_created(date):
+def date_created(date: str) -> ET._Element:
     """
     :param date:
     :return: Element object for date created.
@@ -110,7 +119,7 @@ def date_created(date):
     return date_el
 
 
-def creating_application_name(name):
+def creating_application_name(name: str) -> ET._Element:
     """
     :param name:
     :return: Element object for software name.
@@ -120,7 +129,7 @@ def creating_application_name(name):
     return name_el
 
 
-def creating_application_version(version):
+def creating_application_version(version: str) -> ET._Element:
     """
     :param version:
     :return: Element object for software version.
@@ -130,7 +139,9 @@ def creating_application_version(version):
     return version_el
 
 
-def creating_application(child_elements=None):
+def creating_application(
+    child_elements: Iterable[ET._Element] | None = None,
+) -> ET._Element:
     """
     :param child_elements:
     :return: Element object for creating application.
@@ -142,7 +153,10 @@ def creating_application(child_elements=None):
     return creating_app
 
 
-def object_characteristics(composition_level='0', child_elements=None):
+def object_characteristics(
+    composition_level: str = "0",
+    child_elements: Iterable[ET._Element] | None = None,
+) -> ET._Element:
     """
     :param composition_level:
     :param child_elements:
@@ -160,14 +174,16 @@ def object_characteristics(composition_level='0', child_elements=None):
 
 
 def relationship(
-        relationship_type, relationship_subtype,
-        related_objects):
+    relationship_type: str,
+    relationship_subtype: str,
+    related_objects: Iterable[ET._Element],
+) -> ET._Element | None:
     """Create PREMIS relationship DOM segment.
 
-    :relationship_type: Relationship type from PREMIS vocabulary
-    :relationship_subtype: Relationship subtype from PREMIS vocabulary
-    :related_objects: Iterable of related objects linked to relationship
-    :returns: ElementTree DOM tree
+    :param relationship_type: Relationship type from PREMIS vocabulary
+    :param relationship_subtype: Relationship subtype from PREMIS vocabulary
+    :param related_objects: Iterable of related objects linked to relationship
+    :returns: ElementTree DOM tree or None
 
     Produces the following PREMIS segment::
 
@@ -186,13 +202,13 @@ def relationship(
     if not related_objects:
         return None
 
-    _relationship = _element('relationship')
+    relationship_ = _element('relationship')
 
-    _type = _subelement(_relationship, 'relationshipType')
-    _type.text = decode_utf8(relationship_type)
+    type_ = _subelement(relationship_, 'relationshipType')
+    type_.text = decode_utf8(relationship_type)
 
-    _subtype = _subelement(_relationship, 'relationshipSubType')
-    _subtype.text = decode_utf8(relationship_subtype)
+    subtype_ = _subelement(relationship_, 'relationshipSubType')
+    subtype_.text = decode_utf8(relationship_subtype)
 
     for related_object in related_objects:
         (related_type, related_value) = parse_identifier_type_value(
@@ -201,15 +217,17 @@ def relationship(
         related_identifier = identifier(
             related_type, related_value, prefix='relatedObject')
 
-        _relationship.append(related_identifier)
+        relationship_.append(related_identifier)
 
-    return _relationship
+    return relationship_
 
 
-def environment(characteristic=None,
-                purposes=None,
-                notes=None,
-                child_elements=None):
+def environment(
+    characteristic: str | None = None,
+    purposes: list[str] | None = None,
+    notes: list[str] | None = None,
+    child_elements: Iterable[ET._Element] | None = None,
+) -> ET._Element:
     """Return the PREMIS environment structure.
 
     :param characteristic: PREMIS environment characteristic as a string
@@ -219,54 +237,59 @@ def environment(characteristic=None,
     :returns: ElementTree DOM tree
     """
 
-    _environment = _element('environment')
+    environment_ = _element('environment')
 
     if characteristic:
         char_elem = _subelement(
-            _environment, 'environmentCharacteristic')
+            environment_, 'environmentCharacteristic')
         char_elem.text = decode_utf8(characteristic)
 
     if purposes:
         for purpose in purposes:
             purpose_elem = _subelement(
-                _environment, 'environmentPurpose')
+                environment_, 'environmentPurpose')
             purpose_elem.text = decode_utf8(purpose)
 
     if notes:
         for note in notes:
             note_elem = _subelement(
-                _environment, 'environmentNote')
+                environment_, 'environmentNote')
             note_elem.text = decode_utf8(note)
 
     if child_elements:
         for elem in child_elements:
-            _environment.append(elem)
+            environment_.append(elem)
 
-    return _environment
+    return environment_
 
 
-def dependency(names=None, identifiers=None):
+def dependency(
+    names: list[str] | None = None,
+    identifiers: Iterable[ET._Element] | None = None,
+) -> ET._Element:
     """Returns the PREMIS dependency structure.
 
     :param names: A list of strings of dependency names
     :param identifiers: A list of PREMIS identifier structures
     :returns: ElementTree DOM tree
     """
-    _dependency = _element('dependency')
+    dependency_ = _element('dependency')
     if names:
         for name in names:
             name_elem = _subelement(
-                _dependency, 'dependencyName')
+                dependency_, 'dependencyName')
             name_elem.text = decode_utf8(name)
 
     if identifiers:
         for identifier_elem in identifiers:
-            _dependency.append(identifier_elem)
+            dependency_.append(identifier_elem)
 
-    return _dependency
+    return dependency_
 
 
-def get_dependency_identifier(object_or_identifier):
+def get_dependency_identifier(
+    object_or_identifier: ET._Element,
+) -> ET._Element:
     """Create new dependency indentifier from object containing
     objectIdentifier or return existing dependencyIdentifier. If both elements
     exists in given ``object_or_identifier`` return dependencyIdentifier
@@ -295,27 +318,27 @@ def get_dependency_identifier(object_or_identifier):
         return dependency_identifier
 
     raise ValueError(
-        "Argument object_or_indentifier must contain"
-        "valid objectIdentifier or "
-        "dependencyIdentifier: {}".format(
-            object_or_identifier))
+        "Argument object_or_indentifier must contain valid objectIdentifier or"
+        f" dependencyIdentifier: {object_or_identifier}"
+    )
 
 
 def object(
-        object_id,
-        alt_ids=[],
-        original_name=None,
-        child_elements=None,
-        representation=False,
-        bitstream=False):
+    object_id: ET._Element,
+    alt_ids: Iterable[ET._Element] | None = None,
+    original_name: str | None = None,
+    child_elements: Iterable[ET._Element] | None = None,
+    representation: bool = False,
+    bitstream: bool = False,
+) -> ET._Element:
     """Return the PREMIS object.
 
-        :object_id: PREMIS identifier
-        :alt_ids: List of alternative identifiers
-        :original_name: Original name field
-        :child_elements=None: Any other element appended
-        :representation=False: If true, representation object
-        :bitstream=False: If true, bitstream object
+    :param object_id: PREMIS identifier
+    :param alt_ids: List of alternative identifiers
+    :param original_name: Original name field
+    :param child_elements=None: Any other element appended
+    :param representation=False: If true, representation object
+    :param bitstream=False: If true, bitstream object
 
     Returns the following ElementTree structure::
 
@@ -331,43 +354,45 @@ def object(
 
     """
 
-    _object = _element('object', ns=NAMESPACES)
+    alt_ids = alt_ids or []
 
-    _object.append(object_id)
+    object_ = _element('object', ns=NAMESPACES)
+
+    object_.append(object_id)
 
     if alt_ids:
         for alt_id in alt_ids:
-            _object.append(alt_id)
+            object_.append(alt_id)
 
     if representation:
-        _object.set(xsi_ns('type'), 'premis:representation')
+        object_.set(xsi_ns('type'), 'premis:representation')
     elif bitstream:
-        _object.set(xsi_ns('type'), 'premis:bitstream')
+        object_.set(xsi_ns('type'), 'premis:bitstream')
     else:
-        _object.set(xsi_ns('type'), 'premis:file')
+        object_.set(xsi_ns('type'), 'premis:file')
 
-    _object_elements = []
+    object_elements_ = []
 
     if original_name:
-        _original_name = _element('originalName')
-        _original_name.text = original_name
-        _object_elements.append(_original_name)
+        original_name_ = _element('originalName')
+        original_name_.text = original_name
+        object_elements_.append(original_name_)
 
     if child_elements:
-        _object_elements.extend(child_elements)
+        object_elements_.extend(child_elements)
 
     # Sort elements before appending them to the _object
-    _object_elements.sort(key=_object_elems_order)
-    for elem in _object_elements:
-        _object.append(elem)
+    object_elements_.sort(key=_object_elems_order)
+    for elem in object_elements_:
+        object_.append(elem)
 
-    return _object
+    return object_
 
 
-def iter_objects(premis_el):
+def iter_objects(premis_el: ET._Element) -> Generator[ET._Element]:
     """Iterate all PREMIS objects from starting element.
 
-    :starting_element: Element where matching elements are searched
+    :param starting_element: Element where matching elements are searched
     :returns: Generator object for iterating all elements
 
     """
@@ -375,10 +400,13 @@ def iter_objects(premis_el):
     yield from iter_elements(premis_el, 'object')
 
 
-def find_object_by_id(premis, object_id):
+def find_object_by_id(
+    premis: ET._Element, object_id: str
+) -> ET._Element | None:
     """Find a PREMIS object by its objectIdentifierValue
-    :premis: ElementTree element
-    :object_id: The PREMIS object's ID
+
+    :param premis: ElementTree element
+    :param object_id: The PREMIS object's ID
 
     :returns: Element if found, None otherwise
     """
@@ -390,12 +418,14 @@ def find_object_by_id(premis, object_id):
     return None
 
 
-def filter_objects(premis_objects, filtered_objects):
+def filter_objects(
+    premis_objects: Iterable[ET._Element], filtered_objects: ET._Element
+) -> Generator[ET._Element]:
     """Return PREMIS objects from `premis_objects` which are not listed in
     `filtered_objects`
 
-    :premis_objects: Objects to filter
-    :filtered_objects: Objects which are removed from `premis_objects`
+    :param premis_objects: Objects to filter
+    :param filtered_objects: Objects which are removed from `premis_objects`
     :returns: Generator object for iterating all objects
 
     """
@@ -408,12 +438,14 @@ def filter_objects(premis_objects, filtered_objects):
             yield elem
 
 
-def contains_object(object_element, search_from_element):
+def contains_object(
+    object_element: ET._Element, search_from_element: ET._Element
+) -> bool:
     """Return True if `search_from_element` contains the `object_element`
     object or objectIdentifier.
 
-    :object_element: PREMIS object or identifier
-    :search_from_element: PREMIS object to search from
+    :param object_element: PREMIS object or identifier
+    :param search_from_element: PREMIS object to search from
     :returns: Boolean
 
     """
@@ -434,36 +466,38 @@ def contains_object(object_element, search_from_element):
     return False
 
 
-def object_count(premis_el):
+def object_count(premis_el: ET._Element) -> int:
     """Return number of objects in PREMIS data dictionary.
 
-    :premis: ElementTree element
+    :param premis: ElementTree element
     :returns: Integer
 
     """
-    return len([x for x in iter_objects(premis_el)])
+    return len(list(iter_objects(premis_el)))
 
 
-def objects_with_type(objects, object_identifier_type):
+def objects_with_type(
+    objects: Iterable[ET._Element], object_identifier_type: str | None
+) -> Iterator[ET._Element]:
     """Return all objects from list of `objects` with given
     `object_identifier_type` matching the PREMIS objectIdentifierType field.
 
-    :objects: Iterable of objects
-    :object_identifier_type: Identifier type as string
+    :param objects: Iterable of objects
+    :param object_identifier_type: Identifier type as string
     :returns: Iterator with all matching objects
 
     """
     for _object in objects:
 
-        _object_identifier = _object.find(premis_ns('objectIdentifier'))
-        _object_identifier_type = _object_identifier.findtext(
+        object_identifier_ = _object.find(premis_ns('objectIdentifier'))
+        object_identifier_type_ = object_identifier_.findtext(
             premis_ns('objectIdentifierType'))
 
-        if _object_identifier_type == object_identifier_type:
+        if object_identifier_type_ == object_identifier_type:
             yield _object
 
 
-def parse_object_type(obj):
+def parse_object_type(obj: ET._Element) -> str:
     """
     :param obj:
     :return: String
@@ -471,7 +505,7 @@ def parse_object_type(obj):
     return obj.xpath('./@xsi:type', namespaces=NAMESPACES)[0]
 
 
-def parse_fixity(obj):
+def parse_fixity(obj: ET._Element) -> tuple[str | None, str | None]:
     """
     :param obj:
     :return: Tuple of strings to represent algorithm and digest.
@@ -485,7 +519,7 @@ def parse_fixity(obj):
     return (algorithm, digest)
 
 
-def parse_format(obj):
+def parse_format(obj: ET._Element) -> tuple[str | None, str | None]:
     """
     :param obj:
     :return: Tuple of strings to represent format name and version.
@@ -494,14 +528,12 @@ def parse_format(obj):
         ".//premis:formatName", namespaces=NAMESPACES)[0].text
     format_version = obj.xpath(".//premis:formatVersion",
                                namespaces=NAMESPACES)
-    if format_version:
-        format_version = format_version[0].text
-    else:
-        format_version = None
+
+    format_version = format_version[0].text if format_version else None
     return (format_name, format_version)
 
 
-def parse_format_registry(obj):
+def parse_format_registry(obj: ET._Element) -> tuple[str | None, str | None]:
     """
     :param obj:
     :return: Tuple of strings to represent format registry name and key.
@@ -515,7 +547,7 @@ def parse_format_registry(obj):
     return (format_registry_name, format_registry_key)
 
 
-def parse_original_name(premis_object):
+def parse_original_name(premis_object: ET._Element) -> str:
     """
     :param premis_object:
     :return: String
@@ -525,7 +557,7 @@ def parse_original_name(premis_object):
         namespaces=NAMESPACES)[0]
 
 
-def iter_environments(premis_elem):
+def iter_environments(premis_elem: ET._Element) -> Generator[ET._Element]:
     """Iterate all PREMIS environments from starting element.
 
     :param premis_elem: ElementTree element
@@ -534,7 +566,9 @@ def iter_environments(premis_elem):
     yield from iter_elements(premis_elem, 'environment')
 
 
-def environments_with_purpose(environments, purpose):
+def environments_with_purpose(
+    environments: ET._Element, purpose: str
+) -> Iterator[ET._Element]:
     """Finds the premis environment sections with a specific purpose.
     The function yields only the environments with the given purpose in
     the premis:environmentPurpose contents.
@@ -544,55 +578,56 @@ def environments_with_purpose(environments, purpose):
     :return: Iterable of premis environments
     """
     for _environment in environments:
-        for purpose_elem in iter_elements(_environment, 'environmentPurpose'):
+        for purpose_elem in iter_elements(_environment, "environmentPurpose"):
             if purpose_elem.text == purpose:
                 yield _environment
 
 
-def parse_dependency(premis_elem):
+def parse_dependency(premis_elem: ET._Element) -> list[ET._Element]:
     """
     :param premis_elem:
-    :return: String
+    :return: list of elements
     """
     try:
-        return list(iter_elements(premis_elem, 'dependency'))
+        return list(iter_elements(premis_elem, "dependency"))
     except IndexError:
-        return ""
+        return []
 
 
-def parse_relationship(premis_elem):
-    """
-    :param premis_elem:
-    :return: String
-    """
-    try:
-        return premis_elem.xpath(".//premis:relationship",
-                                 namespaces=NAMESPACES)[0]
-    except IndexError:
-        return ""
-
-
-def parse_relationship_type(premis_elem):
+def parse_relationship(premis_elem: ET._Element) -> str:
     """
     :param premis_elem:
     :return: String
     """
     try:
         return premis_elem.xpath(
-            ".//premis:relationshipType/text()",
-            namespaces=NAMESPACES)[0]
+            ".//premis:relationship", namespaces=NAMESPACES
+        )[0]
     except IndexError:
         return ""
 
 
-def parse_relationship_subtype(premis_elem):
+def parse_relationship_type(premis_elem: ET._Element) -> str:
     """
     :param premis_elem:
     :return: String
     """
     try:
         return premis_elem.xpath(
-            ".//premis:relationshipSubType/text()",
-            namespaces=NAMESPACES)[0]
+            ".//premis:relationshipType/text()", namespaces=NAMESPACES
+        )[0]
+    except IndexError:
+        return ""
+
+
+def parse_relationship_subtype(premis_elem: ET._Element) -> str:
+    """
+    :param premis_elem:
+    :return: String
+    """
+    try:
+        return premis_elem.xpath(
+            ".//premis:relationshipSubType/text()", namespaces=NAMESPACES
+        )[0]
     except IndexError:
         return ""

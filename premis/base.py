@@ -8,24 +8,22 @@ References:
     https://docs.python.org/2.6/library/xml.etree.elementtree.html
 
 """
+from __future__ import annotations
+
+from collections.abc import Generator, Iterable
 
 import lxml.etree as ET
-from xml_helpers.utils import XSI_NS, xsi_ns, decode_utf8
+from xml_helpers.utils import XSI_NS, decode_utf8, xsi_ns
 
-PREMIS_NS = 'info:lc/xmlns/premis-v2'
-NAMESPACES = {'premis': PREMIS_NS,
-              'xsi': XSI_NS}
-
-# using lxml.etree causes these, but importing c extensions is not a problem
-# for us
-# pylint: disable=c-extension-no-member
+PREMIS_NS = "info:lc/xmlns/premis-v2"
+NAMESPACES = {"premis": PREMIS_NS, "xsi": XSI_NS}
 
 
-def premis_ns(tag, prefix=""):
+def premis_ns(tag: str, prefix: str = "") -> str:
     """Prefix ElementTree tags with PREMIS namespace.
     object -> {info:lc...premis}object
 
-    :tag: Tag name as string
+    :param tag: Tag name as string
     :returns: Prefixed tag
 
     """
@@ -38,7 +36,9 @@ def premis_ns(tag, prefix=""):
     return f'{{{PREMIS_NS}}}{tag}'
 
 
-def _element(tag, prefix="", ns=None):
+def _element(
+    tag: str, prefix: str = "", ns: dict[str, str] | None = None
+) -> ET._Element:
     """Return _ElementInterface with PREMIS namespace.
 
     Prefix parameter is useful for adding prefixed to lower case tags. It just
@@ -56,11 +56,16 @@ def _element(tag, prefix="", ns=None):
     """
     if ns is None:
         ns = {}
-    ns['premis'] = PREMIS_NS
+    ns["premis"] = PREMIS_NS
     return ET.Element(premis_ns(tag, prefix), nsmap=ns)
 
 
-def _subelement(parent, tag, prefix="", ns=None):
+def _subelement(
+    parent: ET._Element,
+    tag: str,
+    prefix: str = "",
+    ns: dict[str, str] | None = None,
+) -> ET._Element:
     """Return subelement for the given parent element.
 
     Created element is appended to parent element.
@@ -74,11 +79,16 @@ def _subelement(parent, tag, prefix="", ns=None):
     """
     if ns is None:
         ns = {}
-    ns['premis'] = PREMIS_NS
+    ns["premis"] = PREMIS_NS
     return ET.SubElement(parent, premis_ns(tag, prefix), nsmap=ns)
 
 
-def identifier(identifier_type, identifier_value, prefix='object', role=None):
+def identifier(
+    identifier_type: str | None,
+    identifier_value: str | None,
+    prefix: str = "object",
+    role: str | None = None,
+) -> ET._Element:
     """Return PREMIS identifier segments.
 
     Produces without prefix the following PREMIS segment::
@@ -137,34 +147,37 @@ def identifier(identifier_type, identifier_value, prefix='object', role=None):
     prefix = decode_utf8(prefix)
 
     if prefix == 'relatedObject':
-        _identifier = _element('Identification', prefix)
+        identifier_ = _element('Identification', prefix)
     else:
-        _identifier = _element('Identifier', prefix)
+        identifier_ = _element('Identifier', prefix)
 
-    _type = _subelement(_identifier, 'IdentifierType', prefix)
+    type_ = _subelement(identifier_, 'IdentifierType', prefix)
     if identifier_type is not None:
         identifier_type = decode_utf8(identifier_type)
-    _type.text = identifier_type
+    type_.text = identifier_type
 
-    _value = _subelement(_identifier, 'IdentifierValue', prefix)
+    value_ = _subelement(identifier_, 'IdentifierValue', prefix)
     if identifier_value is not None:
         identifier_value = decode_utf8(identifier_value)
-    _value.text = identifier_value
+    value_.text = identifier_value
 
     if 'linking' in prefix and role is not None:
-        _role = _subelement(_identifier, 'Role', prefix)
-        _role.text = role
+        role_ = _subelement(identifier_, 'Role', prefix)
+        role_.text = role
 
-    return _identifier
+    return identifier_
 
 
-def parse_identifier_type_value(id_elem, prefix='object'):
+def parse_identifier_type_value(
+    id_elem: ET._Element, prefix: str = "object"
+) -> tuple[str | None, str | None] | None:
     """Return identifierType and IdentifierValue from given PREMIS id.
     If segment contains multiple identifiers, returns first
     occurrence.
 
-    :id_elem: Premis identifier
-    :returns: (identifier_type, identifier_value)
+    :param id_elem: Premis identifier
+    :param prefix: Prefix for the identifier
+    :returns: (identifier_type, identifier_value) or None if not found
 
     """
     prefix = decode_utf8(prefix)
@@ -188,10 +201,14 @@ def parse_identifier_type_value(id_elem, prefix='object'):
     return None
 
 
-def premis(child_elements=None, namespaces=None):
+def premis(
+    child_elements: Iterable[ET._Element] | None = None,
+    namespaces: dict[str, str] | None = None,
+) -> ET._Element:
     """Create PREMIS Data Dictionary root element.
 
-    :child_elements: Any elements appended to the PREMIS dictionary
+    :param child_elements: Any elements appended to the PREMIS dictionary
+    :param namespaces: Optional namespaces for the elements
 
     Returns the following ElementTree structure::
 
@@ -206,32 +223,36 @@ def premis(child_elements=None, namespaces=None):
     """
     if namespaces is None:
         namespaces = NAMESPACES
-    _premis = _element('premis', ns=namespaces)
-    _premis.set(
+    premis_ = _element('premis', ns=namespaces)
+    premis_.set(
         xsi_ns('schemaLocation'),
         'info:lc/xmlns/premis-v2 '
         'http://www.loc.gov/standards/premis/v2/premis-v2-3.xsd')
-    _premis.set('version', '2.2')
+    premis_.set('version', '2.2')
 
     if child_elements:
         for elem in child_elements:
-            _premis.append(elem)
+            premis_.append(elem)
 
-    return _premis
+    return premis_
 
 
-def iter_elements(starting_element, tag):
+def iter_elements(
+    starting_element: ET._Element, tag: str
+) -> Generator[ET._Element]:
     """Iterate all element from starting element that match the `tag`
     parameter. Tag is always prefixed to PREMIS namespace before matching.
 
-    :starting_element: Element where matching elements are searched
+    :param starting_element: Element where matching elements are searched
     :returns: Generator object for iterating all elements
 
     """
     yield from starting_element.findall('.//' + premis_ns(tag))
 
 
-def parse_identifier(section, prefix='object'):
+def parse_identifier(
+    section: ET._Element, prefix: str = "object"
+) -> ET._Element | None:
     """
     :param section:
     :param prefix:

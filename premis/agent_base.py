@@ -8,20 +8,37 @@ References:
     https://docs.python.org/2.6/library/xml.etree.elementtree.html
 
 """
+from __future__ import annotations
 
+from collections.abc import Generator, Iterable
+
+import lxml.etree as ET
 from xml_helpers.utils import decode_utf8
-from premis.base import (_element, _subelement, iter_elements, premis_ns,
-                         NAMESPACES)
+
+from premis.base import (
+    NAMESPACES,
+    _element,
+    _subelement,
+    iter_elements,
+    premis_ns,
+)
 
 
-def agent(agent_id, agent_name, agent_type, note=None):
+def agent(
+    agent_id: ET._Element,
+    agent_name: str,
+    agent_type: str,
+    note: str | None = None,
+) -> ET._Element:
     """Returns PREMIS agent element
 
-    :agent_id: PREMIS identifier for the agent
-    :agent_name: Agent name
-    :agent_type: Agent type
+    :param agent_id: PREMIS identifier for the agent
+    :param agent_name: Agent name
+    :param agent_type: Agent type
+    :param note: Agent note
 
-    Returns the following ElementTree structure::
+    :returns:
+    The following ElementTree structure::
 
         <premis:agent>
             <premis:agentIdentifier>
@@ -37,37 +54,37 @@ def agent(agent_id, agent_name, agent_type, note=None):
 
     """
 
-    _agent = _element('agent')
+    agent_ = _element('agent')
 
-    _agent.append(agent_id)
+    agent_.append(agent_id)
 
-    _agent_name = _subelement(_agent, 'agentName')
-    _agent_name.text = decode_utf8(agent_name)
+    agent_name_ = _subelement(agent_, 'agentName')
+    agent_name_.text = decode_utf8(agent_name)
 
-    _agent_type = _subelement(_agent, 'agentType')
-    _agent_type.text = decode_utf8(agent_type)
+    agent_type_ = _subelement(agent_, 'agentType')
+    agent_type_.text = decode_utf8(agent_type)
 
     if note is not None:
-        _agent_type = _subelement(_agent, 'agentNote')
-        _agent_type.text = decode_utf8(note)
+        agent_type_ = _subelement(agent_, 'agentNote')
+        agent_type_.text = decode_utf8(note)
 
-    return _agent
+    return agent_
 
 
-def iter_agents(premis):
+def iter_agents(premis: ET._Element) -> Generator[ET._Element]:
     """Iterate all PREMIS agents from starting element.
 
-    :starting_element: Element where matching elements are searched
+    :param starting_element: Element where matching elements are searched
     :returns: Generator object for iterating all elements
 
     """
     yield from iter_elements(premis, 'agent')
 
 
-def find_agent_by_id(premis, agent_id):
+def find_agent_by_id(premis: ET._Element, agent_id: str) -> ET._Element | None:
     """Find a PREMIS agent by its agentIdentifierValue
 
-    :premis: ElementTree element
+    :param premis: ElementTree element
     :agent_id: The PREMIS agent's ID
 
     :returns: Element if found, None otherwise
@@ -80,20 +97,23 @@ def find_agent_by_id(premis, agent_id):
     return None
 
 
-def agent_count(premis):
+def agent_count(premis: ET._Element) -> int:
     """Return number of agents in PREMIS data dictionary.
 
-    :premis: ElementTree element
+    :param premis: ElementTree element
     :returns: Integer
 
     """
-    return len([x for x in iter_agents(premis)])
+    return len(list(iter_agents(premis)))
 
 
-def agents_with_type(agents, agent_type='organization'):
+def agents_with_type(
+    agents: Iterable[ET._Element], agent_type: str = "organization"
+) -> Generator[tuple[str, str | None]]:
     """Return all agents from list of `agents` with given `agent_type`.
 
-    :task_report: Report to search from
+    :param agent: Iterable of Agent Element objects
+    :param task_report: Report to search from
     :returns: Generator object which iterates all (agent_type, agent_name)
 
     """
@@ -101,36 +121,37 @@ def agents_with_type(agents, agent_type='organization'):
 
     for _agent in agents:
         agent_name = _agent.findtext(premis_ns('agentName'))
-        _agent_type = _agent.findtext(premis_ns('agentType'))
+        agent_type_ = _agent.findtext(premis_ns('agentType'))
 
-        if _agent_type == agent_type:
+        if agent_type_ == agent_type:
             yield (agent_type, agent_name)
 
 
-# pylint: disable=redefined-outer-name
-# Listed as requiring a fix in KDKPAS-2522
-def parse_name(agent):
+def parse_name(agent: ET._Element) -> str:
     """
     :param agent: Agent Element object.
     :return: Unicode string
     """
-    return decode_utf8(agent.xpath(".//premis:agentName/text()",
-                                   namespaces=NAMESPACES)[0])
+    return decode_utf8(
+        agent.xpath(".//premis:agentName/text()", namespaces=NAMESPACES)[0]
+    )
 
 
-def parse_agent_type(agent):
+def parse_agent_type(agent: ET._Element) -> str:
     """
     :param agent: Agent Element object.
     :return: Unicode string
     """
-    return decode_utf8(agent.xpath(".//premis:agentType/text()",
-                                   namespaces=NAMESPACES)[0])
+    return decode_utf8(
+        agent.xpath(".//premis:agentType/text()", namespaces=NAMESPACES)[0]
+    )
 
 
-def parse_note(agent):
+def parse_note(agent: ET._Element) -> str:
     """
     :param agent: Agent Element object.
     :return: Unicode string
     """
-    return decode_utf8(agent.xpath(".//premis:agentNote/text()",
-                                   namespaces=NAMESPACES)[0])
+    return decode_utf8(
+        agent.xpath(".//premis:agentNote/text()", namespaces=NAMESPACES)[0]
+    )

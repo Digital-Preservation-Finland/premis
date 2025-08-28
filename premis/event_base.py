@@ -9,28 +9,43 @@ References:
 
 """
 
+from __future__ import annotations
+
+from collections.abc import Generator, Iterable, Iterator
+
+import lxml.etree as ET
 from xml_helpers.utils import decode_utf8
 
-from premis.base import (_element, _subelement, premis_ns, identifier,
-                         iter_elements, NAMESPACES)
+from premis.base import (
+    NAMESPACES,
+    _element,
+    _subelement,
+    identifier,
+    iter_elements,
+    premis_ns,
+)
 
 
-# pylint: disable=redefined-outer-name
 # Listed as requiring a fix in KDKPAS-2522
-def outcome(outcome, detail_note=None, detail_extension=None,
-            single_extension_element=False):
+def outcome(
+    outcome: str,
+    detail_note: str | None = None,
+    detail_extension: list[ET._Element] | None = None,
+    single_extension_element: bool = False,
+) -> ET._Element:
     """Create PREMIS event outcome DOM structure.
 
-    :outcome: Event outcome (success, failure)
-    :detail_note: String description for the event outcome
-    :detail_extension: List of detail extension etree elements
-    :single_extension_element:
+    :param outcome: Event outcome (success, failure)
+    :param detail_note: String description for the event outcome
+    :param detail_extension: List of detail extension etree elements
+    :param single_extension_element:
         True: all element trees in detail_extension are placed in a single
               eventOutcomeDetailExtension element.
         False: each element tree in detail_extension is placed in a separate
                eventOutcomeDetailExtension element.
 
-    Returns the following ElementTree structure::
+    :returns:
+    The following ElementTree structure::
 
         <premis:eventOutcomeInformation>
             <premis:eventOutcome>success</premis:eventOutcome>
@@ -45,49 +60,59 @@ def outcome(outcome, detail_note=None, detail_extension=None,
 
     outcome_information = _element('eventOutcomeInformation')
 
-    _outcome = _subelement(outcome_information, 'eventOutcome')
-    _outcome.text = decode_utf8(outcome)
+    outcome_ = _subelement(outcome_information, 'eventOutcome')
+    outcome_.text = decode_utf8(outcome)
 
     if detail_note or detail_extension:
         detail = _subelement(outcome_information, 'eventOutcomeDetail')
 
         if detail_note is not None:
-            _detail_note = _subelement(detail, 'eventOutcomeDetailNote')
-            _detail_note.text = decode_utf8(detail_note)
+            detail_note_ = _subelement(detail, 'eventOutcomeDetailNote')
+            detail_note_.text = decode_utf8(detail_note)
 
         if detail_extension:
             if single_extension_element:
                 # Add all extensions into one eventOutcomeDetailExtension
                 # element
-                _detail_extension = _subelement(
+                detail_extension_ = _subelement(
                     detail, 'eventOutcomeDetailExtension'
                 )
                 for extension in detail_extension:
-                    _detail_extension.append(extension)
+                    detail_extension_.append(extension)
             else:
                 # Separate eventOutcomeDetailExtension element for each
                 # extension
                 for extension in detail_extension:
-                    _detail_extension = _subelement(
+                    detail_extension_ = _subelement(
                         detail, 'eventOutcomeDetailExtension'
                     )
-                    _detail_extension.append(extension)
+                    detail_extension_.append(extension)
 
     return outcome_information
 
 
-# pylint: disable=too-many-arguments, too-many-locals
-# too-many-arguments: The given arguments are used to form the Element obj.
-def event(event_id, event_type, event_date_time, event_detail,
-          child_elements=None, linking_objects=None, linking_agents=None):
+def event(
+    event_id: ET._Element,
+    event_type: str,
+    event_date_time: str,
+    event_detail: str,
+    child_elements: list[ET._Element] | None = None,
+    linking_objects: list[ET._Element] | None = None,
+    linking_agents: list[ET._Element] | None = None,
+) -> ET._Element:
     """Create PREMIS event element.
 
-    :event_id: PREMIS event identifier
-    :event_type: Type for the event
-    :event_date_time: Event time
-    :event_detail: Event details
-    :child_elements: Any child elements appended to the event (default=None)
-    :linking_objects: Any linking objects appended to the event (default=None)
+    :param event_id: PREMIS event identifier
+    :param event_type: Type for the event
+    :param event_date_time: Event time
+    :param event_detail: Event details
+    :param child_elements: Any child elements appended to the event
+        (default=None)
+    :param linking_objects: Any linking objects appended to the event
+        (default=None)
+    :param linking_agents: Any linking agents appended to the event
+        (default=None)
+    :returns: PREMIS event element
 
     Returns the following ElementTree structure::
 
@@ -104,30 +129,30 @@ def event(event_id, event_type, event_date_time, event_detail,
         </premis:event>
 
     """
-    _event = _element('event')
+    event_ = _element('event')
 
-    _event.append(event_id)
+    event_.append(event_id)
 
-    _event_type = _subelement(_event, 'eventType')
-    _event_type.text = decode_utf8(event_type)
+    event_type_ = _subelement(event_, 'eventType')
+    event_type_.text = decode_utf8(event_type)
 
-    _event_date_time = _subelement(_event, 'eventDateTime')
-    _event_date_time.text = decode_utf8(event_date_time)
+    event_date_time_ = _subelement(event_, 'eventDateTime')
+    event_date_time_.text = decode_utf8(event_date_time)
 
-    _event_detail = _subelement(_event, 'eventDetail')
-    _event_detail.text = decode_utf8(event_detail)
+    event_detail_ = _subelement(event_, 'eventDetail')
+    event_detail_.text = decode_utf8(event_detail)
 
     if child_elements:
         for elem in child_elements:
-            _event.append(elem)
+            event_.append(elem)
 
     if linking_agents:
-        for _agent in linking_agents:
+        for agent_ in linking_agents:
             linking_agent = identifier(
-                _agent.findtext('.//' + premis_ns('agentIdentifierType')),
-                _agent.findtext('.//' + premis_ns('agentIdentifierValue')),
+                agent_.findtext('.//' + premis_ns('agentIdentifierType')),
+                agent_.findtext('.//' + premis_ns('agentIdentifierValue')),
                 'linkingAgent')
-            _event.append(linking_agent)
+            event_.append(linking_agent)
 
     if linking_objects:
         for _object in linking_objects:
@@ -135,28 +160,28 @@ def event(event_id, event_type, event_date_time, event_detail,
                 _object.findtext('.//' + premis_ns('objectIdentifierType')),
                 _object.findtext('.//' + premis_ns('objectIdentifierValue')),
                 'linkingObject')
-            _event.append(linking_object)
+            event_.append(linking_object)
 
-    return _event
+    return event_
 
 
-def iter_events(premis):
+def iter_events(premis: ET._Element) -> Generator[ET._Element]:
     """Iterate all PREMIS events from starting element.
 
-    :starting_element: Element where matching elements are searched
+    :param starting_element: Element where matching elements are searched
     :returns: Generator object for iterating all elements
 
     """
     yield from iter_elements(premis, 'event')
 
 
-def find_event_by_id(premis, event_id):
+def find_event_by_id(premis: ET._Element, event_id: str) -> ET._Element | None:
     """Find a PREMIS event by its eventIdentifierValue
 
-    :premis: ElementTree element
-    :event_id: The PREMIS event's ID
-
+    :param premis: ElementTree element
+    :param event_id: The PREMIS event's ID
     :returns: Element if found, None otherwise
+
     """
     event_id = decode_utf8(event_id)
 
@@ -168,118 +193,128 @@ def find_event_by_id(premis, event_id):
     return None
 
 
-def event_count(premis):
+def event_count(premis: ET._Element) -> int:
     """Return number of events in PREMIS data dictionary.
 
-    :premis: ElementTree element
+    :param premis: ElementTree element
     :returns: Integer
 
     """
-    return len([x for x in iter_events(premis)])
+    return len(list(iter_events(premis)))
 
 
-def event_with_type_and_detail(events, event_type, event_detail):
+def event_with_type_and_detail(
+    events: Iterable[ET._Element], event_type: str, event_detail: str
+) -> Iterator[ET._Element]:
     """Return all events from list of `events` with given
     `event_identifier_type` matching the PREMIS eventIdentifierType field.
 
-    :events: Iterable of events
-    :event_identifier_type: Identifier type as string
+    :param events: Iterable of events
+    :param event_identifier_type: Identifier type as string
+    :param event_detail: Event detail as string
     :returns: Iterator with all matching events
 
     """
 
-    for _event in events:
-        _event_type = _event.findtext(premis_ns('eventType'))
-        _event_detail = _event.findtext(premis_ns('eventDetail'))
+    for event_ in events:
+        event_type_ = event_.findtext(premis_ns('eventType'))
+        event_detail_ = event_.findtext(premis_ns('eventDetail'))
 
-        if _event_type == event_type and _event_detail == event_detail:
-            yield _event
+        if event_type_ == event_type and event_detail_ == event_detail:
+            yield event_
 
 
-def events_with_outcome(events, outcome):
+def events_with_outcome(
+    events: Iterable[ET._Element], outcome: str
+) -> Iterator[ET._Element]:
     """Iterate over all events with given outcome
 
     :param events: Iterable of events
     :param outcome: Return all events that has the outcome
-    :returns: Iterable of events
+    :returns: Iterator of events
 
     """
     outcome = decode_utf8(outcome)
 
-    for _event in events:
-        _event_outcome = _event.findtext('/'.join([
+    for event_ in events:
+        event_outcome_ = event_.findtext('/'.join([
             premis_ns('eventOutcomeInformation'),
             premis_ns('eventOutcome')]))
-        if _event_outcome == outcome:
-            yield _event
+        if event_outcome_ == outcome:
+            yield event_
 
 
-def parse_event_type(event_elem):
+def parse_event_type(event_elem: ET._Element) -> str:
     """
     :param event_elem: Premis event element.
     :return: String
     """
     try:
         return event_elem.xpath(
-            ".//premis:eventType/text()",
-            namespaces=NAMESPACES)[0]
+            ".//premis:eventType/text()", namespaces=NAMESPACES
+        )[0]
     except IndexError:
         return ""
 
 
-def parse_datetime(event_elem):
+def parse_datetime(event_elem: ET._Element) -> str:
     """
     :param event_elem: Premis event element.
     :return: String
     """
     return event_elem.xpath(
-        ".//premis:eventDateTime/text()",
-        namespaces=NAMESPACES)[0]
+        ".//premis:eventDateTime/text()", namespaces=NAMESPACES
+    )[0]
 
 
-def parse_detail(event_elem):
+def parse_detail(event_elem: ET._Element) -> str:
     """
     :param event_elem: Premis event element.
     :return: String
     """
     try:
         return event_elem.xpath(
-            ".//premis:eventDetail/text()",
-            namespaces=NAMESPACES)[0]
+            ".//premis:eventDetail/text()", namespaces=NAMESPACES
+        )[0]
     except IndexError:
         return ""
 
 
-def parse_outcome(event_elem):
+def parse_outcome(event_elem: ET._Element) -> str:
     """
     :param event_elem: Premis event element.
     :return: String
     """
     return event_elem.xpath(
         ".//premis:eventOutcomeInformation/premis:eventOutcome/text()",
-        namespaces=NAMESPACES)[0]
+        namespaces=NAMESPACES,
+    )[0]
 
 
-def parse_outcome_detail_note(event_elem):
+def parse_outcome_detail_note(event_elem: ET._Element) -> str:
     """
     :param event_elem: Premis event element.
     :return: String
     """
     try:
         return event_elem.xpath(
-            (".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/"
-             "premis:eventOutcomeDetailNote/text()"),
-            namespaces=NAMESPACES)[0]
+            ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/"
+            "premis:eventOutcomeDetailNote/text()",
+            namespaces=NAMESPACES,
+        )[0]
     except IndexError:
         return ""
 
 
-def parse_outcome_detail_extension(event_elem):
+def parse_outcome_detail_extension(
+    event_elem: ET._Element,
+) -> ET._Element | None:
     """
     :param event_elem: Premis event element.
-    :return: String
+    :return: Event element, or None if not found
     """
     return event_elem.find(
-        (".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/"
-         "premis:eventOutcomeDetailExtension"),
-        namespaces=NAMESPACES)
+        ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/"
+        "premis:eventOutcomeDetailExtension",
+        namespaces=NAMESPACES,
+    )

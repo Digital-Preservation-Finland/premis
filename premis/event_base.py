@@ -26,7 +26,6 @@ from premis.base import (
 )
 
 
-# Listed as requiring a fix in KDKPAS-2522
 def outcome(
     outcome: str,
     detail_note: str | None = None,
@@ -63,30 +62,32 @@ def outcome(
     outcome_ = _subelement(outcome_information, 'eventOutcome')
     outcome_.text = decode_utf8(outcome)
 
-    if detail_note or detail_extension:
-        detail = _subelement(outcome_information, 'eventOutcomeDetail')
+    if not (detail_note or detail_extension):
+        return outcome_information
 
-        if detail_note is not None:
-            detail_note_ = _subelement(detail, 'eventOutcomeDetailNote')
-            detail_note_.text = decode_utf8(detail_note)
+    detail = _subelement(outcome_information, 'eventOutcomeDetail')
 
-        if detail_extension:
-            if single_extension_element:
-                # Add all extensions into one eventOutcomeDetailExtension
-                # element
+    if detail_note is not None:
+        detail_note_ = _subelement(detail, 'eventOutcomeDetailNote')
+        detail_note_.text = decode_utf8(detail_note)
+
+    if detail_extension:
+        if single_extension_element:
+            # Add all extensions into one eventOutcomeDetailExtension
+            # element
+            detail_extension_ = _subelement(
+                detail, 'eventOutcomeDetailExtension'
+            )
+            for extension in detail_extension:
+                detail_extension_.append(extension)
+        else:
+            # Separate eventOutcomeDetailExtension element for each
+            # extension
+            for extension in detail_extension:
                 detail_extension_ = _subelement(
                     detail, 'eventOutcomeDetailExtension'
                 )
-                for extension in detail_extension:
-                    detail_extension_.append(extension)
-            else:
-                # Separate eventOutcomeDetailExtension element for each
-                # extension
-                for extension in detail_extension:
-                    detail_extension_ = _subelement(
-                        detail, 'eventOutcomeDetailExtension'
-                    )
-                    detail_extension_.append(extension)
+                detail_extension_.append(extension)
 
     return outcome_information
 

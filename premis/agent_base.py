@@ -5,7 +5,7 @@ References:
 
     * PREMIS http://www.loc.gov/standards/premis/
     * ElementTree
-    https://docs.python.org/2.6/library/xml.etree.elementtree.html
+    https://docs.python.org/3.9/library/xml.etree.elementtree.html
 
 """
 from __future__ import annotations
@@ -53,7 +53,6 @@ def agent(
         </premis:agent>
 
     """
-
     agent_ = _element('agent')
 
     agent_.append(agent_id)
@@ -85,7 +84,7 @@ def find_agent_by_id(premis: ET._Element, agent_id: str) -> ET._Element | None:
     """Find a PREMIS agent by its agentIdentifierValue
 
     :param premis: ElementTree element
-    :agent_id: The PREMIS agent's ID
+    :param agent_id: The PREMIS agent's ID
 
     :returns: Element if found, None otherwise
     """
@@ -130,7 +129,7 @@ def agents_with_type(
 def parse_name(agent: ET._Element) -> str:
     """
     :param agent: Agent Element object.
-    :return: Unicode string
+    :returns: Unicode string
     """
     return decode_utf8(
         agent.xpath(".//premis:agentName/text()", namespaces=NAMESPACES)[0]
@@ -140,7 +139,7 @@ def parse_name(agent: ET._Element) -> str:
 def parse_agent_type(agent: ET._Element) -> str:
     """
     :param agent: Agent Element object.
-    :return: Unicode string
+    :returns: Unicode string
     """
     return decode_utf8(
         agent.xpath(".//premis:agentType/text()", namespaces=NAMESPACES)[0]
@@ -150,7 +149,7 @@ def parse_agent_type(agent: ET._Element) -> str:
 def parse_note(agent: ET._Element) -> str:
     """
     :param agent: Agent Element object.
-    :return: Unicode string
+    :returns: Unicode string
     """
     return decode_utf8(
         agent.xpath(".//premis:agentNote/text()", namespaces=NAMESPACES)[0]

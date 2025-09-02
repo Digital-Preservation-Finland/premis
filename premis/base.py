@@ -5,7 +5,7 @@ References:
 
     * PREMIS http://www.loc.gov/standards/premis/
     * ElementTree
-    https://docs.python.org/2.6/library/xml.etree.elementtree.html
+    https://docs.python.org/3.9/library/xml.etree.elementtree.html
 
 """
 from __future__ import annotations
@@ -91,8 +91,14 @@ def identifier(
 ) -> ET._Element:
     """Return PREMIS identifier segments.
 
-    Produces without prefix the following PREMIS segment::
+    :param identifier_type: Type of the identifier
+    :param identifier_value: Value of the identifier
+    :param prefix: Type of premis object generated (default="object")
+    :param role: Optional role assosiation with the identifier. Only used when
+        prefix is "linking".
 
+    :returns:
+    Produces without prefix the following PREMIS segment::
 
           <premis:objectIdentifier>
               <premis:objectIdentifierType>
@@ -210,15 +216,15 @@ def premis(
     :param child_elements: Any elements appended to the PREMIS dictionary
     :param namespaces: Optional namespaces for the elements
 
-    Returns the following ElementTree structure::
+    :returns:
+    The following ElementTree structure::
 
-
-        <premis:premis
-            xmlns:premis="info:lc/xmlns/premis-v2"
-            xmlns:xsi="http://www.w3.org/2001/xmlschema-instance"
-            xsi:schemalocation="info:lc/xmlns/premis-v2
-                                http://www.loc.gov/standards/premis/v2/premis-v2-3.xsd"
-            version="2.2">
+            <premis:premis
+                xmlns:premis="info:lc/xmlns/premis-v2"
+                xmlns:xsi="http://www.w3.org/2001/xmlschema-instance"
+                xsi:schemalocation="info:lc/xmlns/premis-v2
+                                    http://www.loc.gov/standards/premis/v2/premis-v2-3.xsd"
+                version="2.2">
 
     """
     if namespaces is None:
@@ -256,7 +262,7 @@ def parse_identifier(
     """
     :param section:
     :param prefix:
-    :return: Element object.
+    :returns: Element object.
     """
     prefix = decode_utf8(prefix)
 

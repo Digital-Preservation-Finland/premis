@@ -5,7 +5,7 @@ References:
 
     * PREMIS http://www.loc.gov/standards/premis/
     * ElementTree
-    https://docs.python.org/2.6/library/xml.etree.elementtree.html
+    https://docs.python.org/3.9/library/xml.etree.elementtree.html
 
 """
 
@@ -56,7 +56,6 @@ def outcome(
         </premis:eventOutcomeInformation>
 
     """
-
     outcome_information = _element('eventOutcomeInformation')
 
     outcome_ = _subelement(outcome_information, 'eventOutcome')
@@ -113,9 +112,8 @@ def event(
         (default=None)
     :param linking_agents: Any linking agents appended to the event
         (default=None)
-    :returns: PREMIS event element
-
-    Returns the following ElementTree structure::
+    :returns:
+    PREMIS event element with the following ElementTree structure::
 
         <premis:event>
 
@@ -216,7 +214,6 @@ def event_with_type_and_detail(
     :returns: Iterator with all matching events
 
     """
-
     for event_ in events:
         event_type_ = event_.findtext(premis_ns('eventType'))
         event_detail_ = event_.findtext(premis_ns('eventDetail'))
@@ -248,7 +245,7 @@ def events_with_outcome(
 def parse_event_type(event_elem: ET._Element) -> str:
     """
     :param event_elem: Premis event element.
-    :return: String
+    :returns: String
     """
     try:
         return event_elem.xpath(
@@ -261,7 +258,7 @@ def parse_event_type(event_elem: ET._Element) -> str:
 def parse_datetime(event_elem: ET._Element) -> str:
     """
     :param event_elem: Premis event element.
-    :return: String
+    :returns: String
     """
     return event_elem.xpath(
         ".//premis:eventDateTime/text()", namespaces=NAMESPACES
@@ -271,7 +268,7 @@ def parse_datetime(event_elem: ET._Element) -> str:
 def parse_detail(event_elem: ET._Element) -> str:
     """
     :param event_elem: Premis event element.
-    :return: String
+    :returns: String
     """
     try:
         return event_elem.xpath(
@@ -284,7 +281,7 @@ def parse_detail(event_elem: ET._Element) -> str:
 def parse_outcome(event_elem: ET._Element) -> str:
     """
     :param event_elem: Premis event element.
-    :return: String
+    :returns: String
     """
     return event_elem.xpath(
         ".//premis:eventOutcomeInformation/premis:eventOutcome/text()",
@@ -295,7 +292,7 @@ def parse_outcome(event_elem: ET._Element) -> str:
 def parse_outcome_detail_note(event_elem: ET._Element) -> str:
     """
     :param event_elem: Premis event element.
-    :return: String
+    :returns: String
     """
     try:
         return event_elem.xpath(
@@ -312,7 +309,7 @@ def parse_outcome_detail_extension(
 ) -> ET._Element | None:
     """
     :param event_elem: Premis event element.
-    :return: Event element, or None if not found
+    :returns: Event element, or None if not found
     """
     return event_elem.find(
         ".//premis:eventOutcomeInformation/premis:eventOutcomeDetail/"

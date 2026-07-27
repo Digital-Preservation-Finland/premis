@@ -1,6 +1,11 @@
 Release notes
 =============
 
+Version 1.1.0
+-------------
+
+- Add ``rights``, ``other_rights_information`` and ``statute_information`` functions for generating PREMIS rights metadata elements
+
 Version 1.0.0
 -------------
 
